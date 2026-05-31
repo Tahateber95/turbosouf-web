@@ -1,0 +1,113 @@
+import { Phone, Mail, MapPin, Clock, MessageCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import Link from "next/link";
+
+export default function ContactPage() {
+  return (
+    <div className="bg-gray-50 min-h-screen">
+      <div className="bg-white border-b border-gray-100">
+        <div className="mx-auto max-w-7xl px-4 py-6">
+          <nav className="flex items-center gap-1.5 text-xs text-gray-400 mb-3">
+            <Link href="/" className="hover:text-gray-600">Accueil</Link>
+            <span>/</span>
+            <span className="text-gray-600 font-medium">Contact</span>
+          </nav>
+          <h1 className="text-2xl sm:text-3xl font-black text-[var(--ts-primary-900)] tracking-tight">
+            Contactez-nous
+          </h1>
+          <p className="text-sm text-gray-500 mt-1">Notre équipe est à votre écoute</p>
+        </div>
+      </div>
+
+      <div className="mx-auto max-w-7xl px-4 py-10">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Contact info */}
+          <div className="space-y-4">
+            {[
+              { icon: Phone, label: "Téléphone", value: "+33 1 23 45 67 89", href: "tel:+33123456789" },
+              { icon: Mail, label: "Email", value: "contact@turbosouf.com", href: "mailto:contact@turbosouf.com" },
+              { icon: MapPin, label: "Adresse", value: "123 Rue de l'Industrie\n67000 Strasbourg, France", href: null },
+              { icon: Clock, label: "Horaires", value: "Lun-Ven: 9h-18h\nSam: 9h-12h", href: null },
+            ].map((item) => (
+              <div key={item.label} className="bg-white rounded-xl border border-gray-100 p-4 flex gap-3">
+                <div className="w-10 h-10 rounded-lg bg-[var(--ts-primary-500)]/10 flex items-center justify-center shrink-0">
+                  <item.icon className="h-5 w-5 text-[var(--ts-primary-500)]" />
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{item.label}</p>
+                  {item.href ? (
+                    <a href={item.href} className="text-sm font-medium text-gray-900 hover:text-[var(--ts-primary-500)]">
+                      {item.value}
+                    </a>
+                  ) : (
+                    <p className="text-sm text-gray-900 whitespace-pre-line">{item.value}</p>
+                  )}
+                </div>
+              </div>
+            ))}
+
+            <a
+              href="https://wa.me/33123456789"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 bg-emerald-50 border border-emerald-100 rounded-xl p-4 hover:bg-emerald-100 transition-colors"
+            >
+              <div className="w-10 h-10 rounded-lg bg-emerald-500 flex items-center justify-center">
+                <MessageCircle className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-emerald-800">WhatsApp</p>
+                <p className="text-xs text-emerald-600">Réponse rapide par message</p>
+              </div>
+            </a>
+          </div>
+
+          {/* Contact form */}
+          <div className="lg:col-span-2">
+            <div className="bg-white rounded-xl border border-gray-100 p-6">
+              <h2 className="text-lg font-bold text-gray-900 mb-4">Envoyez-nous un message</h2>
+              <form className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="name" className="text-sm font-medium text-gray-700">Nom complet</Label>
+                    <Input id="name" placeholder="Jean Dupont" className="mt-1" />
+                  </div>
+                  <div>
+                    <Label htmlFor="email" className="text-sm font-medium text-gray-700">Email</Label>
+                    <Input id="email" type="email" placeholder="votre@email.com" className="mt-1" />
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="phone" className="text-sm font-medium text-gray-700">Téléphone (optionnel)</Label>
+                  <Input id="phone" type="tel" placeholder="+33 6 12 34 56 78" className="mt-1" />
+                </div>
+                <div>
+                  <Label htmlFor="subject" className="text-sm font-medium text-gray-700">Sujet</Label>
+                  <select id="subject" className="mt-1 w-full h-9 px-3 rounded-md border border-input bg-background text-sm">
+                    <option value="">Sélectionnez un sujet</option>
+                    <option>Demande de devis</option>
+                    <option>Question sur un produit</option>
+                    <option>Suivi de commande</option>
+                    <option>Retour / Consigne</option>
+                    <option>Service atelier</option>
+                    <option>Autre</option>
+                  </select>
+                </div>
+                <div>
+                  <Label htmlFor="message" className="text-sm font-medium text-gray-700">Message</Label>
+                  <Textarea id="message" placeholder="Décrivez votre demande..." rows={5} className="mt-1" />
+                </div>
+                <Button className="h-11 px-6 bg-[var(--ts-primary-500)] hover:bg-[var(--ts-primary-600)] text-white font-semibold">
+                  Envoyer le message
+                </Button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
