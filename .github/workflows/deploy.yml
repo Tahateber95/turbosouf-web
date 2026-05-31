@@ -31,6 +31,8 @@ jobs:
           context: .
           push: true
           tags: ${{ env.IMAGE }}:latest
+          build-args: |
+            NEXT_PUBLIC_API_URL=${{ secrets.TURBOSOUF_API_URL }}
 
       - name: Deploy to server
         uses: appleboy/ssh-action@v1
