@@ -2,7 +2,7 @@ import { ProductCard } from "@/components/store/product-card";
 import Link from "next/link";
 import type { ProductListItem } from "@/lib/api";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const API = process.env.NEXT_PUBLIC_API_URL || "http://89.117.54.131:5280";
 
 export default async function CategoryPage({ params }: { params: Promise<{ category: string }> }) {
   const { category } = await params;

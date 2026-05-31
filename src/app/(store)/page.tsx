@@ -4,7 +4,7 @@ import { VehicleFinder } from "@/components/store/vehicle-finder";
 import { TrustBar } from "@/components/store/trust-bar";
 import type { Category, Brand, VehicleMake } from "@/lib/api";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const API = process.env.NEXT_PUBLIC_API_URL || "http://89.117.54.131:5280";
 
 const GRADIENT_COLORS = [
   "from-blue-500 to-blue-700",
