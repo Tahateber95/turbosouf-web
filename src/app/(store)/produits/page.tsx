@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { SlidersHorizontal } from "lucide-react";
 import { ProductCard } from "@/components/store/product-card";
-import type { ProductListItem, PagedResult, Category, Brand } from "@/lib/api";
+import { SERVER_API_URL, type ProductListItem, type PagedResult, type Category, type Brand } from "@/lib/api";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://89.117.54.131:5280";
+const API = SERVER_API_URL;
 
 export default async function ProductsPage() {
   const [productsRes, categoriesRes, brandsRes] = await Promise.all([

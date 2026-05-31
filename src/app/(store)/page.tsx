@@ -2,9 +2,9 @@ import Link from "next/link";
 import { Wrench, Zap, Shield, Award, Star, ChevronRight, Package, Users, CheckCircle2, Clock, Sparkles, Phone } from "lucide-react";
 import { VehicleFinder } from "@/components/store/vehicle-finder";
 import { TrustBar } from "@/components/store/trust-bar";
-import type { Category, Brand, VehicleMake } from "@/lib/api";
+import { SERVER_API_URL, type Category, type Brand, type VehicleMake } from "@/lib/api";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://89.117.54.131:5280";
+const API = SERVER_API_URL;
 
 const GRADIENT_COLORS = [
   "from-blue-500 to-blue-700",

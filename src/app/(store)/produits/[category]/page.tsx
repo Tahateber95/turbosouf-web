@@ -1,8 +1,8 @@
 import { ProductCard } from "@/components/store/product-card";
 import Link from "next/link";
-import type { ProductListItem } from "@/lib/api";
+import { SERVER_API_URL, type ProductListItem } from "@/lib/api";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://89.117.54.131:5280";
+const API = SERVER_API_URL;
 
 export default async function CategoryPage({ params }: { params: Promise<{ category: string }> }) {
   const { category } = await params;

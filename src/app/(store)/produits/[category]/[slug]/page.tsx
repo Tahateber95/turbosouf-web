@@ -4,9 +4,9 @@ import { Badge } from "@/components/ui/badge";
 import { notFound } from "next/navigation";
 import { ProductIllustration } from "@/components/store/product-illustration";
 import { PdpAddToCart } from "@/components/store/pdp-add-to-cart";
-import type { ProductDetail } from "@/lib/api";
+import { SERVER_API_URL, type ProductDetail } from "@/lib/api";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://89.117.54.131:5280";
+const API = SERVER_API_URL;
 
 function formatPrice(amount: number): string {
   return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(amount);

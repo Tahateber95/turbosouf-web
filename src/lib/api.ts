@@ -1,4 +1,7 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://89.117.54.131:5280";
+export const SERVER_API_URL = process.env.INTERNAL_API_URL || "http://turbosouf-api:8080";
+export const CLIENT_API_URL = process.env.NEXT_PUBLIC_API_URL || "http://89.117.54.131:5280";
+
+const API_URL = typeof window === "undefined" ? SERVER_API_URL : CLIENT_API_URL;
 
 type FetchOptions = RequestInit & {
   token?: string;
