@@ -1,21 +1,23 @@
 import { Plus, Search, ChevronRight } from "lucide-react";
+import { SERVER_API_URL, type VehicleMake } from "@/lib/api";
 
-const MAKES = [
-  { name: "Peugeot", models: 8, engines: 24 },
-  { name: "Renault", models: 10, engines: 30 },
-  { name: "Citroën", models: 7, engines: 18 },
-  { name: "BMW", models: 12, engines: 35 },
-  { name: "Volkswagen", models: 9, engines: 28 },
-  { name: "Audi", models: 8, engines: 22 },
-];
+export default async function VehiclesPage() {
+  let makes: VehicleMake[] = [];
 
-export default function VehiclesPage() {
+  try {
+    const res = await fetch(`${SERVER_API_URL}/api/v1/vehicles/makes`, { next: { revalidate: 60 } });
+    const json = await res.json();
+    makes = json.data || [];
+  } catch {
+    // fallback to empty
+  }
+
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-black text-gray-900">Base Véhicules</h1>
-          <p className="text-sm text-gray-500">Gestion des marques, modèles et motorisations</p>
+          <p className="text-sm text-gray-500">{makes.length} marques · Gestion des marques, modèles et motorisations</p>
         </div>
         <button className="inline-flex items-center gap-1.5 h-9 px-4 bg-[var(--ts-primary-500)] hover:bg-[var(--ts-primary-600)] text-white text-sm font-medium rounded-lg transition-colors">
           <Plus className="h-4 w-4" />
@@ -29,8 +31,8 @@ export default function VehiclesPage() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {MAKES.map((make) => (
-          <div key={make.name} className="bg-white rounded-xl border border-gray-100 p-5 hover:shadow-md hover:border-gray-200 transition-all cursor-pointer group">
+        {makes.map((make) => (
+          <div key={make.id} className="bg-white rounded-xl border border-gray-100 p-5 hover:shadow-md hover:border-gray-200 transition-all cursor-pointer group">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-11 h-11 rounded-lg bg-[var(--ts-primary-500)]/10 flex items-center justify-center">
@@ -38,13 +40,16 @@ export default function VehiclesPage() {
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-gray-900">{make.name}</h3>
-                  <p className="text-xs text-gray-500">{make.models} modèles · {make.engines} motorisations</p>
+                  <p className="text-xs text-gray-500">{make.modelCount} modèles</p>
                 </div>
               </div>
               <ChevronRight className="h-4 w-4 text-gray-300 group-hover:text-[var(--ts-primary-500)] transition-colors" />
             </div>
           </div>
         ))}
+        {makes.length === 0 && (
+          <p className="text-sm text-gray-500 col-span-full text-center py-8">Aucune marque trouvée.</p>
+        )}
       </div>
     </div>
   );

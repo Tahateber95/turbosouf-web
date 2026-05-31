@@ -1,25 +1,33 @@
 import Link from "next/link";
-import { Plus, Search, Filter } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { StatusBadge } from "@/components/dashboard/status-badge";
-
-const PRODUCTS = [
-  { id: "1", sku: "TRB-GT1544V-001", name: "Turbo Garrett GT1544V", category: "Turbocompresseurs", brand: "Garrett", priceHT: 215, stock: 12, active: true },
-  { id: "2", sku: "INJ-BOSCH-CR-001", name: "Injecteur Bosch Common Rail", category: "Injecteurs", brand: "Bosch", priceHT: 89, stock: 25, active: true },
-  { id: "3", sku: "PMP-DELPHI-HP-001", name: "Pompe HP Delphi DFP1", category: "Pompes HP", brand: "Delphi", priceHT: 320, stock: 3, active: true },
-  { id: "4", sku: "BRK-PAD-001", name: "Plaquettes de frein avant", category: "Freinage", brand: "—", priceHT: 35, stock: 50, active: true },
-  { id: "5", sku: "OIL-5W30-5L", name: "Huile moteur 5W-30 5L", category: "Huiles & Additifs", brand: "—", priceHT: 28, stock: 100, active: true },
-  { id: "6", sku: "TRB-BW-001", name: "Turbo BorgWarner K03", category: "Turbocompresseurs", brand: "BorgWarner", priceHT: 285, stock: 2, active: true },
-];
+import { SERVER_API_URL, type ProductListItem, type Category } from "@/lib/api";
 
 function formatPrice(n: number) { return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(n); }
 
-export default function ProductsPage() {
+export default async function ProductsPage() {
+  let products: ProductListItem[] = [];
+  let totalCount = 0;
+  let categories: Category[] = [];
+
+  try {
+    const [productsRes, categoriesRes] = await Promise.all([
+      fetch(`${SERVER_API_URL}/api/v1/products?PageSize=50`, { next: { revalidate: 30 } }).then(r => r.json()),
+      fetch(`${SERVER_API_URL}/api/v1/categories`, { next: { revalidate: 60 } }).then(r => r.json()),
+    ]);
+    products = productsRes.data?.items || [];
+    totalCount = productsRes.data?.totalCount || 0;
+    categories = categoriesRes.data || [];
+  } catch {
+    // fallback to empty
+  }
+
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-black text-gray-900">Produits</h1>
-          <p className="text-sm text-gray-500">{PRODUCTS.length} produits au total</p>
+          <p className="text-sm text-gray-500">{totalCount} produits au total</p>
         </div>
         <Link
           href="/dashboard/produits/nouveau"
@@ -42,11 +50,9 @@ export default function ProductsPage() {
         </div>
         <select className="h-9 px-3 rounded-lg border border-gray-200 text-sm bg-white">
           <option value="">Toutes catégories</option>
-          <option>Turbocompresseurs</option>
-          <option>Injecteurs</option>
-          <option>Pompes HP</option>
-          <option>Freinage</option>
-          <option>Huiles & Additifs</option>
+          {categories.map((c) => (
+            <option key={c.id} value={c.slug}>{c.name}</option>
+          ))}
         </select>
         <select className="h-9 px-3 rounded-lg border border-gray-200 text-sm bg-white">
           <option value="">Tout stock</option>
@@ -73,24 +79,24 @@ export default function ProductsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {PRODUCTS.map((p) => (
+              {products.map((p) => (
                 <tr key={p.id} className="hover:bg-gray-50/50 transition-colors">
                   <td className="px-5 py-3 font-medium text-gray-900">{p.name}</td>
                   <td className="px-5 py-3 font-mono text-xs text-gray-500">{p.sku}</td>
-                  <td className="px-5 py-3 text-gray-600">{p.category}</td>
-                  <td className="px-5 py-3 text-gray-600">{p.brand}</td>
+                  <td className="px-5 py-3 text-gray-600">{p.categoryName ?? "—"}</td>
+                  <td className="px-5 py-3 text-gray-600">{p.brandName ?? "—"}</td>
                   <td className="px-5 py-3 text-right font-semibold">{formatPrice(p.priceHT)}</td>
                   <td className="px-5 py-3 text-right">
-                    <span className={`font-semibold ${p.stock <= 5 ? "text-red-600" : "text-gray-900"}`}>
-                      {p.stock}
+                    <span className={`font-semibold ${p.stockQuantity <= 5 ? "text-red-600" : "text-gray-900"}`}>
+                      {p.stockQuantity}
                     </span>
                   </td>
                   <td className="px-5 py-3">
-                    <StatusBadge status={p.active ? "Active" : "Inactive"} />
+                    <StatusBadge status={p.isFeatured ? "Active" : "Inactive"} />
                   </td>
                   <td className="px-5 py-3">
                     <Link
-                      href={`/dashboard/produits/${p.id}`}
+                      href={`/dashboard/produits/${p.slug}`}
                       className="text-xs font-medium text-[var(--ts-primary-500)] hover:underline"
                     >
                       Modifier
@@ -98,6 +104,11 @@ export default function ProductsPage() {
                   </td>
                 </tr>
               ))}
+              {products.length === 0 && (
+                <tr>
+                  <td colSpan={8} className="px-5 py-8 text-center text-gray-500">Aucun produit trouvé.</td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
