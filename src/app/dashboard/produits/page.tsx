@@ -66,8 +66,8 @@ export default async function ProductsPage({ searchParams }: Props) {
             <thead>
               <tr className="text-left text-xs text-gray-500 uppercase tracking-wider bg-gray-50/50">
                 <th className="px-5 py-3 font-medium">Produit</th>
+                <th className="px-5 py-3 font-medium">Réf. turbo</th>
                 <th className="px-5 py-3 font-medium">SKU</th>
-                <th className="px-5 py-3 font-medium">Catégorie</th>
                 <th className="px-5 py-3 font-medium">Marque</th>
                 <th className="px-5 py-3 font-medium text-right">Prix HT</th>
                 <th className="px-5 py-3 font-medium text-right">Stock</th>
@@ -78,9 +78,12 @@ export default async function ProductsPage({ searchParams }: Props) {
             <tbody className="divide-y divide-gray-50">
               {products.map((p) => (
                 <tr key={p.id} className="hover:bg-gray-50/50 transition-colors">
-                  <td className="px-5 py-3 font-medium text-gray-900">{p.name}</td>
+                  <td className="px-5 py-3">
+                    <div className="font-medium text-gray-900">{p.name}</div>
+                    {p.vehicleSummary && <div className="text-[11px] text-gray-400 mt-0.5">{p.vehicleSummary}</div>}
+                  </td>
+                  <td className="px-5 py-3 font-mono text-xs font-semibold text-[var(--ts-primary-500)]">{p.oemReference ?? "—"}</td>
                   <td className="px-5 py-3 font-mono text-xs text-gray-500">{p.sku}</td>
-                  <td className="px-5 py-3 text-gray-600">{p.categoryName ?? "—"}</td>
                   <td className="px-5 py-3 text-gray-600">{p.brandName ?? "—"}</td>
                   <td className="px-5 py-3 text-right font-semibold">{formatPrice(p.priceHT)}</td>
                   <td className="px-5 py-3 text-right">
