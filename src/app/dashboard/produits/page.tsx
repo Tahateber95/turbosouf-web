@@ -71,7 +71,7 @@ export default async function ProductsPage({ searchParams }: Props) {
                 <th className="px-5 py-3 font-medium">Marque</th>
                 <th className="px-5 py-3 font-medium text-right">Prix HT</th>
                 <th className="px-5 py-3 font-medium text-right">Stock</th>
-                <th className="px-5 py-3 font-medium">Statut</th>
+                <th className="px-5 py-3 font-medium">État</th>
                 <th className="px-5 py-3 font-medium"></th>
               </tr>
             </thead>
@@ -89,7 +89,12 @@ export default async function ProductsPage({ searchParams }: Props) {
                     </span>
                   </td>
                   <td className="px-5 py-3">
-                    <StatusBadge status={p.isFeatured ? "Active" : "Inactive"} />
+                    {p.isFeatured && (
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+                        Mis en avant
+                      </span>
+                    )}
+                    <StatusBadge status={p.condition === "Refurbished" ? "Reconditionne" : p.condition === "New" ? "Neuf" : "Echange Std"} />
                   </td>
                   <td className="px-5 py-3">
                     <div className="flex items-center gap-3 justify-end">
