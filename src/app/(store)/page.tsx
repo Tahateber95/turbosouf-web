@@ -79,20 +79,16 @@ export default async function HomePage() {
               </div>
             </div>
 
-            {/* Right: Turbo visual */}
+            {/* Right: Turbo image */}
             <div className="relative hidden lg:flex items-center justify-center animate-fade-up-delay">
               <div className="relative w-[440px] h-[440px]">
-                {/* Background glow rings */}
                 <div className="absolute inset-8 rounded-full bg-gradient-to-br from-[var(--ts-primary-500)]/8 to-[var(--ts-accent-500)]/12 blur-sm" />
-                <div className="absolute inset-16 rounded-full border-2 border-dashed border-[var(--ts-primary-500)]/10 animate-[spin_30s_linear_infinite]" />
                 <div className="absolute inset-4 rounded-full border border-[var(--ts-primary-500)]/5" />
-                {/* Turbo image with blend to remove dark bg */}
                 <img
                   src="/images/turbo-default.jpg"
                   alt="Turbocompresseur"
-                  className="relative w-full h-full object-contain p-6 mix-blend-screen"
+                  className="relative w-full h-full object-contain p-6 drop-shadow-xl"
                 />
-                {/* Floating stats badges */}
                 <div className="absolute top-8 right-4 bg-white rounded-xl shadow-lg px-3 py-2 border border-gray-100 animate-bounce-slow">
                   <p className="text-xs font-bold text-[var(--ts-primary-500)]">Garantie 2 ans</p>
                 </div>

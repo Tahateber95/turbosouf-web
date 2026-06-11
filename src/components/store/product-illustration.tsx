@@ -53,12 +53,11 @@ export function ProductIllustration({
   const badge = conditionLabel(condition);
 
   return (
-    <div className="relative aspect-square bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden group">
-      {/* Product photo with screen blend to remove dark background */}
+    <div className="relative aspect-square bg-white overflow-hidden group">
       <img
         src={imageSrc}
         alt={categoryName || "Produit"}
-        className="absolute inset-0 w-full h-full object-contain p-4 mix-blend-screen transition-transform duration-500 group-hover:scale-105"
+        className="absolute inset-0 w-full h-full object-contain p-4 transition-transform duration-500 group-hover:scale-105"
         loading="lazy"
       />
 
