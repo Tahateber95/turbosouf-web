@@ -24,7 +24,17 @@ export default function LoginPage() {
 
   // Redirect if already logged in
   if (user) {
-    if (typeof window !== "undefined") window.location.href = "/";
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const redirect = params.get("redirect");
+      if (redirect) {
+        window.location.href = redirect;
+      } else if (user.role === "Admin" || user.role === "admin") {
+        window.location.href = "/dashboard";
+      } else {
+        window.location.href = "/";
+      }
+    }
     return null;
   }
 
@@ -35,7 +45,25 @@ export default function LoginPage() {
     const result = await login(email, password);
     setLoading(false);
     if (result.success) {
-      window.location.href = "/";
+      // Check redirect param or role-based redirect
+      const params = new URLSearchParams(window.location.search);
+      const redirect = params.get("redirect");
+      if (redirect) {
+        window.location.href = redirect;
+      } else {
+        // Read the user from localStorage since state hasn't updated yet
+        try {
+          const stored = localStorage.getItem("turbosouf_user");
+          const u = stored ? JSON.parse(stored) : null;
+          if (u?.role === "Admin" || u?.role === "admin") {
+            window.location.href = "/dashboard";
+          } else {
+            window.location.href = "/";
+          }
+        } catch {
+          window.location.href = "/";
+        }
+      }
     } else {
       setError(result.error || "Erreur de connexion");
     }
