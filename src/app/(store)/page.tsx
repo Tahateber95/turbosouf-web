@@ -87,7 +87,7 @@ export default async function HomePage() {
                 <img
                   src="/images/turbo-default.jpg"
                   alt="Turbocompresseur"
-                  className="relative w-full h-full object-contain p-6 drop-shadow-xl"
+                  className="relative w-full h-full object-contain p-6 drop-shadow-xl rounded-3xl"
                 />
                 <div className="absolute top-8 right-4 bg-white rounded-xl shadow-lg px-3 py-2 border border-gray-100 animate-bounce-slow">
                   <p className="text-xs font-bold text-[var(--ts-primary-500)]">Garantie 2 ans</p>
