@@ -1,7 +1,6 @@
 /**
  * Product image placeholder.
- * Shows a real turbo product photo when no product image is available,
- * with category/brand/condition overlays.
+ * Shows turbo product photo with blended background when no product image is available.
  */
 
 interface ProductIllustrationProps {
@@ -48,26 +47,25 @@ export function ProductIllustration({
   brandName,
   sku,
   condition,
-  size = "md",
 }: ProductIllustrationProps) {
   const slug = getCategorySlug(categoryName);
   const imageSrc = CATEGORY_IMAGES[slug] || DEFAULT_IMAGE;
   const badge = conditionLabel(condition);
 
   return (
-    <div className="relative aspect-square bg-gray-100 overflow-hidden group">
-      {/* Real product photo */}
+    <div className="relative aspect-square bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden group">
+      {/* Product photo with screen blend to remove dark background */}
       <img
         src={imageSrc}
         alt={categoryName || "Produit"}
-        className="absolute inset-0 w-full h-full object-contain p-4 transition-transform duration-500 group-hover:scale-105"
+        className="absolute inset-0 w-full h-full object-contain p-4 mix-blend-screen transition-transform duration-500 group-hover:scale-105"
         loading="lazy"
       />
 
       {/* Category label */}
       {categoryName && (
-        <div className="absolute top-2 left-2">
-          <span className="inline-block px-1.5 py-0.5 rounded bg-black/60 text-white text-[8px] font-bold tracking-wider uppercase backdrop-blur-sm">
+        <div className="absolute top-2 left-2 z-10">
+          <span className="inline-block px-1.5 py-0.5 rounded bg-[var(--ts-primary-500)] text-white text-[8px] font-bold tracking-wider uppercase">
             {categoryName}
           </span>
         </div>
@@ -75,7 +73,7 @@ export function ProductIllustration({
 
       {/* Condition badge */}
       {badge && (
-        <div className="absolute top-2 right-2">
+        <div className="absolute top-2 right-2 z-10">
           <span className={`inline-block px-1.5 py-0.5 rounded text-[8px] font-semibold ${badge.cls}`}>
             {badge.label}
           </span>
@@ -84,15 +82,15 @@ export function ProductIllustration({
 
       {/* Bottom info */}
       {(brandName || sku) && (
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/40 to-transparent px-2.5 pb-2 pt-6">
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-gray-100 to-transparent px-2.5 pb-2 pt-6 z-10">
           <div className="flex items-end justify-between">
             {brandName && (
-              <span className="text-white text-[9px] font-bold uppercase tracking-wider">
+              <span className="text-gray-700 text-[9px] font-bold uppercase tracking-wider">
                 {brandName}
               </span>
             )}
             {sku && (
-              <span className="text-white/60 text-[8px] font-mono">
+              <span className="text-gray-400 text-[8px] font-mono">
                 {sku}
               </span>
             )}
