@@ -1,11 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { CheckCircle2, ArrowRight, Loader2, XCircle } from "lucide-react";
 
 export default function OrderConfirmationPage() {
+  return (
+    <Suspense fallback={
+      <div className="bg-gray-50 min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-[var(--ts-primary-500)]" />
+      </div>
+    }>
+      <ConfirmationContent />
+    </Suspense>
+  );
+}
+
+function ConfirmationContent() {
   const searchParams = useSearchParams();
   const paymentIntent = searchParams.get("payment_intent");
   const redirectStatus = searchParams.get("redirect_status");
