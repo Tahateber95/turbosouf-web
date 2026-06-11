@@ -219,17 +219,19 @@ export function ProductForm({ mode, product, categories, brands, makes }: Props)
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="md:col-span-2">
             <label className="block text-sm font-medium text-gray-700 mb-1">Nom du produit *</label>
-            <input {...register("name")} className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
+            <input {...register("name")} placeholder="ex: Turbo Garrett GT1544V" className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
             {errors.name && <p className="text-xs text-red-500 mt-1">{errors.name.message}</p>}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">SKU *</label>
-            <input {...register("sku")} className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
-            {errors.sku && <p className="text-xs text-red-500 mt-1">{errors.sku.message}</p>}
+            <label className="block text-sm font-medium text-gray-700 mb-1">Référence turbo *</label>
+            <input {...register("oemReference")} placeholder="ex: 753420-5005S, K03-0015" className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm font-mono bg-amber-50/50 border-amber-200 focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
+            <p className="text-[10px] text-gray-400 mt-1">Numéro de référence du fabricant (Garrett, BorgWarner, etc.)</p>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Référence OEM</label>
-            <input {...register("oemReference")} className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
+            <label className="block text-sm font-medium text-gray-700 mb-1">SKU interne *</label>
+            <input {...register("sku")} placeholder="ex: TS-0042" className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
+            {errors.sku && <p className="text-xs text-red-500 mt-1">{errors.sku.message}</p>}
+            <p className="text-[10px] text-gray-400 mt-1">Code interne TurboSouf</p>
           </div>
           <div className="md:col-span-2">
             <label className="block text-sm font-medium text-gray-700 mb-1">Description courte *</label>
