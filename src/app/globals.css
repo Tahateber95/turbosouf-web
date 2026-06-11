@@ -132,10 +132,10 @@
 /* TurboSouf Custom Styles — Orange/flame palette from logo */
 @layer base {
   :root {
-    --ts-primary-900: #1a1a1a;
-    --ts-primary-800: #2d2d2d;
-    --ts-primary-700: #404040;
-    --ts-primary-600: #525252;
+    --ts-primary-900: #1f2937;
+    --ts-primary-800: #374151;
+    --ts-primary-700: #4b5563;
+    --ts-primary-600: #6b7280;
     --ts-primary-500: #E85D26;
     --ts-primary-400: #F07A3A;
     --ts-accent-500: #F7941D;

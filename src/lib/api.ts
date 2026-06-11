@@ -154,6 +154,35 @@ export interface Faq {
   category: string | null;
 }
 
+// Checkout / Stripe types
+export interface CheckoutRequest {
+  items: { productId: string; quantity: number }[];
+  shippingAddress: {
+    fullName: string;
+    street: string;
+    street2?: string;
+    postalCode: string;
+    city: string;
+    phone?: string;
+  };
+  billingAddress?: {
+    fullName: string;
+    street: string;
+    postalCode: string;
+    city: string;
+    companyName?: string;
+    siret?: string;
+  };
+  shippingMethod: string;
+  customerNote?: string;
+}
+
+export interface CheckoutResponse {
+  orderId: string;
+  orderNumber: string;
+  clientSecret: string;
+}
+
 // API functions
 export const getCategories = () => api<Category[]>("/categories");
 export const getBrands = () => api<Brand[]>("/brands");
@@ -162,3 +191,10 @@ export const getProductBySlug = (slug: string) => api<ProductDetail>(`/products/
 export const getVehicleMakes = () => api<VehicleMake[]>("/vehicles/makes");
 export const getVehicleModels = (makeId: string) => api<VehicleModel[]>(`/vehicles/makes/${makeId}/models`);
 export const getVehicleEngines = (modelId: string) => api<VehicleEngine[]>(`/vehicles/models/${modelId}/engines`);
+
+export const createCheckoutSession = (data: CheckoutRequest, token: string) =>
+  api<CheckoutResponse>("/orders/checkout", {
+    method: "POST",
+    body: JSON.stringify(data),
+    token,
+  });

@@ -1,8 +1,61 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { CheckCircle2, Package, ArrowRight } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { CheckCircle2, ArrowRight, Loader2, XCircle } from "lucide-react";
 
 export default function OrderConfirmationPage() {
-  const orderNumber = `TS-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 99999)).padStart(6, "0")}`;
+  const searchParams = useSearchParams();
+  const paymentIntent = searchParams.get("payment_intent");
+  const redirectStatus = searchParams.get("redirect_status");
+
+  const [status, setStatus] = useState<"loading" | "success" | "failed">(
+    paymentIntent ? "loading" : "success"
+  );
+
+  useEffect(() => {
+    if (!paymentIntent) return;
+    // If Stripe redirected here, check the status
+    if (redirectStatus === "succeeded") {
+      setStatus("success");
+    } else if (redirectStatus === "failed") {
+      setStatus("failed");
+    } else {
+      // processing or requires_action — treat as success for now
+      setStatus("success");
+    }
+  }, [paymentIntent, redirectStatus]);
+
+  if (status === "loading") {
+    return (
+      <div className="bg-gray-50 min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-[var(--ts-primary-500)]" />
+      </div>
+    );
+  }
+
+  if (status === "failed") {
+    return (
+      <div className="bg-gray-50 min-h-screen flex items-center justify-center px-4 py-16">
+        <div className="max-w-md w-full text-center">
+          <div className="w-20 h-20 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-6">
+            <XCircle className="h-10 w-10 text-red-600" />
+          </div>
+          <h1 className="text-2xl font-black text-gray-900 mb-2">Paiement échoué</h1>
+          <p className="text-gray-500 mb-6">
+            Le paiement n&apos;a pas pu être traité. Veuillez réessayer.
+          </p>
+          <Link
+            href="/panier"
+            className="inline-flex items-center justify-center gap-2 h-11 px-6 bg-[var(--ts-primary-500)] hover:bg-[var(--ts-primary-600)] text-white font-semibold rounded-lg transition-colors"
+          >
+            Retour au panier
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-gray-50 min-h-screen flex items-center justify-center px-4 py-16">
@@ -18,12 +71,6 @@ export default function OrderConfirmationPage() {
         <p className="text-gray-500 mb-6 animate-fade-up-delay">
           Merci pour votre commande. Vous recevrez un email de confirmation sous peu.
         </p>
-
-        {/* Order number */}
-        <div className="bg-white rounded-xl border border-gray-100 p-5 mb-6 animate-fade-up-delay">
-          <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Numéro de commande</p>
-          <p className="text-lg font-mono font-bold text-[var(--ts-primary-900)]">{orderNumber}</p>
-        </div>
 
         {/* Next steps */}
         <div className="bg-white rounded-xl border border-gray-100 p-5 mb-6 text-left animate-fade-up-delay-2">
