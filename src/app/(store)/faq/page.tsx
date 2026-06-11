@@ -15,7 +15,7 @@ const FAQS = [
     { q: "La livraison est-elle gratuite ?", a: "La livraison est gratuite en France métropolitaine dès 150€ d'achat (standard) ou dès 100€ en Point Relais." },
   ]},
   { category: "Recherche", items: [
-    { q: "Comment trouver la bonne pièce pour mon véhicule ?", a: "Utilisez notre outil de recherche par plaque d'immatriculation pour identifier automatiquement votre véhicule. Vous pouvez aussi sélectionner manuellement votre marque, modèle et motorisation." },
+    { q: "Comment trouver la bonne pièce pour mon véhicule ?", a: "Utilisez notre outil de recherche par marque, modèle et motorisation pour trouver les pièces compatibles avec votre véhicule." },
     { q: "La pièce est-elle compatible avec mon véhicule ?", a: "Chaque fiche produit indique la liste des véhicules compatibles. En cas de doute, contactez notre équipe technique qui vous confirmera la compatibilité." },
   ]},
   { category: "Paiement", items: [

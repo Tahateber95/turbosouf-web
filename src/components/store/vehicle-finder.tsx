@@ -12,10 +12,6 @@ interface Model { id: string; name: string; slug: string; }
 interface Engine { id: string; name: string; engineCode: string | null; fuelType: string; powerCV: number | null; }
 
 export function VehicleFinder() {
-  const [mode, setMode] = useState<"plate" | "manual">("plate");
-  const [plate, setPlate] = useState("");
-
-  // Manual search state
   const [makes, setMakes] = useState<Make[]>([]);
   const [models, setModels] = useState<Model[]>([]);
   const [engines, setEngines] = useState<Engine[]>([]);
@@ -64,13 +60,6 @@ export function VehicleFinder() {
       .finally(() => setLoadingEngines(false));
   }, [selectedModel]);
 
-  const handlePlateSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (plate.trim()) {
-      window.location.href = `/produits?search=${encodeURIComponent(plate.trim())}`;
-    }
-  };
-
   const handleManualSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (selectedEngine) {
@@ -98,38 +87,11 @@ export function VehicleFinder() {
             Recherchez par véhicule
           </h2>
           <p className="text-gray-400 text-sm sm:text-base">
-            Entrez votre plaque d&apos;immatriculation ou sélectionnez votre véhicule pour trouver les pièces compatibles.
+            Sélectionnez votre marque, modèle et motorisation pour trouver les pièces compatibles.
           </p>
         </div>
 
-        <div className="flex justify-center gap-2 mb-6">
-          <button onClick={() => setMode("plate")} className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${mode === "plate" ? "bg-white text-[var(--ts-primary-900)]" : "bg-white/10 text-white hover:bg-white/20"}`}>
-            Par plaque
-          </button>
-          <button onClick={() => setMode("manual")} className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${mode === "manual" ? "bg-white text-[var(--ts-primary-900)]" : "bg-white/10 text-white hover:bg-white/20"}`}>
-            Par marque / modèle
-          </button>
-        </div>
-
-        {mode === "plate" && (
-          <form onSubmit={handlePlateSearch} className="max-w-lg mx-auto animate-fade-in">
-            <div className="flex gap-2">
-              <div className="relative flex-1">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-6 rounded bg-blue-600 flex items-center justify-center">
-                  <span className="text-white text-[8px] font-bold">F</span>
-                </div>
-                <input type="text" value={plate} onChange={(e) => setPlate(e.target.value.toUpperCase())} placeholder="AA-123-BB" className="w-full h-14 pl-14 pr-4 rounded-xl bg-white text-lg font-mono font-bold text-gray-900 tracking-widest placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-[var(--ts-accent-500)]" maxLength={9} />
-              </div>
-              <button type="submit" className="h-14 px-6 flex items-center gap-2 bg-[var(--ts-accent-500)] hover:bg-[var(--ts-accent-600)] text-white font-semibold rounded-xl transition-colors">
-                <Search className="h-5 w-5" />
-                Rechercher
-              </button>
-            </div>
-          </form>
-        )}
-
-        {mode === "manual" && (
-          <form onSubmit={handleManualSearch} className="max-w-3xl mx-auto animate-fade-in">
+        <form onSubmit={handleManualSearch} className="max-w-3xl mx-auto">
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
               <select
                 value={selectedMake}
@@ -177,8 +139,7 @@ export function VehicleFinder() {
                 Chercher
               </button>
             </div>
-          </form>
-        )}
+        </form>
       </div>
     </section>
   );

@@ -1,18 +1,31 @@
 import Link from "next/link";
-import { Plus, Search } from "lucide-react";
+import { Plus } from "lucide-react";
 import { StatusBadge } from "@/components/dashboard/status-badge";
 import { SERVER_API_URL, type ProductListItem, type Category } from "@/lib/api";
+import { DashboardProductsFilters, DeleteProductButton } from "@/components/dashboard/products-list-actions";
 
 function formatPrice(n: number) { return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(n); }
 
-export default async function ProductsPage() {
+interface Props {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
+export default async function ProductsPage({ searchParams }: Props) {
+  const params = await searchParams;
   let products: ProductListItem[] = [];
   let totalCount = 0;
   let categories: Category[] = [];
 
+  const apiParams = new URLSearchParams();
+  apiParams.set("PageSize", "50");
+  if (params.search) apiParams.set("Search", String(params.search));
+  if (params.category) apiParams.set("Category", String(params.category));
+  if (params.stock === "low") apiParams.set("LowStock", "true");
+  if (params.stock === "out") apiParams.set("OutOfStock", "true");
+
   try {
     const [productsRes, categoriesRes] = await Promise.all([
-      fetch(`${SERVER_API_URL}/api/v1/products?PageSize=50`, { next: { revalidate: 30 } }).then(r => r.json()),
+      fetch(`${SERVER_API_URL}/api/v1/products?${apiParams}`, { next: { revalidate: 30 } }).then(r => r.json()),
       fetch(`${SERVER_API_URL}/api/v1/categories`, { next: { revalidate: 60 } }).then(r => r.json()),
     ]);
     products = productsRes.data?.items || [];
@@ -38,29 +51,13 @@ export default async function ProductsPage() {
         </Link>
       </div>
 
-      {/* Filters */}
-      <div className="flex items-center gap-3 mb-4">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Rechercher par nom, SKU, référence..."
-            className="w-full h-9 pl-9 pr-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]"
-          />
-        </div>
-        <select className="h-9 px-3 rounded-lg border border-gray-200 text-sm bg-white">
-          <option value="">Toutes catégories</option>
-          {categories.map((c) => (
-            <option key={c.id} value={c.slug}>{c.name}</option>
-          ))}
-        </select>
-        <select className="h-9 px-3 rounded-lg border border-gray-200 text-sm bg-white">
-          <option value="">Tout stock</option>
-          <option>En stock</option>
-          <option>Stock faible</option>
-          <option>Rupture</option>
-        </select>
-      </div>
+      {/* Filters - client component */}
+      <DashboardProductsFilters
+        categories={categories}
+        activeSearch={params.search ? String(params.search) : ""}
+        activeCategory={params.category ? String(params.category) : ""}
+        activeStock={params.stock ? String(params.stock) : ""}
+      />
 
       {/* Table */}
       <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
@@ -95,12 +92,15 @@ export default async function ProductsPage() {
                     <StatusBadge status={p.isFeatured ? "Active" : "Inactive"} />
                   </td>
                   <td className="px-5 py-3">
-                    <Link
-                      href={`/dashboard/produits/${p.slug}`}
-                      className="text-xs font-medium text-[var(--ts-primary-500)] hover:underline"
-                    >
-                      Modifier
-                    </Link>
+                    <div className="flex items-center gap-3 justify-end">
+                      <Link
+                        href={`/dashboard/produits/${p.slug}`}
+                        className="text-xs font-medium text-[var(--ts-primary-500)] hover:underline"
+                      >
+                        Modifier
+                      </Link>
+                      <DeleteProductButton productId={p.id} productName={p.name} />
+                    </div>
                   </td>
                 </tr>
               ))}

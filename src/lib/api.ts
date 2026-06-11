@@ -183,7 +183,103 @@ export interface CheckoutResponse {
   clientSecret: string;
 }
 
-// API functions
+// --- Mutation DTOs ---
+
+export interface CreateProductRequest {
+  name: string;
+  sku: string;
+  shortDescription: string;
+  description: string;
+  priceHT: number;
+  tvaRate: number;
+  salePriceHT?: number | null;
+  depositAmount?: number | null;
+  categoryId: string;
+  brandId?: string | null;
+  condition: string;
+  stockQuantity: number;
+  oemReference?: string | null;
+  isActive: boolean;
+  isFeatured: boolean;
+  b2bPriceHT?: number | null;
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+  images?: { url: string; altText?: string | null; sortOrder: number; isPrimary: boolean }[];
+  attributes?: { key: string; value: string; sortOrder: number }[];
+  compatibleVehicleEngineIds?: string[];
+}
+
+export type UpdateProductRequest = Partial<CreateProductRequest>;
+
+export interface CreateMakeRequest {
+  name: string;
+  slug?: string;
+  logoUrl?: string | null;
+}
+
+export interface CreateModelRequest {
+  name: string;
+  slug?: string;
+}
+
+export interface CreateEngineRequest {
+  name: string;
+  engineCode?: string | null;
+  fuelType: string;
+  powerCV?: number | null;
+  displacementCC?: number | null;
+  yearFrom?: number | null;
+  yearTo?: number | null;
+}
+
+export interface OrderDetail {
+  id: string;
+  orderNumber: string;
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string | null;
+  status: string;
+  paymentStatus: string;
+  totalHT: number;
+  totalTVA: number;
+  totalTTC: number;
+  shippingCost: number;
+  depositTotal: number;
+  shippingMethod: string;
+  customerNote: string | null;
+  shippingAddress: {
+    fullName: string;
+    street: string;
+    street2?: string;
+    postalCode: string;
+    city: string;
+    phone?: string;
+  };
+  billingAddress?: {
+    fullName: string;
+    street: string;
+    postalCode: string;
+    city: string;
+    companyName?: string;
+    siret?: string;
+  };
+  items: {
+    id: string;
+    productId: string;
+    productName: string;
+    productSku: string;
+    quantity: number;
+    unitPriceHT: number;
+    unitPriceTTC: number;
+    totalHT: number;
+    totalTTC: number;
+  }[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+// --- API functions (read) ---
+
 export const getCategories = () => api<Category[]>("/categories");
 export const getBrands = () => api<Brand[]>("/brands");
 export const getProducts = (params?: string) => api<PagedResult<ProductListItem>>(`/products${params ? `?${params}` : ""}`);
@@ -191,7 +287,55 @@ export const getProductBySlug = (slug: string) => api<ProductDetail>(`/products/
 export const getVehicleMakes = () => api<VehicleMake[]>("/vehicles/makes");
 export const getVehicleModels = (makeId: string) => api<VehicleModel[]>(`/vehicles/makes/${makeId}/models`);
 export const getVehicleEngines = (modelId: string) => api<VehicleEngine[]>(`/vehicles/models/${modelId}/engines`);
+export const getOrderById = (id: string, token: string) => api<OrderDetail>(`/orders/${id}`, { token });
 
+// --- API functions (mutations) ---
+
+// Products
+export const createProduct = (data: CreateProductRequest, token: string) =>
+  api<ProductDetail>("/products", { method: "POST", body: JSON.stringify(data), token });
+
+export const updateProduct = (id: string, data: UpdateProductRequest, token: string) =>
+  api<ProductDetail>(`/products/${id}`, { method: "PUT", body: JSON.stringify(data), token });
+
+export const deleteProduct = (id: string, token: string) =>
+  api<void>(`/products/${id}`, { method: "DELETE", token });
+
+// Vehicle Makes
+export const createMake = (data: CreateMakeRequest, token: string) =>
+  api<VehicleMake>("/vehicles/makes", { method: "POST", body: JSON.stringify(data), token });
+
+export const updateMake = (id: string, data: CreateMakeRequest, token: string) =>
+  api<VehicleMake>(`/vehicles/makes/${id}`, { method: "PUT", body: JSON.stringify(data), token });
+
+export const deleteMake = (id: string, token: string) =>
+  api<void>(`/vehicles/makes/${id}`, { method: "DELETE", token });
+
+// Vehicle Models
+export const createModel = (makeId: string, data: CreateModelRequest, token: string) =>
+  api<VehicleModel>(`/vehicles/makes/${makeId}/models`, { method: "POST", body: JSON.stringify(data), token });
+
+export const updateModel = (id: string, data: CreateModelRequest, token: string) =>
+  api<VehicleModel>(`/vehicles/models/${id}`, { method: "PUT", body: JSON.stringify(data), token });
+
+export const deleteModel = (id: string, token: string) =>
+  api<void>(`/vehicles/models/${id}`, { method: "DELETE", token });
+
+// Vehicle Engines
+export const createEngine = (modelId: string, data: CreateEngineRequest, token: string) =>
+  api<VehicleEngine>(`/vehicles/models/${modelId}/engines`, { method: "POST", body: JSON.stringify(data), token });
+
+export const updateEngine = (id: string, data: CreateEngineRequest, token: string) =>
+  api<VehicleEngine>(`/vehicles/engines/${id}`, { method: "PUT", body: JSON.stringify(data), token });
+
+export const deleteEngine = (id: string, token: string) =>
+  api<void>(`/vehicles/engines/${id}`, { method: "DELETE", token });
+
+// Orders
+export const updateOrderStatus = (id: string, status: string, token: string) =>
+  api<void>(`/orders/${id}/status`, { method: "PATCH", body: JSON.stringify({ status }), token });
+
+// Checkout
 export const createCheckoutSession = (data: CheckoutRequest, token: string) =>
   api<CheckoutResponse>("/orders/checkout", {
     method: "POST",
