@@ -4,19 +4,33 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, Package, ShoppingCart, Users, FileText,
-  Wrench, FileEdit, Settings, ChevronLeft, ChevronRight, LogOut,
-  BarChart3, Database,
+  Wrench, FileEdit, Settings, ChevronLeft, ChevronRight, ChevronDown, LogOut,
+  BarChart3, Car,
 } from "lucide-react";
 import { useState } from "react";
 
-const NAV_ITEMS = [
+interface NavItem {
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  children?: { href: string; label: string }[];
+}
+
+const NAV_ITEMS: NavItem[] = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Tableau de bord" },
   { href: "/dashboard/produits", icon: Package, label: "Produits" },
   { href: "/dashboard/commandes", icon: ShoppingCart, label: "Commandes" },
   { href: "/dashboard/clients", icon: Users, label: "Clients" },
   { href: "/dashboard/factures", icon: FileText, label: "Factures" },
   { href: "/dashboard/services", icon: Wrench, label: "Services Atelier" },
-  { href: "/dashboard/vehicules", icon: Database, label: "Véhicules" },
+  {
+    href: "/dashboard/vehicules",
+    icon: Car,
+    label: "Véhicules",
+    children: [
+      { href: "/dashboard/vehicules", label: "Marques" },
+    ],
+  },
   { href: "/dashboard/contenu", icon: FileEdit, label: "Contenu" },
   { href: "/dashboard/rapports", icon: BarChart3, label: "Rapports" },
   { href: "/dashboard/parametres", icon: Settings, label: "Paramètres" },
@@ -50,6 +64,46 @@ export function Sidebar() {
             item.href === "/dashboard"
               ? pathname === "/dashboard"
               : pathname.startsWith(item.href);
+
+          // Items with children get an expandable section
+          if (item.children && !collapsed) {
+            return (
+              <div key={item.href}>
+                <Link
+                  href={item.href}
+                  className={`flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[13px] font-medium transition-all ${
+                    isActive
+                      ? "bg-white/15 text-white"
+                      : "text-gray-400 hover:bg-white/8 hover:text-gray-200"
+                  }`}
+                >
+                  <item.icon className="h-4 w-4 shrink-0" />
+                  <span className="truncate flex-1">{item.label}</span>
+                  {isActive && <ChevronDown className="h-3 w-3 shrink-0 opacity-50" />}
+                </Link>
+                {isActive && (
+                  <div className="ml-7 mt-0.5 space-y-0.5">
+                    {item.children.map((child) => {
+                      const childActive = pathname === child.href;
+                      return (
+                        <Link
+                          key={child.href}
+                          href={child.href}
+                          className={`block px-2.5 py-1.5 rounded-md text-[12px] transition-all ${
+                            childActive
+                              ? "text-white font-medium"
+                              : "text-gray-500 hover:text-gray-300"
+                          }`}
+                        >
+                          {child.label}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          }
 
           return (
             <Link
