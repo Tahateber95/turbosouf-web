@@ -62,9 +62,9 @@ export const adminUpdateMake = (id: string, data: CreateMakeRequest) =>
 export const adminDeleteMake = (id: string) =>
   adminFetch<void>(`/vehicles/makes/${id}`, { method: "DELETE" });
 
-// Vehicle Models
+// Vehicle Models — backend expects POST /vehicles/models with makeId in body
 export const adminCreateModel = (makeId: string, data: CreateModelRequest) =>
-  adminFetch<VehicleModel>(`/vehicles/makes/${makeId}/models`, { method: "POST", body: JSON.stringify(data) });
+  adminFetch<VehicleModel>(`/vehicles/models`, { method: "POST", body: JSON.stringify({ makeId, ...data }) });
 
 export const adminUpdateModel = (id: string, data: CreateModelRequest) =>
   adminFetch<VehicleModel>(`/vehicles/models/${id}`, { method: "PUT", body: JSON.stringify(data) });
@@ -72,9 +72,9 @@ export const adminUpdateModel = (id: string, data: CreateModelRequest) =>
 export const adminDeleteModel = (id: string) =>
   adminFetch<void>(`/vehicles/models/${id}`, { method: "DELETE" });
 
-// Vehicle Engines
+// Vehicle Engines — backend expects POST /vehicles/engines with modelId in body
 export const adminCreateEngine = (modelId: string, data: CreateEngineRequest) =>
-  adminFetch<VehicleEngine>(`/vehicles/models/${modelId}/engines`, { method: "POST", body: JSON.stringify(data) });
+  adminFetch<VehicleEngine>(`/vehicles/engines`, { method: "POST", body: JSON.stringify({ modelId, ...data }) });
 
 export const adminUpdateEngine = (id: string, data: CreateEngineRequest) =>
   adminFetch<VehicleEngine>(`/vehicles/engines/${id}`, { method: "PUT", body: JSON.stringify(data) });
