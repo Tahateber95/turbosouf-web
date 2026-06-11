@@ -35,33 +35,14 @@ export function ProductCard({ product }: { product: ProductListItem }) {
       {/* Image area */}
       <div className="relative overflow-hidden">
         {product.primaryImageUrl ? (
-          <div className="aspect-square bg-gray-50 relative overflow-hidden">
+          <div className="aspect-square bg-white relative overflow-hidden">
             <img
               src={product.primaryImageUrl}
               alt={product.name}
               className="absolute inset-0 w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
             />
-            {/* Overlay badges for real images */}
-            <div className="absolute top-2 left-2 flex flex-col gap-1">
-              {hasDiscount && (
-                <Badge className="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 shadow-sm">
-                  -{discountPercent}%
-                </Badge>
-              )}
-              {product.condition === "Refurbished" && (
-                <Badge variant="secondary" className="text-[10px] px-1.5 py-0.5 shadow-sm">
-                  Reconditionné
-                </Badge>
-              )}
-              {product.condition === "ExchangeStandard" && (
-                <Badge variant="outline" className="text-[10px] px-1.5 py-0.5 bg-white shadow-sm">
-                  Échange Std
-                </Badge>
-              )}
-            </div>
           </div>
         ) : (
-          /* Rich category-aware illustration when no image */
           <div className="relative">
             <ProductIllustration
               categoryName={product.categoryName}
@@ -70,22 +51,27 @@ export function ProductCard({ product }: { product: ProductListItem }) {
               condition={product.condition}
               size="sm"
             />
-            {/* Discount overlay on illustration */}
-            {hasDiscount && (
-              <div className="absolute top-2 left-2">
-                <Badge className="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 shadow-lg">
-                  -{discountPercent}%
-                </Badge>
-              </div>
-            )}
-            {/* Hover hint */}
-            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
-              <span className="text-white text-xs font-semibold bg-black/40 px-3 py-1.5 rounded-full backdrop-blur-sm">
-                Voir le produit
-              </span>
-            </div>
           </div>
         )}
+
+        {/* Top badges */}
+        <div className="absolute top-2 left-2 flex flex-col gap-1">
+          {hasDiscount && (
+            <Badge className="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 shadow-sm">
+              -{discountPercent}%
+            </Badge>
+          )}
+          {product.condition === "Refurbished" && (
+            <Badge variant="secondary" className="text-[10px] px-1.5 py-0.5 shadow-sm">
+              Reconditionne
+            </Badge>
+          )}
+          {product.condition === "ExchangeStandard" && (
+            <Badge variant="outline" className="text-[10px] px-1.5 py-0.5 bg-white shadow-sm">
+              Echange Std
+            </Badge>
+          )}
+        </div>
 
         {/* Out of stock overlay */}
         {product.stockQuantity <= 0 && (
@@ -108,30 +94,43 @@ export function ProductCard({ product }: { product: ProductListItem }) {
 
       {/* Product info */}
       <div className="p-3 sm:p-4">
-        {/* Brand + Category */}
-        <div className="flex items-center gap-1.5 mb-1.5">
+        {/* Brand + Reference */}
+        <div className="flex items-center gap-1.5 mb-1">
           {product.brandName && (
             <span className="text-[10px] font-bold text-[var(--ts-primary-500)] uppercase tracking-wider">
               {product.brandName}
             </span>
           )}
-          {product.brandName && product.categoryName && (
-            <span className="text-gray-300">·</span>
+          {product.brandName && product.oemReference && (
+            <span className="text-gray-300">|</span>
           )}
-          {product.categoryName && (
-            <span className="text-[10px] text-gray-400 uppercase tracking-wider">
-              {product.categoryName}
+          {product.oemReference && (
+            <span className="text-[10px] font-mono text-gray-400">
+              {product.oemReference}
             </span>
           )}
         </div>
 
-        <h3 className="text-sm font-semibold text-gray-900 line-clamp-2 group-hover:text-[var(--ts-primary-500)] transition-colors mb-1.5">
+        {/* Product name */}
+        <h3 className="text-sm font-semibold text-gray-900 line-clamp-2 group-hover:text-[var(--ts-primary-500)] transition-colors mb-1">
           {product.name}
         </h3>
-        <p className="text-xs text-gray-500 line-clamp-1 mb-3">{product.shortDescription}</p>
+
+        {/* Vehicle compatibility */}
+        {product.vehicleSummary && (
+          <p className="text-[11px] text-gray-500 mb-2 line-clamp-1">
+            {product.vehicleSummary}
+          </p>
+        )}
+
+        {!product.vehicleSummary && product.shortDescription && (
+          <p className="text-[11px] text-gray-500 mb-2 line-clamp-1">
+            {product.shortDescription}
+          </p>
+        )}
 
         {/* Price section */}
-        <div className="flex items-end justify-between gap-2">
+        <div className="flex items-end justify-between gap-2 mt-auto">
           <div>
             <div className="flex items-baseline gap-1.5">
               <span className="text-lg font-black text-[var(--ts-primary-900)]">
@@ -146,8 +145,8 @@ export function ProductCard({ product }: { product: ProductListItem }) {
             <div className="flex items-center gap-2 mt-0.5">
               <span className="text-[10px] text-gray-400">TTC</span>
               {displayPrice >= 50 && (
-                <span className="text-[9px] text-[var(--ts-primary-500)] font-medium">
-                  ou {(displayPrice / 3).toFixed(0)}€ x3
+                <span className="text-[9px] text-[var(--ts-primary-500)] font-semibold bg-[var(--ts-primary-500)]/5 px-1.5 py-0.5 rounded">
+                  3x {(displayPrice / 3).toFixed(0)}€ sans frais
                 </span>
               )}
             </div>

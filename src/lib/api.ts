@@ -45,6 +45,8 @@ export interface ProductListItem {
   stockQuantity: number;
   isFeatured: boolean;
   primaryImageUrl: string | null;
+  oemReference: string | null;
+  vehicleSummary: string | null;
 }
 
 export interface ProductDetail extends ProductListItem {
