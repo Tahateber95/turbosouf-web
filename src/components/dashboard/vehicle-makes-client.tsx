@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Plus, Search, ChevronRight, Trash2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { adminCreateMake, adminDeleteMake } from "@/lib/admin-api";
+import { MakeLogo } from "@/components/store/make-logo";
 import type { VehicleMake } from "@/lib/api";
 
 interface Props {
@@ -103,8 +104,8 @@ export function VehicleMakesClient({ initialMakes }: Props) {
           <div key={make.id} className="bg-white rounded-xl border border-gray-100 p-5 hover:shadow-md hover:border-gray-200 transition-all group relative">
             <Link href={`/dashboard/vehicules/${make.id}`} className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-lg bg-[var(--ts-primary-500)]/10 flex items-center justify-center">
-                  <span className="text-sm font-bold text-[var(--ts-primary-500)]">{make.name.slice(0, 2).toUpperCase()}</span>
+                <div className="w-11 h-11 rounded-lg bg-gray-50 flex items-center justify-center p-1.5">
+                  <MakeLogo name={make.name} logoUrl={make.logoUrl} className="w-full h-full" />
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-gray-900">{make.name}</h3>

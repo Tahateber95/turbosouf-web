@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Wrench, Shield, Award, Star, ChevronRight, Users, CheckCircle2, Clock, Phone, Anchor, Car, Factory, Cog } from "lucide-react";
 import { VehicleFinder } from "@/components/store/vehicle-finder";
 import { TrustBar } from "@/components/store/trust-bar";
+import { MakeLogo } from "@/components/store/make-logo";
 import { SERVER_API_URL, type VehicleMake } from "@/lib/api";
 import { readFile } from "fs/promises";
 import { join } from "path";
@@ -221,10 +222,8 @@ export default async function HomePage() {
                 href={`/produits?make=${make.slug}`}
                 className="flex flex-col items-center justify-center p-4 bg-gray-50 rounded-xl border border-gray-100 hover:border-[var(--ts-primary-500)]/40 hover:shadow-md hover:bg-white transition-all group"
               >
-                <div className="w-12 h-12 rounded-full bg-white group-hover:bg-[var(--ts-primary-500)]/10 flex items-center justify-center mb-2 transition-colors border border-gray-100 group-hover:border-[var(--ts-primary-500)]/20">
-                  <span className="text-sm font-bold text-gray-500 group-hover:text-[var(--ts-primary-500)] transition-colors">
-                    {make.name.slice(0, 2).toUpperCase()}
-                  </span>
+                <div className="w-12 h-12 rounded-full bg-white group-hover:bg-[var(--ts-primary-500)]/10 flex items-center justify-center mb-2 transition-colors border border-gray-100 group-hover:border-[var(--ts-primary-500)]/20 p-2">
+                  <MakeLogo name={make.name} logoUrl={make.logoUrl} className="w-full h-full" />
                 </div>
                 <span className="text-xs font-medium text-gray-700">{make.name}</span>
               </Link>
