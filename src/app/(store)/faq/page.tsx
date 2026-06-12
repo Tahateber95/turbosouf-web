@@ -1,30 +1,23 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
+import { readFile } from "fs/promises";
+import { join } from "path";
 
-const FAQS = [
-  { category: "Garantie", items: [
-    { q: "Quelle est la garantie sur les pièces reconditionnées ?", a: "Toutes nos pièces reconditionnées sont couvertes par une garantie de 2 ans pièces et main-d'œuvre. Cette garantie couvre tout défaut de fabrication ou de reconditionnement." },
-    { q: "Comment faire jouer la garantie ?", a: "Contactez notre service client par téléphone ou email avec votre numéro de commande. Nous organisons le retour de la pièce défectueuse et son remplacement ou remboursement." },
-  ]},
-  { category: "Consigne", items: [
-    { q: "Qu'est-ce que la consigne ?", a: "La consigne est un montant que vous payez à l'achat d'une pièce en échange standard. Elle vous est remboursée intégralement lorsque vous nous renvoyez votre ancienne pièce usagée dans un délai de 30 jours." },
-    { q: "Comment retourner ma pièce usagée ?", a: "Nous vous fournissons une étiquette de retour prépayée. Emballez soigneusement votre ancienne pièce dans le carton de livraison et déposez-la en point relais. Le remboursement de la consigne est effectué sous 5 jours ouvrés après réception." },
-  ]},
-  { category: "Livraison", items: [
-    { q: "Quels sont les délais de livraison ?", a: "Livraison standard en 2-3 jours ouvrés partout en France. Livraison express en 24h disponible. Point Relais en 3-5 jours ouvrés." },
-    { q: "La livraison est-elle gratuite ?", a: "La livraison est gratuite en France métropolitaine dès 150€ d'achat (standard) ou dès 100€ en Point Relais." },
-  ]},
-  { category: "Recherche", items: [
-    { q: "Comment trouver la bonne pièce pour mon véhicule ?", a: "Utilisez notre outil de recherche par marque, modèle et motorisation pour trouver les pièces compatibles avec votre véhicule." },
-    { q: "La pièce est-elle compatible avec mon véhicule ?", a: "Chaque fiche produit indique la liste des véhicules compatibles. En cas de doute, contactez notre équipe technique qui vous confirmera la compatibilité." },
-  ]},
-  { category: "Paiement", items: [
-    { q: "Quels modes de paiement acceptez-vous ?", a: "Carte bancaire (Visa, Mastercard), PayPal, et paiement en 3x ou 4x sans frais via Alma. Les professionnels peuvent également payer par virement bancaire." },
-    { q: "Le paiement est-il sécurisé ?", a: "Oui, tous les paiements sont sécurisés par chiffrement SSL. Les paiements par carte sont traités par Stripe, leader mondial du paiement en ligne." },
-  ]},
-];
+export const dynamic = "force-dynamic";
 
-export default function FaqPage() {
+interface FaqItem { q: string; a: string }
+interface FaqCategory { category: string; items: FaqItem[] }
+
+async function getFaqs(): Promise<FaqCategory[]> {
+  try {
+    const data = await readFile(join(process.cwd(), "src/data/faq-config.json"), "utf-8");
+    return JSON.parse(data);
+  } catch { return []; }
+}
+
+export default async function FaqPage() {
+  const faqs = await getFaqs();
+
   return (
     <div className="bg-gray-50 min-h-screen">
       <div className="bg-white border-b border-gray-100">
@@ -35,14 +28,14 @@ export default function FaqPage() {
             <span className="text-gray-600 font-medium">FAQ</span>
           </nav>
           <h1 className="text-2xl sm:text-3xl font-black text-[var(--ts-primary-900)] tracking-tight">
-            Questions fréquentes
+            Questions frequentes
           </h1>
-          <p className="text-sm text-gray-500 mt-1">Trouvez rapidement les réponses à vos questions</p>
+          <p className="text-sm text-gray-500 mt-1">Trouvez rapidement les reponses a vos questions</p>
         </div>
       </div>
 
       <div className="mx-auto max-w-3xl px-4 py-10 space-y-8">
-        {FAQS.map((section) => (
+        {faqs.map((section) => (
           <div key={section.category}>
             <h2 className="text-sm font-bold text-[var(--ts-primary-500)] uppercase tracking-wider mb-3">
               {section.category}
@@ -61,8 +54,12 @@ export default function FaqPage() {
           </div>
         ))}
 
+        {faqs.length === 0 && (
+          <p className="text-center text-gray-400 py-12">Aucune FAQ pour le moment.</p>
+        )}
+
         <div className="text-center pt-6">
-          <p className="text-sm text-gray-500 mb-3">Vous n&apos;avez pas trouvé la réponse ?</p>
+          <p className="text-sm text-gray-500 mb-3">Vous n&apos;avez pas trouve la reponse ?</p>
           <Link
             href="/contact"
             className="inline-flex items-center gap-1 text-sm font-medium text-[var(--ts-primary-500)] hover:underline"

@@ -3,8 +3,25 @@ import { Wrench, Shield, Award, Star, ChevronRight, Users, CheckCircle2, Clock, 
 import { VehicleFinder } from "@/components/store/vehicle-finder";
 import { TrustBar } from "@/components/store/trust-bar";
 import { SERVER_API_URL, type VehicleMake } from "@/lib/api";
+import { readFile } from "fs/promises";
+import { join } from "path";
+
+export const dynamic = "force-dynamic";
 
 const API = SERVER_API_URL;
+
+interface HomepageConfig {
+  heroTagline: string;
+  heroTitle: string;
+  heroTitleHighlight: string;
+  heroDescription: string;
+  stats: { value: string; label: string }[];
+  ctaTitle: string;
+  ctaDescription: string;
+  ctaPhone: string;
+}
+
+interface Banner { id: string; text: string; link: string; active: boolean; bgColor: string }
 
 async function fetchVehicleMakes(): Promise<VehicleMake[]> {
   try {
@@ -14,11 +31,31 @@ async function fetchVehicleMakes(): Promise<VehicleMake[]> {
   } catch { return []; }
 }
 
+async function getConfig<T>(file: string, fallback: T): Promise<T> {
+  try {
+    const data = await readFile(join(process.cwd(), "src/data", file), "utf-8");
+    return JSON.parse(data);
+  } catch { return fallback; }
+}
+
 export default async function HomePage() {
-  const vehicleMakes = await fetchVehicleMakes();
+  const [vehicleMakes, hc, banners] = await Promise.all([
+    fetchVehicleMakes(),
+    getConfig<HomepageConfig>("homepage-config.json", { heroTagline: "SPECIALISTE TURBO DEPUIS 2010", heroTitle: "Votre expert", heroTitleHighlight: "turbocompresseur", heroDescription: "", stats: [], ctaTitle: "", ctaDescription: "", ctaPhone: "" }),
+    getConfig<Banner[]>("banners-config.json", []),
+  ]);
+
+  const activeBanners = banners.filter(b => b.active && b.text);
 
   return (
     <>
+      {/* Promo banners */}
+      {activeBanners.map(banner => (
+        <div key={banner.id} className="text-center text-white text-sm font-medium py-2 px-4" style={{ backgroundColor: banner.bgColor }}>
+          {banner.link ? <Link href={banner.link} className="hover:underline">{banner.text}</Link> : banner.text}
+        </div>
+      ))}
+
       {/* Hero — Light, clean, turbo-focused */}
       <section className="relative overflow-hidden bg-gradient-to-br from-white via-orange-50/40 to-amber-50/30">
         {/* Subtle background decoration */}
@@ -32,19 +69,18 @@ export default async function HomePage() {
               <div className="flex items-center gap-3 mb-6 animate-fade-up">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--ts-primary-500)]/10 border border-[var(--ts-primary-500)]/20 text-[var(--ts-primary-500)] text-xs font-bold tracking-wide">
                   <Cog className="h-3.5 w-3.5" />
-                  SPECIALISTE TURBO DEPUIS 2010
+                  {hc.heroTagline}
                 </span>
               </div>
 
               <h1 className="text-4xl sm:text-5xl lg:text-[3.5rem] font-black text-gray-900 tracking-tight leading-[1.1] mb-6 animate-fade-up">
-                Votre expert
+                {hc.heroTitle}
                 <br />
-                <span className="text-[var(--ts-primary-500)]">turbocompresseur</span>
+                <span className="text-[var(--ts-primary-500)]">{hc.heroTitleHighlight}</span>
               </h1>
 
               <p className="text-lg text-gray-500 mb-8 max-w-lg leading-relaxed animate-fade-up-delay">
-                Vente, reconditionnement et reparation de turbocompresseurs pour automobile, marine et industriel.
-                Qualite professionnelle, garantie 2 ans.
+                {hc.heroDescription}
               </p>
 
               <div className="flex flex-wrap gap-3 mb-10 animate-fade-up-delay">
@@ -100,19 +136,16 @@ export default async function HomePage() {
           </div>
 
           {/* Stats */}
+          {hc.stats.length > 0 && (
           <div className="mt-16 grid grid-cols-2 lg:grid-cols-4 gap-4 animate-fade-up-delay-2">
-            {[
-              { value: "15+", label: "Annees d'expertise" },
-              { value: "2000+", label: "Turbos reconditionnes" },
-              { value: "98%", label: "Clients satisfaits" },
-              { value: "-50%", label: "vs prix du neuf" },
-            ].map((stat) => (
+            {hc.stats.map((stat) => (
               <div key={stat.label} className="rounded-xl p-5 bg-white border border-gray-100 shadow-sm">
                 <p className="text-2xl sm:text-3xl font-black text-[var(--ts-primary-500)]">{stat.value}</p>
                 <p className="text-xs text-gray-400 mt-1">{stat.label}</p>
               </div>
             ))}
           </div>
+          )}
         </div>
       </section>
 
@@ -286,22 +319,24 @@ export default async function HomePage() {
       </section>
 
       {/* CTA */}
+      {(hc.ctaTitle || hc.ctaDescription) && (
       <section className="bg-gradient-to-r from-[var(--ts-primary-500)] to-[var(--ts-accent-500)] py-14">
         <div className="mx-auto max-w-7xl px-4 text-center">
-          <h2 className="text-2xl sm:text-3xl font-black text-white mb-3">
-            Besoin d&apos;un devis ou d&apos;un conseil ?
-          </h2>
-          <p className="text-white/80 mb-6">Nos experts turbo sont disponibles du lundi au vendredi, 9h-18h.</p>
+          {hc.ctaTitle && <h2 className="text-2xl sm:text-3xl font-black text-white mb-3">{hc.ctaTitle}</h2>}
+          {hc.ctaDescription && <p className="text-white/80 mb-6">{hc.ctaDescription}</p>}
           <div className="flex flex-wrap justify-center gap-3">
             <Link href="/contact" className="inline-flex items-center h-12 px-6 bg-white text-[var(--ts-primary-500)] font-bold rounded-xl transition-colors hover:bg-gray-50 shadow-lg">
               Nous contacter
             </Link>
-            <a href="tel:+33123456789" className="inline-flex items-center h-12 px-6 border-2 border-white/30 text-white hover:bg-white/10 font-semibold rounded-xl transition-colors">
-              +33 1 23 45 67 89
+            {hc.ctaPhone && (
+            <a href={`tel:${hc.ctaPhone.replace(/\s/g, "")}`} className="inline-flex items-center h-12 px-6 border-2 border-white/30 text-white hover:bg-white/10 font-semibold rounded-xl transition-colors">
+              {hc.ctaPhone}
             </a>
+            )}
           </div>
         </div>
       </section>
+      )}
     </>
   );
 }

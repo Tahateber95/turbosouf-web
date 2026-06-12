@@ -1,0 +1,37 @@
+[
+  {
+    "category": "Garantie",
+    "items": [
+      { "q": "Quelle est la garantie sur les pieces reconditionnees ?", "a": "Toutes nos pieces reconditionnees sont couvertes par une garantie de 2 ans pieces et main-d'oeuvre. Cette garantie couvre tout defaut de fabrication ou de reconditionnement." },
+      { "q": "Comment faire jouer la garantie ?", "a": "Contactez notre service client par telephone ou email avec votre numero de commande. Nous organisons le retour de la piece defectueuse et son remplacement ou remboursement." }
+    ]
+  },
+  {
+    "category": "Consigne",
+    "items": [
+      { "q": "Qu'est-ce que la consigne ?", "a": "La consigne est un montant que vous payez a l'achat d'une piece en echange standard. Elle vous est remboursee integralement lorsque vous nous renvoyez votre ancienne piece usagee dans un delai de 30 jours." },
+      { "q": "Comment retourner ma piece usagee ?", "a": "Nous vous fournissons une etiquette de retour prepayee. Emballez soigneusement votre ancienne piece dans le carton de livraison et deposez-la en point relais. Le remboursement de la consigne est effectue sous 5 jours ouvres apres reception." }
+    ]
+  },
+  {
+    "category": "Livraison",
+    "items": [
+      { "q": "Quels sont les delais de livraison ?", "a": "Livraison standard en 2-3 jours ouvres partout en France. Livraison express en 24h disponible. Point Relais en 3-5 jours ouvres." },
+      { "q": "La livraison est-elle gratuite ?", "a": "La livraison est gratuite en France metropolitaine des 150EUR d'achat (standard) ou des 100EUR en Point Relais." }
+    ]
+  },
+  {
+    "category": "Recherche",
+    "items": [
+      { "q": "Comment trouver la bonne piece pour mon vehicule ?", "a": "Utilisez notre outil de recherche par marque, modele et motorisation pour trouver les pieces compatibles avec votre vehicule." },
+      { "q": "La piece est-elle compatible avec mon vehicule ?", "a": "Chaque fiche produit indique la liste des vehicules compatibles. En cas de doute, contactez notre equipe technique qui vous confirmera la compatibilite." }
+    ]
+  },
+  {
+    "category": "Paiement",
+    "items": [
+      { "q": "Quels modes de paiement acceptez-vous ?", "a": "Carte bancaire (Visa, Mastercard), PayPal, et paiement en 3x ou 4x sans frais via Alma. Les professionnels peuvent egalement payer par virement bancaire." },
+      { "q": "Le paiement est-il securise ?", "a": "Oui, tous les paiements sont securises par chiffrement SSL. Les paiements par carte sont traites par Stripe, leader mondial du paiement en ligne." }
+    ]
+  }
+]

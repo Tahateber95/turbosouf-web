@@ -1,0 +1,9 @@
+[
+  {
+    "id": "1",
+    "text": "Livraison gratuite des 150EUR d'achat",
+    "link": "/produits",
+    "active": true,
+    "bgColor": "#e74c3c"
+  }
+]
