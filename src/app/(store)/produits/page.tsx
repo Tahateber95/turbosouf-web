@@ -13,19 +13,18 @@ interface Props {
 export default async function ProductsPage({ searchParams }: Props) {
   const params = await searchParams;
 
-  // Build API query string from search params
+  // Build API query string — param names must match backend ProductFilterRequest
   const apiParams = new URLSearchParams();
   apiParams.set("PageSize", "24");
 
   if (params.search) apiParams.set("Search", String(params.search));
-  if (params.engineId) apiParams.set("EngineId", String(params.engineId));
-  if (params.make) apiParams.set("Make", String(params.make));
-  if (params.application) apiParams.set("Application", String(params.application));
-  if (params.category) apiParams.set("Category", String(params.category));
-  if (params.brand) apiParams.set("Brand", String(params.brand));
+  if (params.engineId) apiParams.set("VehicleEngineId", String(params.engineId));
+  if (params.make) apiParams.set("MakeSlug", String(params.make));
+  if (params.category) apiParams.set("CategorySlug", String(params.category));
+  if (params.brand) apiParams.set("BrandId", String(params.brand));
   if (params.condition) apiParams.set("Condition", String(params.condition));
   if (params.inStock === "true") apiParams.set("InStock", "true");
-  if (params.sort) apiParams.set("SortBy", String(params.sort));
+  if (params.sort) apiParams.set("Sort", String(params.sort));
   if (params.page) apiParams.set("Page", String(params.page));
 
   const [productsRes, categoriesRes, brandsRes] = await Promise.all([

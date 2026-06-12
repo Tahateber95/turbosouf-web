@@ -71,9 +71,10 @@ export function StoreFilters({ categories, brands, activeCategory, activeBrand, 
             className="w-full h-9 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]"
           >
             <option value="">Plus récents</option>
-            <option value="price_asc">Prix croissant</option>
-            <option value="price_desc">Prix décroissant</option>
-            <option value="name_asc">Nom A-Z</option>
+            <option value="price-asc">Prix croissant</option>
+            <option value="price-desc">Prix décroissant</option>
+            <option value="name">Nom A-Z</option>
+            <option value="popular">Populaires</option>
           </select>
         </div>
 
@@ -106,8 +107,8 @@ export function StoreFilters({ categories, brands, activeCategory, activeBrand, 
                 <input
                   type="radio"
                   name="brand"
-                  checked={activeBrand === brand.slug}
-                  onChange={() => updateFilter("brand", activeBrand === brand.slug ? null : brand.slug)}
+                  checked={activeBrand === brand.id}
+                  onChange={() => updateFilter("brand", activeBrand === brand.id ? null : brand.id)}
                   className="text-[var(--ts-primary-500)] focus:ring-[var(--ts-primary-500)]"
                 />
                 {brand.name}
