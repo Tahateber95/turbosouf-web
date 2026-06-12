@@ -17,6 +17,9 @@ interface SiteConfig {
   mapUrl: string;
 }
 
+// Force dynamic rendering so config changes are reflected immediately
+export const dynamic = "force-dynamic";
+
 async function getConfig(): Promise<SiteConfig> {
   try {
     const data = await readFile(join(process.cwd(), "src/data/site-config.json"), "utf-8");
