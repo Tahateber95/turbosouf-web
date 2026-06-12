@@ -17,6 +17,7 @@ export function VehicleMakesClient({ initialMakes }: Props) {
   const [search, setSearch] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [newName, setNewName] = useState("");
+  const [newLogo, setNewLogo] = useState("");
   const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
@@ -27,9 +28,10 @@ export function VehicleMakesClient({ initialMakes }: Props) {
     if (!newName.trim()) return;
     setSaving(true);
     try {
-      const make = await adminCreateMake({ name: newName.trim() });
+      const make = await adminCreateMake({ name: newName.trim(), logoUrl: newLogo.trim() || null });
       setMakes(prev => [...prev, make]);
       setNewName("");
+      setNewLogo("");
       setShowForm(false);
       toast.success("Marque créée");
     } catch (err) {
@@ -70,21 +72,38 @@ export function VehicleMakesClient({ initialMakes }: Props) {
       </div>
 
       {showForm && (
-        <form onSubmit={handleCreate} className="bg-white rounded-xl border border-gray-100 p-4 mb-4 flex items-center gap-3">
-          <input
-            value={newName}
-            onChange={e => setNewName(e.target.value)}
-            placeholder="Nom de la marque (ex: Renault)"
-            className="flex-1 h-9 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]"
-            autoFocus
-          />
-          <button type="submit" disabled={saving} className="h-9 px-4 bg-[var(--ts-primary-500)] hover:bg-[var(--ts-primary-600)] text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50 flex items-center gap-1.5">
-            {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
-            Créer
-          </button>
-          <button type="button" onClick={() => { setShowForm(false); setNewName(""); }} className="h-9 px-3 text-sm text-gray-500 hover:text-gray-700">
-            Annuler
-          </button>
+        <form onSubmit={handleCreate} className="bg-white rounded-xl border border-gray-100 p-5 mb-4 space-y-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-medium text-gray-500 mb-1">Nom de la marque *</label>
+              <input
+                value={newName}
+                onChange={e => setNewName(e.target.value)}
+                placeholder="ex: Renault"
+                className="w-full h-9 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]"
+                autoFocus
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-500 mb-1">URL du logo (optionnel)</label>
+              <input
+                value={newLogo}
+                onChange={e => setNewLogo(e.target.value)}
+                placeholder="https://... .png ou .svg"
+                className="w-full h-9 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]"
+              />
+            </div>
+          </div>
+          <p className="text-[10px] text-gray-400">Si aucun logo n&apos;est fourni, un logo SVG integre sera utilise pour les marques connues.</p>
+          <div className="flex items-center gap-3">
+            <button type="submit" disabled={saving} className="h-9 px-4 bg-[var(--ts-primary-500)] hover:bg-[var(--ts-primary-600)] text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50 flex items-center gap-1.5">
+              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
+              Creer
+            </button>
+            <button type="button" onClick={() => { setShowForm(false); setNewName(""); setNewLogo(""); }} className="h-9 px-3 text-sm text-gray-500 hover:text-gray-700">
+              Annuler
+            </button>
+          </div>
         </form>
       )}
 
