@@ -3,6 +3,7 @@ import { Wrench, Shield, Award, Star, ChevronRight, Users, CheckCircle2, Clock, 
 import { VehicleFinder } from "@/components/store/vehicle-finder";
 import { TrustBar } from "@/components/store/trust-bar";
 import { MakeLogo } from "@/components/store/make-logo";
+import { TikTokFeed } from "@/components/store/tiktok-feed";
 import { SERVER_API_URL, type VehicleMake } from "@/lib/api";
 import { readFile } from "fs/promises";
 import { join } from "path";
@@ -285,6 +286,9 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* TikTok Feed */}
+      <TikTokFeed />
 
       {/* FAQ */}
       <section className="py-16 bg-gray-50">
