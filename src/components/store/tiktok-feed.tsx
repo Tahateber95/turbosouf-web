@@ -1,13 +1,17 @@
 import Link from "next/link";
-import { fetchLatestTikTokVideos } from "@/lib/tiktok";
 
 const TIKTOK_USERNAME = "turbosouf_rosnysousbois";
 
-export async function TikTokFeed() {
-  const videos = await fetchLatestTikTokVideos(TIKTOK_USERNAME, 6);
+const VIDEOS = [
+  "7456849764714351874",
+  "7417868756405243169",
+  "7365155722969091361",
+  "7654572395876961568",
+  "7652363525909679393",
+  "7643091411922930977",
+];
 
-  if (!videos.length) return null;
-
+export function TikTokFeed() {
   return (
     <section className="py-16 bg-white border-t border-gray-100">
       <div className="mx-auto max-w-7xl px-4">
@@ -21,17 +25,17 @@ export async function TikTokFeed() {
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-          {videos.map((video) => (
+          {VIDEOS.map((id) => (
             <div
-              key={video.id}
+              key={id}
               className="relative rounded-2xl overflow-hidden bg-black aspect-[9/16] shadow-md hover:shadow-xl transition-shadow"
             >
               <iframe
-                src={`https://www.tiktok.com/embed/v2/${video.id}`}
+                src={`https://www.tiktok.com/embed/v2/${id}`}
                 className="absolute inset-0 w-full h-full border-0"
                 allow="autoplay; encrypted-media"
                 allowFullScreen
-                title={video.desc || "TikTok video"}
+                title={`TikTok video ${id}`}
                 loading="lazy"
               />
             </div>
