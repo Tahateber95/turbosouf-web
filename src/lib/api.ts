@@ -213,6 +213,31 @@ export interface CreateProductRequest {
 
 export type UpdateProductRequest = Partial<CreateProductRequest>;
 
+export interface CreateCategoryRequest {
+  name: string;
+  description?: string | null;
+  imageUrl?: string | null;
+  parentId?: string | null;
+  sortOrder?: number;
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+}
+
+export interface UpdateCategoryRequest extends CreateCategoryRequest {
+  isActive: boolean;
+}
+
+export interface CreateBrandRequest {
+  name: string;
+  logoUrl?: string | null;
+  website?: string | null;
+  sortOrder?: number;
+}
+
+export interface UpdateBrandRequest extends CreateBrandRequest {
+  isActive: boolean;
+}
+
 export interface CreateMakeRequest {
   name: string;
   slug?: string;

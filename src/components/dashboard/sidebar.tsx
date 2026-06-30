@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, Package, ShoppingCart, Users, FileText,
   Wrench, FileEdit, Settings, ChevronLeft, ChevronRight, ChevronDown, LogOut,
-  BarChart3, Car,
+  BarChart3, Car, Layers,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -19,6 +19,7 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Tableau de bord" },
   { href: "/dashboard/produits", icon: Package, label: "Produits" },
+  { href: "/dashboard/catalogue", icon: Layers, label: "Catalogue" },
   { href: "/dashboard/commandes", icon: ShoppingCart, label: "Commandes" },
   { href: "/dashboard/clients", icon: Users, label: "Clients" },
   { href: "/dashboard/factures", icon: FileText, label: "Factures" },

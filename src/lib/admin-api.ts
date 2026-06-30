@@ -7,10 +7,16 @@ import type {
   CreateMakeRequest,
   CreateModelRequest,
   CreateEngineRequest,
+  CreateCategoryRequest,
+  UpdateCategoryRequest,
+  CreateBrandRequest,
+  UpdateBrandRequest,
   ProductDetail,
   VehicleMake,
   VehicleModel,
   VehicleEngine,
+  Category,
+  Brand,
   OrderDetail,
 } from "@/lib/api";
 
@@ -41,6 +47,26 @@ async function adminFetch<T>(endpoint: string, options: RequestInit = {}): Promi
 
   return json.data as T;
 }
+
+// Categories
+export const adminCreateCategory = (data: CreateCategoryRequest) =>
+  adminFetch<Category>("/categories", { method: "POST", body: JSON.stringify(data) });
+
+export const adminUpdateCategory = (id: string, data: UpdateCategoryRequest) =>
+  adminFetch<Category>(`/categories/${id}`, { method: "PUT", body: JSON.stringify(data) });
+
+export const adminDeleteCategory = (id: string) =>
+  adminFetch<void>(`/categories/${id}`, { method: "DELETE" });
+
+// Brands
+export const adminCreateBrand = (data: CreateBrandRequest) =>
+  adminFetch<Brand>("/brands", { method: "POST", body: JSON.stringify(data) });
+
+export const adminUpdateBrand = (id: string, data: UpdateBrandRequest) =>
+  adminFetch<Brand>(`/brands/${id}`, { method: "PUT", body: JSON.stringify(data) });
+
+export const adminDeleteBrand = (id: string) =>
+  adminFetch<void>(`/brands/${id}`, { method: "DELETE" });
 
 // Products
 export const adminCreateProduct = (data: CreateProductRequest) =>
