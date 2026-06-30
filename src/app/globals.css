@@ -168,6 +168,27 @@
   }
 }
 
+/* Application cards — per-domain color accents (used in server component, no JS handlers) */
+.app-card-auto  { background-color: #FFF4F0; border-color: rgba(232,93,38,0.14); }
+.app-card-marine { background-color: #EFF4FA; border-color: rgba(26,58,92,0.14); }
+.app-card-indus { background-color: #FDF6EC; border-color: rgba(107,79,26,0.14); }
+
+.app-card-auto .app-card-line  { background-color: #E85D26; }
+.app-card-marine .app-card-line { background-color: #1A3A5C; }
+.app-card-indus .app-card-line { background-color: #B07D30; }
+
+.app-card-auto .app-card-icon  { background-color: rgba(232,93,38,0.12); }
+.app-card-marine .app-card-icon { background-color: rgba(26,58,92,0.12); }
+.app-card-indus .app-card-icon { background-color: rgba(107,79,26,0.12); }
+
+.app-card-auto .app-card-icon-svg  { color: #E85D26; }
+.app-card-marine .app-card-icon-svg { color: #1A3A5C; }
+.app-card-indus .app-card-icon-svg { color: #B07D30; }
+
+.app-card-auto .app-card-link  { color: #E85D26; }
+.app-card-marine .app-card-link { color: #1A3A5C; }
+.app-card-indus .app-card-link { color: #B07D30; }
+
 /* Blueprint crosshatch — technical engineering texture */
 .bg-blueprint {
   background-image: url("data:image/svg+xml,%3Csvg width='56' height='56' viewBox='0 0 56 56' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Crect width='56' height='56' fill='none'/%3E%3Cpath d='M0 28h56M28 0v56' stroke='%23000' stroke-width='0.4' stroke-opacity='0.06'/%3E%3C/g%3E%3C/svg%3E");

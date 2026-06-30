@@ -200,47 +200,37 @@ export default async function HomePage() {
                 title: "Automobile",
                 desc: "Voitures, utilitaires, poids lourds. Toutes marques, tous modeles. Turbo neuf ou reconditionne.",
                 href: "/produits?application=automobile",
-                accent: "#E85D26",
-                bg: "#FFF4F0",
+                accentClass: "app-card-auto",
               },
               {
                 icon: Anchor,
                 title: "Marine",
                 desc: "Bateaux, yachts, navires de croisiere. Turbos marins adaptes aux conditions extremes.",
                 href: "/produits?application=marine",
-                accent: "#1A3A5C",
-                bg: "#EFF4FA",
+                accentClass: "app-card-marine",
               },
               {
                 icon: Factory,
                 title: "Industriel",
                 desc: "Groupes electrogenes, engins de chantier, machines agricoles. Solutions sur mesure.",
                 href: "/produits?application=industriel",
-                accent: "#6B4F1A",
-                bg: "#FDF6EC",
+                accentClass: "app-card-indus",
               },
             ].map((app) => (
               <Link
                 key={app.title}
                 href={app.href}
-                className="group relative rounded-2xl p-8 border transition-all duration-300 hover:-translate-y-1"
-                style={{
-                  backgroundColor: app.bg,
-                  borderColor: `${app.accent}18`,
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
-                }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = `0 12px 32px ${app.accent}18, 0 2px 6px rgba(0,0,0,0.06)`; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 8px rgba(0,0,0,0.05)"; }}
+                className={`group relative rounded-2xl p-8 border transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${app.accentClass}`}
               >
                 {/* Top accent line */}
-                <div className="absolute top-0 left-8 right-8 h-0.5 rounded-b-full opacity-60" style={{ backgroundColor: app.accent }} />
+                <div className="app-card-line absolute top-0 left-8 right-8 h-0.5 rounded-b-full opacity-70" />
 
-                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-5" style={{ backgroundColor: `${app.accent}16` }}>
-                  <app.icon className="h-7 w-7" style={{ color: app.accent }} />
+                <div className="app-card-icon w-14 h-14 rounded-xl flex items-center justify-center mb-5">
+                  <app.icon className="h-7 w-7 app-card-icon-svg" />
                 </div>
                 <h3 className="text-xl font-bold text-[#0A0A0A] mb-2">{app.title}</h3>
                 <p className="text-sm text-[#6B6B6B] leading-relaxed mb-5">{app.desc}</p>
-                <span className="inline-flex items-center gap-1.5 text-sm font-bold transition-gap" style={{ color: app.accent }}>
+                <span className="app-card-link inline-flex items-center gap-1.5 text-sm font-bold">
                   Decouvrir
                   <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </span>
@@ -302,10 +292,7 @@ export default async function HomePage() {
             ].map((item) => (
               <div
                 key={item.title}
-                className="group p-7 rounded-2xl border border-[rgba(0,0,0,0.07)] bg-white hover:border-[rgba(232,93,38,0.25)] transition-all duration-300 hover:-translate-y-0.5"
-                style={{ boxShadow: "0 2px 6px rgba(0,0,0,0.04)" }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 10px 28px rgba(0,0,0,0.09), 0 2px 6px rgba(0,0,0,0.04)"; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 6px rgba(0,0,0,0.04)"; }}
+                className="group p-7 rounded-2xl border border-[rgba(0,0,0,0.07)] bg-white hover:border-[rgba(232,93,38,0.25)] hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 shadow-sm"
               >
                 <div className="w-11 h-11 rounded-lg flex items-center justify-center mb-4" style={{ backgroundColor: `${item.accent}12`, border: `1px solid ${item.accent}20` }}>
                   <item.icon className="h-5 w-5" style={{ color: item.accent }} />
