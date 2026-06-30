@@ -129,20 +129,54 @@
   }
 }
 
-/* TurboSouf Custom Styles — Orange/flame palette from logo */
+/* TurboSouf Design System */
 @layer base {
   :root {
+    /* Brand orange */
+    --ts-primary-500: #E85D26;
+    --ts-primary-400: #F07A3A;
+    --ts-primary-300: #FF7A45;
+    --ts-accent-500: #F7941D;
+    --ts-accent-600: #E07E0C;
+
+    /* Trust navy */
+    --ts-navy-900: #0F1923;
+    --ts-navy-700: #1A3A5C;
+    --ts-navy-500: #2563A8;
+
+    /* Warm canvas */
+    --ts-canvas: #F8F7F4;
+    --ts-muted: #F2F0EC;
+    --ts-surface: #FFFFFF;
+
+    /* Text */
+    --ts-text-primary: #0A0A0A;
+    --ts-text-secondary: #3A3A3A;
+    --ts-text-muted: #6B6B6B;
+
+    /* Utility */
+    --ts-border: rgba(0,0,0,0.08);
+    --ts-border-medium: rgba(0,0,0,0.14);
+    --ts-success: #16a34a;
+    --ts-danger: #dc2626;
+
+    /* Legacy aliases (keep for dashboard/other pages) */
     --ts-primary-900: #1f2937;
     --ts-primary-800: #374151;
     --ts-primary-700: #4b5563;
     --ts-primary-600: #6b7280;
-    --ts-primary-500: #E85D26;
-    --ts-primary-400: #F07A3A;
-    --ts-accent-500: #F7941D;
-    --ts-accent-600: #E07E0C;
-    --ts-success: #16a34a;
-    --ts-danger: #dc2626;
   }
+}
+
+/* Blueprint crosshatch — technical engineering texture */
+.bg-blueprint {
+  background-image: url("data:image/svg+xml,%3Csvg width='56' height='56' viewBox='0 0 56 56' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Crect width='56' height='56' fill='none'/%3E%3Cpath d='M0 28h56M28 0v56' stroke='%23000' stroke-width='0.4' stroke-opacity='0.06'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Dot grid — light version */
+.bg-dot-grid-light {
+  background-image: radial-gradient(circle, rgba(0,0,0,0.10) 1px, transparent 1px);
+  background-size: 24px 24px;
 }
 
 @keyframes fade-up {

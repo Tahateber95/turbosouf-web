@@ -19,30 +19,30 @@ const INFO_LINKS = [
 
 export function Footer() {
   return (
-    <footer className="bg-gray-50 text-gray-600 border-t border-gray-200">
-      <div className="mx-auto max-w-7xl px-4 py-12 lg:py-16">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
+    <footer style={{ backgroundColor: "#0F1923" }} className="text-white/60">
+      <div className="mx-auto max-w-7xl px-4 py-14 lg:py-18">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
           {/* Brand */}
           <div>
-            <div className="flex items-center gap-2.5 mb-4">
-              <img src="/logo.png" alt="TurboSouf" className="w-8 h-8 rounded-full object-contain" />
-              <span className="text-lg font-black text-gray-900">TurboSouf</span>
+            <div className="flex items-center gap-2.5 mb-5">
+              <img src="/logo.png" alt="TurboSouf" className="w-9 h-9 rounded-full object-contain" />
+              <span className="text-lg font-black text-white">TurboSouf</span>
             </div>
-            <p className="text-sm leading-relaxed text-gray-500 mb-4">
+            <p className="text-sm leading-relaxed text-white/45 mb-5">
               Specialiste en turbocompresseurs neufs et reconditionnes pour automobile, marine et industriel.
               Garantie 2 ans, prix competitifs.
             </p>
-            <div className="space-y-2 text-sm">
-              <a href="tel:+33123456789" className="flex items-center gap-2 hover:text-[var(--ts-primary-500)] transition-colors">
-                <Phone className="h-4 w-4 text-[var(--ts-primary-500)]" />
+            <div className="space-y-2.5 text-sm">
+              <a href="tel:+33123456789" className="flex items-center gap-2 text-white/55 hover:text-white transition-colors">
+                <Phone className="h-4 w-4 text-[#E85D26] shrink-0" />
                 +33 1 23 45 67 89
               </a>
-              <a href="mailto:contact@turbosouf.com" className="flex items-center gap-2 hover:text-[var(--ts-primary-500)] transition-colors">
-                <Mail className="h-4 w-4 text-[var(--ts-primary-500)]" />
+              <a href="mailto:contact@turbosouf.com" className="flex items-center gap-2 text-white/55 hover:text-white transition-colors">
+                <Mail className="h-4 w-4 text-[#E85D26] shrink-0" />
                 contact@turbosouf.com
               </a>
-              <p className="flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-[var(--ts-primary-500)]" />
+              <p className="flex items-center gap-2 text-white/55">
+                <MapPin className="h-4 w-4 text-[#E85D26] shrink-0" />
                 Strasbourg, France
               </p>
             </div>
@@ -50,13 +50,13 @@ export function Footer() {
 
           {/* Products */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">
+            <h3 className="text-xs font-bold text-white uppercase tracking-[0.14em] mb-5">
               Nos Turbos
             </h3>
-            <ul className="space-y-2.5">
+            <ul className="space-y-3">
               {PRODUCT_LINKS.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="text-sm hover:text-[var(--ts-primary-500)] transition-colors">
+                  <Link href={link.href} className="text-sm text-white/50 hover:text-white transition-colors">
                     {link.label}
                   </Link>
                 </li>
@@ -66,13 +66,13 @@ export function Footer() {
 
           {/* Info */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">
+            <h3 className="text-xs font-bold text-white uppercase tracking-[0.14em] mb-5">
               Informations
             </h3>
-            <ul className="space-y-2.5">
+            <ul className="space-y-3">
               {INFO_LINKS.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="text-sm hover:text-[var(--ts-primary-500)] transition-colors">
+                  <Link href={link.href} className="text-sm text-white/50 hover:text-white transition-colors">
                     {link.label}
                   </Link>
                 </li>
@@ -82,21 +82,22 @@ export function Footer() {
 
           {/* Newsletter */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">
+            <h3 className="text-xs font-bold text-white uppercase tracking-[0.14em] mb-5">
               Newsletter
             </h3>
-            <p className="text-sm text-gray-500 mb-3">
+            <p className="text-sm text-white/45 mb-4">
               Recevez nos offres et promotions en avant-premiere.
             </p>
             <form className="flex gap-2">
               <input
                 type="email"
                 placeholder="Votre email"
-                className="flex-1 h-10 px-3 rounded-lg bg-white border border-gray-200 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]"
+                className="flex-1 h-10 px-3 rounded-lg bg-white/8 border border-white/12 text-sm text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-[#E85D26]/50"
               />
               <button
                 type="submit"
-                className="h-10 px-4 rounded-lg bg-[var(--ts-primary-500)] text-white text-sm font-medium hover:bg-[var(--ts-primary-400)] transition-colors"
+                className="h-10 px-4 rounded-lg text-white text-sm font-bold hover:opacity-90 transition-opacity"
+                style={{ background: "linear-gradient(180deg,#FF7A45 0%,#E85D26 100%)" }}
               >
                 OK
               </button>
@@ -106,10 +107,10 @@ export function Footer() {
       </div>
 
       {/* Bottom bar */}
-      <div className="border-t border-gray-200">
-        <div className="mx-auto max-w-7xl px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-gray-400">
+      <div className="border-t border-white/8">
+        <div className="mx-auto max-w-7xl px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-white/30">
           <p>&copy; {new Date().getFullYear()} TurboSouf. Tous droits reserves.</p>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-5">
             <span>Paiement securise</span>
             <span>Garantie 2 ans</span>
             <span>Livraison 24-48h</span>

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Wrench, Shield, Award, Star, ChevronRight, Users, CheckCircle2, Clock, Phone, Anchor, Car, Factory, Cog, Zap } from "lucide-react";
+import { Wrench, Shield, Award, Star, ChevronRight, Users, CheckCircle2, Clock, Phone, Anchor, Car, Factory, Cog, ArrowRight } from "lucide-react";
 import { VehicleFinder } from "@/components/store/vehicle-finder";
 import { TrustBar } from "@/components/store/trust-bar";
 import { MakeLogo } from "@/components/store/make-logo";
@@ -43,7 +43,16 @@ async function getConfig<T>(file: string, fallback: T): Promise<T> {
 export default async function HomePage() {
   const [vehicleMakes, hc, banners] = await Promise.all([
     fetchVehicleMakes(),
-    getConfig<HomepageConfig>("homepage-config.json", { heroTagline: "SPECIALISTE TURBO DEPUIS 2010", heroTitle: "Votre expert", heroTitleHighlight: "turbocompresseur", heroDescription: "", stats: [], ctaTitle: "", ctaDescription: "", ctaPhone: "" }),
+    getConfig<HomepageConfig>("homepage-config.json", {
+      heroTagline: "SPECIALISTE TURBO DEPUIS 2010",
+      heroTitle: "Votre expert",
+      heroTitleHighlight: "turbocompresseur",
+      heroDescription: "",
+      stats: [],
+      ctaTitle: "",
+      ctaDescription: "",
+      ctaPhone: "",
+    }),
     getConfig<Banner[]>("banners-config.json", []),
   ]);
 
@@ -58,58 +67,63 @@ export default async function HomePage() {
         </div>
       ))}
 
-      {/* ── HERO — Dark with orange fire glow ─────────────────────────────── */}
-      <section className="relative overflow-hidden bg-[#08090d]">
-        {/* Ambient glow orbs */}
-        <div className="absolute top-[-10%] right-[5%] w-[700px] h-[700px] rounded-full bg-[#E85D26]/[0.18] blur-[160px] animate-pulse-glow pointer-events-none" />
-        <div className="absolute bottom-[-20%] left-[0%] w-[500px] h-[500px] rounded-full bg-[#F7941D]/[0.12] blur-[130px] animate-pulse-glow-slow pointer-events-none" />
-        <div className="absolute top-[40%] left-[30%] w-[300px] h-[300px] rounded-full bg-[#E85D26]/[0.07] blur-[100px] pointer-events-none" />
+      {/* ── HERO — Warm cream mesh gradient ───────────────────────────────── */}
+      <section
+        className="relative overflow-hidden"
+        style={{
+          background: [
+            "radial-gradient(ellipse 70% 60% at 8% 60%, rgba(232,93,38,0.13) 0%, transparent 65%)",
+            "radial-gradient(ellipse 55% 65% at 88% 20%, rgba(26,58,92,0.07) 0%, transparent 60%)",
+            "radial-gradient(ellipse 40% 40% at 50% 110%, rgba(232,93,38,0.06) 0%, transparent 60%)",
+            "#F8F7F4",
+          ].join(", "),
+        }}
+      >
+        {/* Blueprint crosshatch texture */}
+        <div className="absolute inset-0 bg-blueprint opacity-100 pointer-events-none" />
 
-        {/* Dot grid */}
-        <div className="absolute inset-0 bg-dot-grid opacity-100 pointer-events-none" />
-        {/* Vignette edges */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,#08090d_100%)] pointer-events-none" />
-
-        <div className="relative mx-auto max-w-7xl px-4 py-20 lg:py-32">
+        <div className="relative mx-auto max-w-7xl px-4 pt-16 pb-20 lg:pt-24 lg:pb-28">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
+
             {/* Left: Copy */}
             <div>
-              <div className="flex items-center gap-3 mb-7 animate-fade-up">
-                <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#E85D26]/15 border border-[#E85D26]/30 text-[#F07A3A] text-xs font-bold tracking-widest uppercase">
-                  <Zap className="h-3 w-3" />
+              {/* Eyebrow */}
+              <div className="flex items-center gap-2 mb-6 animate-fade-up">
+                <span className="inline-block w-8 h-0.5 bg-[#E85D26] rounded-full" />
+                <span className="text-[11px] font-bold tracking-[0.18em] uppercase text-[#E85D26]">
                   {hc.heroTagline}
                 </span>
               </div>
 
-              <h1 className="text-4xl sm:text-5xl lg:text-[3.75rem] font-black text-white tracking-tight leading-[1.08] mb-6 animate-fade-up">
+              <h1 className="text-4xl sm:text-5xl lg:text-[3.6rem] font-black text-[#0A0A0A] tracking-tight leading-[1.07] mb-6 animate-fade-up">
                 {hc.heroTitle}
                 <br />
-                <span className="bg-gradient-to-r from-[#E85D26] via-[#F07A3A] to-[#F7941D] bg-clip-text text-transparent">
-                  {hc.heroTitleHighlight}
-                </span>
+                <span className="text-[#E85D26]">{hc.heroTitleHighlight}</span>
               </h1>
 
-              <p className="text-lg text-white/50 mb-9 max-w-lg leading-relaxed animate-fade-up-delay">
+              <p className="text-lg text-[#6B6B6B] mb-9 max-w-lg leading-relaxed animate-fade-up-delay">
                 {hc.heroDescription}
               </p>
 
               <div className="flex flex-wrap gap-3 mb-10 animate-fade-up-delay">
                 <Link
                   href="/produits"
-                  className="inline-flex items-center h-13 px-7 bg-gradient-to-r from-[#E85D26] to-[#F7941D] hover:from-[#F07A3A] hover:to-[#F7941D] text-white font-bold rounded-xl text-base transition-all hover:shadow-2xl hover:shadow-[#E85D26]/30 active:scale-[0.98]"
+                  className="inline-flex items-center h-13 px-7 font-bold rounded-lg text-base text-white transition-all hover:shadow-xl hover:shadow-[#E85D26]/25 active:scale-[0.98]"
+                  style={{ background: "linear-gradient(180deg,#FF7A45 0%,#E85D26 100%)" }}
                 >
                   Voir nos turbos
-                  <ChevronRight className="h-5 w-5 ml-1.5" />
+                  <ArrowRight className="h-4 w-4 ml-2" />
                 </Link>
                 <Link
                   href="/contact"
-                  className="inline-flex items-center h-13 px-7 bg-white/8 hover:bg-white/12 text-white font-semibold rounded-xl text-base transition-all border border-white/15 backdrop-blur-sm"
+                  className="inline-flex items-center h-13 px-7 bg-white text-[#3A3A3A] font-semibold rounded-lg text-base transition-all border border-[rgba(0,0,0,0.12)] shadow-sm hover:border-[rgba(0,0,0,0.20)] hover:shadow-md"
                 >
-                  <Phone className="h-4 w-4 mr-2 text-[#F07A3A]" />
+                  <Phone className="h-4 w-4 mr-2 text-[#E85D26]" />
                   Nous contacter
                 </Link>
               </div>
 
+              {/* Trust signals */}
               <div className="flex flex-wrap gap-x-6 gap-y-3 animate-fade-up-delay-2">
                 {[
                   { icon: CheckCircle2, text: "Garantie 2 ans" },
@@ -117,8 +131,8 @@ export default async function HomePage() {
                   { icon: Shield, text: "Paiement securise" },
                   { icon: Award, text: "Atelier certifie" },
                 ].map((item) => (
-                  <div key={item.text} className="flex items-center gap-2 text-sm text-white/50">
-                    <item.icon className="h-4 w-4 text-[#E85D26]" />
+                  <div key={item.text} className="flex items-center gap-2 text-sm text-[#6B6B6B]">
+                    <item.icon className="h-4 w-4 text-[#E85D26] shrink-0" />
                     <span>{item.text}</span>
                   </div>
                 ))}
@@ -128,22 +142,24 @@ export default async function HomePage() {
             {/* Right: Turbo image */}
             <div className="relative hidden lg:flex items-center justify-center animate-fade-up-delay">
               <div className="relative w-[440px] h-[440px]">
-                {/* Glow behind image */}
-                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#E85D26]/25 to-[#F7941D]/20 blur-[60px]" />
-                {/* Ring decoration */}
-                <div className="absolute inset-6 rounded-full border border-[#E85D26]/15" />
-                <div className="absolute inset-12 rounded-full border border-[#E85D26]/8" />
+                {/* Warm glow circle */}
+                <div className="absolute inset-8 rounded-full bg-gradient-to-br from-[#E85D26]/12 via-[#F7941D]/8 to-transparent blur-2xl" />
+                {/* Rings */}
+                <div className="absolute inset-4 rounded-full border border-[#E85D26]/10" />
+                <div className="absolute inset-10 rounded-full border border-[#E85D26]/6" />
+
                 <img
                   src="/images/turbo-default.jpg"
                   alt="Turbocompresseur"
-                  className="relative w-full h-full object-contain p-6 drop-shadow-2xl"
+                  className="relative w-full h-full object-contain p-6 drop-shadow-xl"
                 />
-                {/* Floating badges */}
-                <div className="absolute top-8 right-0 bg-[#1a1b20] border border-white/10 rounded-xl shadow-xl px-3.5 py-2.5 backdrop-blur-sm animate-bounce-slow">
-                  <p className="text-xs font-bold text-[#F07A3A]">Garantie 2 ans</p>
+
+                {/* Floating badges — glass style on light */}
+                <div className="absolute top-10 right-2 bg-white/90 backdrop-blur-sm rounded-xl shadow-lg shadow-black/8 px-4 py-2.5 border border-white animate-bounce-slow">
+                  <p className="text-xs font-bold text-[#E85D26]">Garantie 2 ans</p>
                 </div>
-                <div className="absolute bottom-12 -left-4 bg-[#1a1b20] border border-white/10 rounded-xl shadow-xl px-3.5 py-2.5 backdrop-blur-sm animate-bounce-slow" style={{ animationDelay: "1s" }}>
-                  <p className="text-xs font-bold text-white">-50% vs neuf</p>
+                <div className="absolute bottom-14 -left-2 bg-white/90 backdrop-blur-sm rounded-xl shadow-lg shadow-black/8 px-4 py-2.5 border border-white animate-bounce-slow" style={{ animationDelay: "1.2s" }}>
+                  <p className="text-xs font-bold text-[#1A3A5C]">-50% vs neuf</p>
                 </div>
               </div>
             </div>
@@ -151,34 +167,30 @@ export default async function HomePage() {
 
           {/* Stats */}
           {hc.stats.length > 0 && (
-            <div className="mt-16 grid grid-cols-2 lg:grid-cols-4 gap-4 animate-fade-up-delay-2">
+            <div className="mt-14 grid grid-cols-2 lg:grid-cols-4 gap-4 animate-fade-up-delay-2">
               {hc.stats.map((stat) => (
-                <div key={stat.label} className="rounded-xl p-5 bg-white/5 border border-white/10 backdrop-blur-sm hover:border-[#E85D26]/30 transition-colors">
-                  <p className="text-2xl sm:text-3xl font-black bg-gradient-to-r from-[#E85D26] to-[#F7941D] bg-clip-text text-transparent">{stat.value}</p>
-                  <p className="text-xs text-white/40 mt-1">{stat.label}</p>
+                <div key={stat.label} className="rounded-xl p-5 bg-white border border-[rgba(0,0,0,0.08)] shadow-sm hover:shadow-md transition-shadow">
+                  <p className="text-2xl sm:text-3xl font-black text-[#E85D26]">{stat.value}</p>
+                  <p className="text-xs text-[#6B6B6B] mt-1">{stat.label}</p>
                 </div>
               ))}
             </div>
           )}
         </div>
-
-        {/* Bottom fade into next section */}
-        <div className="absolute bottom-0 inset-x-0 h-16 bg-gradient-to-t from-white to-transparent pointer-events-none" />
       </section>
 
+      {/* ── TRUST BAR — White ─────────────────────────────────────────────── */}
       <TrustBar />
 
-      {/* ── APPLICATIONS — Dark cards ──────────────────────────────────────── */}
-      <section className="relative py-20 overflow-hidden bg-[#0b0c11]">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] rounded-full bg-[#E85D26]/[0.08] blur-[120px] pointer-events-none" />
-        <div className="absolute inset-0 bg-line-grid opacity-100 pointer-events-none" />
-
-        <div className="relative mx-auto max-w-7xl px-4">
+      {/* ── APPLICATIONS — White, colored accent cards ────────────────────── */}
+      <section className="py-20 bg-white">
+        <div className="mx-auto max-w-7xl px-4">
           <div className="text-center mb-12">
-            <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight mb-3">
+            <p className="text-xs font-bold tracking-[0.16em] uppercase text-[#E85D26] mb-3">Nos domaines</p>
+            <h2 className="text-2xl sm:text-3xl font-black text-[#0A0A0A] tracking-tight mb-3">
               Turbos pour toutes les applications
             </h2>
-            <p className="text-white/40">Automobile, marine, industriel — on couvre tout</p>
+            <p className="text-[#6B6B6B]">Automobile, marine, industriel — on couvre tout</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
@@ -188,57 +200,68 @@ export default async function HomePage() {
                 title: "Automobile",
                 desc: "Voitures, utilitaires, poids lourds. Toutes marques, tous modeles. Turbo neuf ou reconditionne.",
                 href: "/produits?application=automobile",
-                color: "#E85D26",
+                accent: "#E85D26",
+                bg: "#FFF4F0",
               },
               {
                 icon: Anchor,
                 title: "Marine",
                 desc: "Bateaux, yachts, navires de croisiere. Turbos marins adaptes aux conditions extremes.",
                 href: "/produits?application=marine",
-                color: "#3B82F6",
+                accent: "#1A3A5C",
+                bg: "#EFF4FA",
               },
               {
                 icon: Factory,
                 title: "Industriel",
                 desc: "Groupes electrogenes, engins de chantier, machines agricoles. Solutions sur mesure.",
                 href: "/produits?application=industriel",
-                color: "#8B5CF6",
+                accent: "#6B4F1A",
+                bg: "#FDF6EC",
               },
             ].map((app) => (
               <Link
                 key={app.title}
                 href={app.href}
-                className="group relative rounded-2xl p-8 bg-white/5 border border-white/8 hover:border-white/20 hover:bg-white/8 transition-all duration-300 overflow-hidden"
+                className="group relative rounded-2xl p-8 border transition-all duration-300 hover:-translate-y-1"
+                style={{
+                  backgroundColor: app.bg,
+                  borderColor: `${app.accent}18`,
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+                }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = `0 12px 32px ${app.accent}18, 0 2px 6px rgba(0,0,0,0.06)`; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 8px rgba(0,0,0,0.05)"; }}
               >
-                {/* Card glow on hover */}
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl" style={{ background: `radial-gradient(circle at 50% 0%, ${app.color}15 0%, transparent 70%)` }} />
-                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-5 transition-all" style={{ backgroundColor: `${app.color}20`, border: `1px solid ${app.color}30` }}>
-                  <app.icon className="h-7 w-7 transition-colors" style={{ color: app.color }} />
+                {/* Top accent line */}
+                <div className="absolute top-0 left-8 right-8 h-0.5 rounded-b-full opacity-60" style={{ backgroundColor: app.accent }} />
+
+                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-5" style={{ backgroundColor: `${app.accent}16` }}>
+                  <app.icon className="h-7 w-7" style={{ color: app.accent }} />
                 </div>
-                <h3 className="text-xl font-bold text-white mb-2">{app.title}</h3>
-                <p className="text-sm text-white/40 leading-relaxed mb-5">{app.desc}</p>
-                <span className="inline-flex items-center gap-1 text-sm font-semibold transition-all" style={{ color: app.color }}>
-                  Decouvrir <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                <h3 className="text-xl font-bold text-[#0A0A0A] mb-2">{app.title}</h3>
+                <p className="text-sm text-[#6B6B6B] leading-relaxed mb-5">{app.desc}</p>
+                <span className="inline-flex items-center gap-1.5 text-sm font-bold transition-gap" style={{ color: app.accent }}>
+                  Decouvrir
+                  <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </span>
               </Link>
             ))}
           </div>
         </div>
-
-        <div className="absolute bottom-0 inset-x-0 h-16 bg-gradient-to-t from-white to-transparent pointer-events-none" />
       </section>
 
-      {/* Vehicle Finder */}
+      {/* ── VEHICLE FINDER — dark stays ───────────────────────────────────── */}
       <VehicleFinder />
 
-      {/* ── MAKES GRID — Light ────────────────────────────────────────────── */}
-      <section className="py-16 bg-white">
+      {/* ── MAKES GRID — Warm muted bg ────────────────────────────────────── */}
+      <section className="py-16" style={{ backgroundColor: "var(--ts-canvas)" }}>
         <div className="mx-auto max-w-7xl px-4">
           <div className="text-center mb-10">
-            <h2 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight mb-2">
+            <p className="text-xs font-bold tracking-[0.16em] uppercase text-[#E85D26] mb-3">Par marque</p>
+            <h2 className="text-2xl sm:text-3xl font-black text-[#0A0A0A] tracking-tight mb-2">
               Trouvez votre turbo par marque
             </h2>
-            <p className="text-gray-500">Selectionnez votre marque pour voir les turbos compatibles</p>
+            <p className="text-[#6B6B6B]">Selectionnez votre marque pour voir les turbos compatibles</p>
           </div>
 
           <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-3">
@@ -246,63 +269,62 @@ export default async function HomePage() {
               <Link
                 key={make.id}
                 href={`/produits?make=${make.slug}`}
-                className="flex flex-col items-center justify-center p-4 bg-gray-50 rounded-xl border border-gray-100 hover:border-[var(--ts-primary-500)]/40 hover:shadow-lg hover:shadow-[var(--ts-primary-500)]/5 hover:bg-white transition-all group"
+                className="group flex flex-col items-center justify-center p-4 bg-white rounded-xl border border-[rgba(0,0,0,0.07)] hover:border-[rgba(232,93,38,0.35)] hover:shadow-lg hover:shadow-[rgba(232,93,38,0.08)] transition-all"
               >
-                <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center mb-2 transition-colors border border-gray-100 group-hover:border-[var(--ts-primary-500)]/20 p-2">
+                <div className="w-12 h-12 rounded-full bg-[#F8F7F4] group-hover:bg-[rgba(232,93,38,0.06)] flex items-center justify-center mb-2 transition-colors p-2">
                   <MakeLogo name={make.name} logoUrl={make.logoUrl} className="w-full h-full" />
                 </div>
-                <span className="text-xs font-medium text-gray-700">{make.name}</span>
+                <span className="text-xs font-semibold text-[#3A3A3A] group-hover:text-[#E85D26] transition-colors">{make.name}</span>
               </Link>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── WHY CHOOSE US — Dark ──────────────────────────────────────────── */}
-      <section className="relative py-20 overflow-hidden bg-[#08090d]">
-        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] rounded-full bg-[#F7941D]/[0.1] blur-[140px] pointer-events-none" />
-        <div className="absolute top-0 left-0 w-[400px] h-[400px] rounded-full bg-[#E85D26]/[0.08] blur-[120px] pointer-events-none" />
-        <div className="absolute inset-0 bg-dot-grid opacity-60 pointer-events-none" />
-
-        <div className="relative mx-auto max-w-7xl px-4">
+      {/* ── WHY CHOOSE US — White ─────────────────────────────────────────── */}
+      <section className="py-20 bg-white border-t border-[rgba(0,0,0,0.05)]">
+        <div className="mx-auto max-w-7xl px-4">
           <div className="text-center mb-12">
-            <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight mb-3">
+            <p className="text-xs font-bold tracking-[0.16em] uppercase text-[#E85D26] mb-3">Notre difference</p>
+            <h2 className="text-2xl sm:text-3xl font-black text-[#0A0A0A] tracking-tight">
               Pourquoi TurboSouf ?
             </h2>
-            <p className="text-white/40">L&apos;expertise qui fait la difference</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {[
-              { icon: Wrench, title: "Atelier integre", desc: "Reconditionnement professionnel dans notre propre atelier. Chaque turbo est teste sur banc d'essai et calibre avant expedition.", color: "#E85D26" },
-              { icon: Shield, title: "Garantie 2 ans", desc: "Tous nos turbos reconditionnes sont couverts par une garantie de 2 ans pieces et main-d'oeuvre.", color: "#22C55E" },
-              { icon: Award, title: "Prix competitifs", desc: "Jusqu'a 50% d'economie par rapport au neuf, sans compromis sur la qualite. Paiement en 3x/4x sans frais.", color: "#F7941D" },
-              { icon: Users, title: "Conseil expert", desc: "Notre equipe de specialistes vous accompagne pour trouver le bon turbo compatible avec votre vehicule ou application.", color: "#3B82F6" },
-              { icon: Star, title: "Multi-applications", desc: "Automobile, marine, industriel — nous couvrons toutes les applications avec des turbos adaptes a chaque usage.", color: "#A855F7" },
-              { icon: Cog, title: "Reconditionnement", desc: "Confiez-nous votre turbo, on le remet a neuf. Diagnostic, reparation et test complet en atelier.", color: "#E85D26" },
+              { icon: Wrench, title: "Atelier integre", desc: "Reconditionnement professionnel dans notre propre atelier. Chaque turbo est teste sur banc d'essai et calibre avant expedition.", accent: "#E85D26" },
+              { icon: Shield, title: "Garantie 2 ans", desc: "Tous nos turbos reconditionnes sont couverts par une garantie de 2 ans pieces et main-d'oeuvre.", accent: "#1A3A5C" },
+              { icon: Award, title: "Prix competitifs", desc: "Jusqu'a 50% d'economie par rapport au neuf, sans compromis sur la qualite. Paiement en 3x/4x sans frais.", accent: "#E85D26" },
+              { icon: Users, title: "Conseil expert", desc: "Notre equipe de specialistes vous accompagne pour trouver le bon turbo compatible avec votre vehicule ou application.", accent: "#1A3A5C" },
+              { icon: Star, title: "Multi-applications", desc: "Automobile, marine, industriel — nous couvrons toutes les applications avec des turbos adaptes a chaque usage.", accent: "#E85D26" },
+              { icon: Cog, title: "Reconditionnement", desc: "Confiez-nous votre turbo, on le remet a neuf. Diagnostic, reparation et test complet en atelier.", accent: "#1A3A5C" },
             ].map((item) => (
-              <div key={item.title} className="group relative p-6 rounded-xl bg-white/[0.04] border border-white/8 hover:border-white/16 hover:bg-white/[0.07] transition-all duration-300 overflow-hidden">
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl" style={{ background: `radial-gradient(circle at 20% 20%, ${item.color}12 0%, transparent 60%)` }} />
-                <div className="w-11 h-11 rounded-lg flex items-center justify-center mb-4 relative" style={{ backgroundColor: `${item.color}20`, border: `1px solid ${item.color}30` }}>
-                  <item.icon className="h-5 w-5" style={{ color: item.color }} />
+              <div
+                key={item.title}
+                className="group p-7 rounded-2xl border border-[rgba(0,0,0,0.07)] bg-white hover:border-[rgba(232,93,38,0.25)] transition-all duration-300 hover:-translate-y-0.5"
+                style={{ boxShadow: "0 2px 6px rgba(0,0,0,0.04)" }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 10px 28px rgba(0,0,0,0.09), 0 2px 6px rgba(0,0,0,0.04)"; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 6px rgba(0,0,0,0.04)"; }}
+              >
+                <div className="w-11 h-11 rounded-lg flex items-center justify-center mb-4" style={{ backgroundColor: `${item.accent}12`, border: `1px solid ${item.accent}20` }}>
+                  <item.icon className="h-5 w-5" style={{ color: item.accent }} />
                 </div>
-                <h3 className="text-base font-bold text-white mb-2">{item.title}</h3>
-                <p className="text-sm text-white/40 leading-relaxed">{item.desc}</p>
+                <h3 className="text-base font-bold text-[#0A0A0A] mb-2">{item.title}</h3>
+                <p className="text-sm text-[#6B6B6B] leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
         </div>
-
-        <div className="absolute bottom-0 inset-x-0 h-16 bg-gradient-to-t from-white to-transparent pointer-events-none" />
       </section>
 
-      {/* ── BRAND PARTNERS — Light ────────────────────────────────────────── */}
-      <section className="py-12 bg-white border-t border-gray-100">
+      {/* ── BRAND PARTNERS — Warm canvas ──────────────────────────────────── */}
+      <section className="py-12 border-t border-[rgba(0,0,0,0.06)]" style={{ backgroundColor: "var(--ts-canvas)" }}>
         <div className="mx-auto max-w-7xl px-4">
-          <p className="text-center text-xs font-semibold text-gray-400 uppercase tracking-widest mb-8">
+          <p className="text-center text-[10px] font-bold text-[#A0A0A0] uppercase tracking-[0.2em] mb-8">
             Nos marques partenaires
           </p>
-          <div className="flex flex-wrap justify-center items-center gap-8 lg:gap-12">
+          <div className="flex flex-wrap justify-center items-center gap-8 lg:gap-14">
             {[
               { name: "Garrett", src: "/images/brand-garrett.png" },
               { name: "BorgWarner", src: "/images/brand-borgwarner.png" },
@@ -312,7 +334,7 @@ export default async function HomePage() {
               { name: "Mitsubishi", src: "/images/brand-mitsubishi.png" },
               { name: "Toyota", src: "/images/brand-toyota.png" },
             ].map((brand) => (
-              <div key={brand.name} className="flex items-center justify-center grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all duration-300" title={brand.name}>
+              <div key={brand.name} className="flex items-center justify-center grayscale opacity-35 hover:grayscale-0 hover:opacity-90 transition-all duration-300" title={brand.name}>
                 <img src={brand.src} alt={brand.name} className="h-8 lg:h-10 w-auto object-contain" />
               </div>
             ))}
@@ -320,16 +342,19 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* TikTok Feed */}
+      {/* ── TIKTOK FEED ──────────────────────────────────────────────────── */}
       <TikTokFeed />
 
-      {/* ── FAQ — Light ───────────────────────────────────────────────────── */}
-      <section className="py-16 bg-gray-50">
+      {/* ── FAQ — Warm muted ──────────────────────────────────────────────── */}
+      <section className="py-16" style={{ backgroundColor: "var(--ts-muted)" }}>
         <div className="mx-auto max-w-3xl px-4">
-          <h2 className="text-2xl font-black text-gray-900 text-center mb-8">
-            Questions frequentes
-          </h2>
-          <div className="space-y-3">
+          <div className="text-center mb-10">
+            <p className="text-xs font-bold tracking-[0.16em] uppercase text-[#E85D26] mb-3">FAQ</p>
+            <h2 className="text-2xl font-black text-[#0A0A0A]">
+              Questions frequentes
+            </h2>
+          </div>
+          <div className="space-y-2.5">
             {[
               { q: "Quelle est la garantie sur les turbos reconditionnes ?", a: "Tous nos turbos reconditionnes sont garantis 2 ans, pieces et main-d'oeuvre." },
               { q: "Qu'est-ce que la consigne ?", a: "La consigne est un montant remboursable que vous payez a l'achat d'un turbo en echange standard. Renvoyez votre ancien turbo et nous vous remboursons la consigne." },
@@ -337,37 +362,38 @@ export default async function HomePage() {
               { q: "Faites-vous les turbos pour bateaux et industriel ?", a: "Oui, nous couvrons toutes les applications : automobile, marine (bateaux, yachts) et industriel (groupes electrogenes, engins de chantier)." },
               { q: "Puis-je faire reconditionner mon propre turbo ?", a: "Absolument. Envoyez-nous votre turbo, nous le diagnostiquons et le remettons a neuf dans notre atelier. Devis gratuit." },
             ].map((faq) => (
-              <details key={faq.q} className="group rounded-xl border border-gray-200 bg-white overflow-hidden">
-                <summary className="flex items-center justify-between px-5 py-4 cursor-pointer text-sm font-semibold text-gray-900 hover:bg-gray-50 transition-colors">
+              <details key={faq.q} className="group rounded-xl border border-[rgba(0,0,0,0.08)] bg-white overflow-hidden">
+                <summary className="flex items-center justify-between px-5 py-4 cursor-pointer text-sm font-semibold text-[#0A0A0A] hover:bg-[#FAFAF8] transition-colors list-none">
                   {faq.q}
-                  <ChevronRight className="h-4 w-4 text-gray-400 group-open:rotate-90 transition-transform shrink-0 ml-2" />
+                  <ChevronRight className="h-4 w-4 text-[#E85D26] group-open:rotate-90 transition-transform shrink-0 ml-3" />
                 </summary>
-                <p className="px-5 pb-4 text-sm text-gray-500 leading-relaxed">{faq.a}</p>
+                <p className="px-5 pb-5 text-sm text-[#6B6B6B] leading-relaxed border-t border-[rgba(0,0,0,0.05)] pt-3">{faq.a}</p>
               </details>
             ))}
           </div>
-          <div className="text-center mt-6">
-            <Link href="/faq" className="text-sm font-medium text-[var(--ts-primary-500)] hover:underline">
+          <div className="text-center mt-8">
+            <Link href="/faq" className="text-sm font-bold text-[#E85D26] hover:underline">
               Voir toutes les FAQ →
             </Link>
           </div>
         </div>
       </section>
 
-      {/* ── CTA — Gradient ───────────────────────────────────────────────── */}
+      {/* ── CTA — Orange gradient ─────────────────────────────────────────── */}
       {(hc.ctaTitle || hc.ctaDescription) && (
-        <section className="relative overflow-hidden bg-[#08090d] py-20">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#E85D26]/20 via-transparent to-[#F7941D]/15 pointer-events-none" />
-          <div className="absolute inset-0 bg-dot-grid opacity-50 pointer-events-none" />
-          <div className="relative mx-auto max-w-7xl px-4 text-center">
+        <section className="py-16" style={{ background: "linear-gradient(135deg, #E85D26 0%, #F7941D 100%)" }}>
+          <div className="mx-auto max-w-7xl px-4 text-center">
             {hc.ctaTitle && <h2 className="text-2xl sm:text-3xl font-black text-white mb-3">{hc.ctaTitle}</h2>}
-            {hc.ctaDescription && <p className="text-white/50 mb-8 max-w-xl mx-auto">{hc.ctaDescription}</p>}
+            {hc.ctaDescription && <p className="text-white/80 mb-8 max-w-xl mx-auto">{hc.ctaDescription}</p>}
             <div className="flex flex-wrap justify-center gap-3">
-              <Link href="/contact" className="inline-flex items-center h-12 px-7 bg-gradient-to-r from-[#E85D26] to-[#F7941D] text-white font-bold rounded-xl transition-all hover:shadow-2xl hover:shadow-[#E85D26]/30">
+              <Link
+                href="/contact"
+                className="inline-flex items-center h-12 px-7 bg-white text-[#E85D26] font-bold rounded-lg transition-all hover:shadow-xl hover:shadow-black/20"
+              >
                 Nous contacter
               </Link>
               {hc.ctaPhone && (
-                <a href={`tel:${hc.ctaPhone.replace(/\s/g, "")}`} className="inline-flex items-center h-12 px-7 bg-white/8 border border-white/15 text-white hover:bg-white/12 font-semibold rounded-xl transition-colors backdrop-blur-sm">
+                <a href={`tel:${hc.ctaPhone.replace(/\s/g, "")}`} className="inline-flex items-center h-12 px-7 border-2 border-white/30 text-white hover:bg-white/10 font-semibold rounded-lg transition-colors">
                   {hc.ctaPhone}
                 </a>
               )}
