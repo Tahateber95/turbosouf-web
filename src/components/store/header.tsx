@@ -74,13 +74,13 @@ export function Header() {
 
       {/* Main nav */}
       <div className="mx-auto max-w-7xl px-4">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5 shrink-0">
-            <img src="/logo.png" alt="TurboSouf" className="w-12 h-12 sm:w-14 sm:h-14 rounded-full object-contain" />
+          <Link href="/" className="flex items-center gap-3 shrink-0">
+            <img src="/logo.png" alt="TurboSouf" className="w-14 h-14 sm:w-16 sm:h-16 rounded-full object-contain" />
             <div>
-              <span className="text-xl sm:text-2xl font-black tracking-tight text-[#0A0A0A]">TurboSouf</span>
-              <span className="hidden sm:block text-[11px] text-[#6B6B6B] -mt-0.5 tracking-wider uppercase">Specialiste Turbo</span>
+              <span className="text-2xl sm:text-3xl font-black tracking-tight text-[#0A0A0A]">TurboSouf</span>
+              <span className="hidden sm:block text-[12px] text-[#6B6B6B] -mt-0.5 tracking-wider uppercase">Specialiste Turbo</span>
             </div>
           </Link>
 
