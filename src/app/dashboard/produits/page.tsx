@@ -18,7 +18,6 @@ export default async function ProductsPage({ searchParams }: Props) {
 
   const apiParams = new URLSearchParams();
   apiParams.set("PageSize", "50");
-  apiParams.set("IncludeInactive", "true");
   if (params.search) apiParams.set("Search", String(params.search));
   if (params.category) apiParams.set("Category", String(params.category));
   if (params.stock === "low") apiParams.set("LowStock", "true");
