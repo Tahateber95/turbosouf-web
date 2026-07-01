@@ -15,18 +15,17 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "TurboSouf — Pièces Auto Reconditionnées",
+    default: "TurboSouf — Turbos Reconditionnés",
     template: "%s | TurboSouf",
   },
   description:
-    "Spécialiste en pièces automobiles reconditionnées : turbos, injecteurs, pompes HP. Garantie 2 ans, livraison 24-48h, paiement 3x/4x sans frais.",
+    "Spécialiste en turbos reconditionnés. Garantie 2 ans, livraison 24-48h, paiement 3x/4x sans frais.",
   keywords: [
     "turbo reconditionné",
-    "injecteur reconditionné",
-    "pompe HP",
-    "pièces auto",
-    "échange standard",
     "turbocompresseur",
+    "échange standard",
+    "turbo diesel",
+    "turbo essence",
   ],
 };
 
