@@ -5,7 +5,7 @@ export default async function VehiclesPage() {
   let makes: VehicleMake[] = [];
 
   try {
-    const res = await fetch(`${SERVER_API_URL}/api/v1/vehicles/makes`, { next: { revalidate: 60 } });
+    const res = await fetch(`${SERVER_API_URL}/api/v1/vehicles/makes?includeInactive=true`, { next: { revalidate: 0 } });
     const json = await res.json();
     makes = json.data || [];
   } catch {

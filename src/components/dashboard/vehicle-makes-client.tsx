@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Plus, Search, ChevronRight, Trash2, Loader2 } from "lucide-react";
+import { Plus, Search, ChevronRight, Trash2, Loader2, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
-import { adminCreateMake, adminDeleteMake } from "@/lib/admin-api";
+import { adminCreateMake, adminDeleteMake, adminUpdateMake } from "@/lib/admin-api";
 import { MakeLogo } from "@/components/store/make-logo";
 import type { VehicleMake } from "@/lib/api";
 
@@ -20,6 +20,7 @@ export function VehicleMakesClient({ initialMakes }: Props) {
   const [newLogo, setNewLogo] = useState("");
   const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [togglingId, setTogglingId] = useState<string | null>(null);
 
   const filtered = makes.filter(m => m.name.toLowerCase().includes(search.toLowerCase()));
 
@@ -38,6 +39,23 @@ export function VehicleMakesClient({ initialMakes }: Props) {
       toast.error(err instanceof Error ? err.message : "Erreur");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleToggleActive = async (make: VehicleMake) => {
+    setTogglingId(make.id);
+    try {
+      const updated = await adminUpdateMake(make.id, {
+        name: make.name,
+        logoUrl: make.logoUrl,
+        isActive: !make.isActive,
+      });
+      setMakes(prev => prev.map(m => m.id === make.id ? { ...m, isActive: updated.isActive } : m));
+      toast.success(updated.isActive ? `${make.name} activée` : `${make.name} désactivée`);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Erreur");
+    } finally {
+      setTogglingId(null);
     }
   };
 
@@ -120,10 +138,10 @@ export function VehicleMakesClient({ initialMakes }: Props) {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {filtered.map((make) => (
-          <div key={make.id} className="bg-white rounded-xl border border-gray-100 p-5 hover:shadow-md hover:border-gray-200 transition-all group relative">
+          <div key={make.id} className={`rounded-xl border p-5 hover:shadow-md transition-all group relative ${make.isActive ? "bg-white border-gray-100 hover:border-gray-200" : "bg-gray-50 border-gray-200 opacity-60"}`}>
             <Link href={`/dashboard/vehicules/${make.id}`} className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-lg bg-gray-50 flex items-center justify-center p-1.5">
+                <div className="w-11 h-11 rounded-lg bg-gray-100 flex items-center justify-center p-1.5">
                   <MakeLogo name={make.name} logoUrl={make.logoUrl} className="w-full h-full" />
                 </div>
                 <div>
@@ -133,13 +151,23 @@ export function VehicleMakesClient({ initialMakes }: Props) {
               </div>
               <ChevronRight className="h-4 w-4 text-gray-300 group-hover:text-[var(--ts-primary-500)] transition-colors" />
             </Link>
-            <button
-              onClick={() => handleDelete(make.id, make.name)}
-              disabled={deletingId === make.id}
-              className="absolute top-2 right-2 p-1.5 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all"
-            >
-              {deletingId === make.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
-            </button>
+            <div className="absolute top-2 right-2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all">
+              <button
+                onClick={() => handleToggleActive(make)}
+                disabled={togglingId === make.id}
+                title={make.isActive ? "Désactiver" : "Activer"}
+                className={`p-1.5 transition-colors ${make.isActive ? "text-green-500 hover:text-gray-400" : "text-gray-300 hover:text-green-500"}`}
+              >
+                {togglingId === make.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : make.isActive ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
+              </button>
+              <button
+                onClick={() => handleDelete(make.id, make.name)}
+                disabled={deletingId === make.id}
+                className="p-1.5 text-gray-300 hover:text-red-500 transition-colors"
+              >
+                {deletingId === make.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
+              </button>
+            </div>
           </div>
         ))}
         {filtered.length === 0 && (

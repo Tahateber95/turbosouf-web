@@ -5,6 +5,7 @@ import type {
   CreateProductRequest,
   UpdateProductRequest,
   CreateMakeRequest,
+  UpdateMakeRequest,
   CreateModelRequest,
   CreateEngineRequest,
   CreateCategoryRequest,
@@ -82,7 +83,7 @@ export const adminDeleteProduct = (id: string) =>
 export const adminCreateMake = (data: CreateMakeRequest) =>
   adminFetch<VehicleMake>("/vehicles/makes", { method: "POST", body: JSON.stringify(data) });
 
-export const adminUpdateMake = (id: string, data: CreateMakeRequest) =>
+export const adminUpdateMake = (id: string, data: UpdateMakeRequest) =>
   adminFetch<VehicleMake>(`/vehicles/makes/${id}`, { method: "PUT", body: JSON.stringify(data) });
 
 export const adminDeleteMake = (id: string) =>

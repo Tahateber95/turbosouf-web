@@ -114,6 +114,7 @@ export interface VehicleMake {
   slug: string;
   logoUrl: string | null;
   modelCount: number;
+  isActive: boolean;
 }
 
 export interface VehicleModel {
@@ -242,6 +243,11 @@ export interface CreateMakeRequest {
   name: string;
   slug?: string;
   logoUrl?: string | null;
+}
+
+export interface UpdateMakeRequest extends CreateMakeRequest {
+  isActive: boolean;
+  sortOrder?: number;
 }
 
 export interface CreateModelRequest {
