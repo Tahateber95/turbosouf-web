@@ -18,6 +18,7 @@ import type {
   VehicleEngine,
   Category,
   Brand,
+  CustomerListItem,
   OrderListItem,
   OrderDetail,
 } from "@/lib/api";
@@ -168,6 +169,14 @@ export const adminUpdateEngine = (id: string, data: CreateEngineRequest) =>
 
 export const adminDeleteEngine = (id: string) =>
   adminFetch<void>(`/vehicles/engines/${id}`, { method: "DELETE" });
+
+// Customers
+export const adminGetCustomers = (search = "", customerType = "", page = 1, pageSize = 50) => {
+  const params = new URLSearchParams({ page: String(page), pageSize: String(pageSize) });
+  if (search) params.set("search", search);
+  if (customerType) params.set("customerType", customerType);
+  return adminFetch<{ items: CustomerListItem[]; totalCount: number }>(`/customers?${params}`);
+};
 
 // Orders
 export const adminGetOrders = (page = 1, pageSize = 50) =>

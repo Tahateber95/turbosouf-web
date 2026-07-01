@@ -265,6 +265,19 @@ export interface CreateEngineRequest {
   yearTo?: number | null;
 }
 
+export interface CustomerListItem {
+  id: string;
+  fullName: string;
+  email: string;
+  phone: string | null;
+  customerType: string;
+  companyName: string | null;
+  b2bTier: string | null;
+  isB2BApproved: boolean;
+  orderCount: number;
+  createdAt: string;
+}
+
 export interface OrderListItem {
   id: string;
   orderNumber: string;
