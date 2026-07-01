@@ -1,11 +1,13 @@
-import Link from "next/link";
-import { ChevronLeft } from "lucide-react";
-import { notFound } from "next/navigation";
-import { StatusBadge } from "@/components/dashboard/status-badge";
-import { SERVER_API_URL, type OrderDetail } from "@/lib/api";
-import { OrderStatusUpdater } from "@/components/dashboard/order-status-updater";
+"use client";
 
-const API = SERVER_API_URL;
+import { useEffect, useState } from "react";
+import { use } from "react";
+import Link from "next/link";
+import { ChevronLeft, Loader2 } from "lucide-react";
+import { StatusBadge } from "@/components/dashboard/status-badge";
+import { type OrderDetail } from "@/lib/api";
+import { adminGetOrder } from "@/lib/admin-api";
+import { OrderStatusUpdater } from "@/components/dashboard/order-status-updater";
 
 function formatPrice(n: number) { return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(n); }
 function formatDate(iso: string) { return new Date(iso).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" }); }
@@ -14,22 +16,32 @@ interface Props {
   params: Promise<{ id: string }>;
 }
 
-export default async function OrderDetailPage({ params }: Props) {
-  const { id } = await params;
+export default function OrderDetailPage({ params }: Props) {
+  const { id } = use(params);
+  const [order, setOrder] = useState<OrderDetail | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  let order: OrderDetail | null = null;
+  useEffect(() => {
+    adminGetOrder(id)
+      .then(setOrder)
+      .catch((err) => setError(err instanceof Error ? err.message : "Erreur de chargement"))
+      .finally(() => setLoading(false));
+  }, [id]);
 
-  try {
-    const res = await fetch(`${API}/api/v1/orders/${id}`, { next: { revalidate: 0 } });
-    if (res.ok) {
-      const json = await res.json();
-      order = json.data;
-    }
-  } catch {
-    // fallback
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20 text-gray-400">
+        <Loader2 className="h-6 w-6 animate-spin mr-2" /> Chargement...
+      </div>
+    );
   }
 
-  if (!order) notFound();
+  if (error || !order) {
+    return (
+      <div className="py-12 text-center text-sm text-red-500">{error || "Commande introuvable."}</div>
+    );
+  }
 
   return (
     <div>
@@ -116,10 +128,8 @@ export default async function OrderDetailPage({ params }: Props) {
 
         {/* Sidebar */}
         <div className="space-y-6">
-          {/* Status update */}
           <OrderStatusUpdater orderId={order.id} currentStatus={order.status} />
 
-          {/* Customer */}
           <div className="bg-white rounded-xl border border-gray-100 p-5">
             <h2 className="text-sm font-bold text-gray-900 mb-3">Client</h2>
             <div className="space-y-1.5 text-sm">
@@ -129,7 +139,6 @@ export default async function OrderDetailPage({ params }: Props) {
             </div>
           </div>
 
-          {/* Shipping address */}
           <div className="bg-white rounded-xl border border-gray-100 p-5">
             <h2 className="text-sm font-bold text-gray-900 mb-3">Adresse de livraison</h2>
             <div className="text-sm text-gray-600 space-y-0.5">
@@ -141,7 +150,6 @@ export default async function OrderDetailPage({ params }: Props) {
             </div>
           </div>
 
-          {/* Billing address */}
           {order.billingAddress && (
             <div className="bg-white rounded-xl border border-gray-100 p-5">
               <h2 className="text-sm font-bold text-gray-900 mb-3">Adresse de facturation</h2>

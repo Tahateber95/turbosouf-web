@@ -110,6 +110,9 @@ export const adminDeleteEngine = (id: string) =>
   adminFetch<void>(`/vehicles/engines/${id}`, { method: "DELETE" });
 
 // Orders
+export const adminGetOrders = (page = 1, pageSize = 50) =>
+  adminFetch<{ items: OrderDetail[]; totalCount: number; page: number; pageSize: number }>(`/orders?Page=${page}&PageSize=${pageSize}`);
+
 export const adminGetOrder = (id: string) =>
   adminFetch<OrderDetail>(`/orders/${id}`);
 
