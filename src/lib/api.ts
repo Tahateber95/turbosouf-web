@@ -265,6 +265,18 @@ export interface CreateEngineRequest {
   yearTo?: number | null;
 }
 
+export interface OrderListItem {
+  id: string;
+  orderNumber: string;
+  customerName: string;
+  customerEmail: string;
+  status: string;
+  paymentStatus: string;
+  totalTTC: number;
+  itemCount: number;
+  createdAt: string;
+}
+
 export interface OrderDetail {
   id: string;
   orderNumber: string;
@@ -320,6 +332,8 @@ export const getProductBySlug = (slug: string) => api<ProductDetail>(`/products/
 export const getVehicleMakes = () => api<VehicleMake[]>("/vehicles/makes");
 export const getVehicleModels = (makeId: string) => api<VehicleModel[]>(`/vehicles/makes/${makeId}/models`);
 export const getVehicleEngines = (modelId: string) => api<VehicleEngine[]>(`/vehicles/models/${modelId}/engines`);
+export const getMyOrders = (token: string) => api<OrderListItem[]>("/orders/my", { token });
+export const getMyOrderById = (id: string, token: string) => api<OrderDetail>(`/orders/my/${id}`, { token });
 export const getOrderById = (id: string, token: string) => api<OrderDetail>(`/orders/${id}`, { token });
 
 // --- API functions (mutations) ---

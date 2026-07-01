@@ -5,13 +5,13 @@ import Link from "next/link";
 import { Loader2, Search } from "lucide-react";
 import { StatusBadge } from "@/components/dashboard/status-badge";
 import { adminGetOrders } from "@/lib/admin-api";
-import type { OrderDetail } from "@/lib/api";
+import type { OrderListItem } from "@/lib/api";
 
 function formatPrice(n: number) { return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(n); }
 function formatDate(iso: string) { return new Date(iso).toLocaleDateString("fr-FR"); }
 
 export default function OrdersPage() {
-  const [orders, setOrders] = useState<OrderDetail[]>([]);
+  const [orders, setOrders] = useState<OrderListItem[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -93,7 +93,7 @@ export default function OrdersPage() {
                       <p className="font-medium text-gray-900">{o.customerName}</p>
                       <p className="text-xs text-gray-400">{o.customerEmail}</p>
                     </td>
-                    <td className="px-5 py-3 text-center text-gray-600">{o.items.length}</td>
+                    <td className="px-5 py-3 text-center text-gray-600">{o.itemCount}</td>
                     <td className="px-5 py-3 text-right font-semibold">{formatPrice(o.totalTTC)}</td>
                     <td className="px-5 py-3"><StatusBadge status={o.status} /></td>
                     <td className="px-5 py-3"><StatusBadge status={o.paymentStatus} /></td>

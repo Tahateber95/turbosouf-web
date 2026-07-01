@@ -18,6 +18,7 @@ import type {
   VehicleEngine,
   Category,
   Brand,
+  OrderListItem,
   OrderDetail,
 } from "@/lib/api";
 
@@ -111,7 +112,7 @@ export const adminDeleteEngine = (id: string) =>
 
 // Orders
 export const adminGetOrders = (page = 1, pageSize = 50) =>
-  adminFetch<{ items: OrderDetail[]; totalCount: number; page: number; pageSize: number }>(`/orders?Page=${page}&PageSize=${pageSize}`);
+  adminFetch<{ items: OrderListItem[]; totalCount: number; page: number; pageSize: number }>(`/orders?Page=${page}&PageSize=${pageSize}`);
 
 export const adminGetOrder = (id: string) =>
   adminFetch<OrderDetail>(`/orders/${id}`);
