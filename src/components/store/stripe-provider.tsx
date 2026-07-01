@@ -5,7 +5,8 @@ import { Elements } from "@stripe/react-stripe-js";
 import type { ReactNode } from "react";
 
 const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ||
+  "pk_test_51PFv4YHobNL4f3GiDiQxFKcMygJwP01TRr5YoKUk1MRs0ZdapK7Hi3DCvsilIbnvRhUxe4r2PoJvupJvMNi15wcp00vYKxyAdZ"
 );
 
 export function StripeProvider({
