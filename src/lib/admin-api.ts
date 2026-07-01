@@ -24,10 +24,46 @@ import type {
 
 const API = CLIENT_API_URL;
 
+const TOKEN_KEY = "turbosouf_token";
+const REFRESH_KEY = "turbosouf_refresh";
+const USER_KEY = "turbosouf_user";
+
 function getToken(): string {
-  const token = localStorage.getItem("turbosouf_token");
-  if (!token) throw new Error("Non authentifié");
+  const token = localStorage.getItem(TOKEN_KEY);
+  if (!token) {
+    window.location.href = "/connexion?redirect=/dashboard";
+    throw new Error("Non authentifié");
+  }
   return token;
+}
+
+async function tryRefreshToken(): Promise<string | null> {
+  const refreshToken = localStorage.getItem(REFRESH_KEY);
+  if (!refreshToken) return null;
+
+  try {
+    const res = await fetch(`${API}/api/v1/auth/refresh`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refreshToken }),
+    });
+    if (!res.ok) return null;
+    const json = await res.json();
+    const { accessToken, refreshToken: newRefresh, profile } = json.data;
+    localStorage.setItem(TOKEN_KEY, accessToken);
+    localStorage.setItem(REFRESH_KEY, newRefresh);
+    localStorage.setItem(USER_KEY, JSON.stringify(profile));
+    return accessToken;
+  } catch {
+    return null;
+  }
+}
+
+function redirectToLogin() {
+  localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(REFRESH_KEY);
+  localStorage.removeItem(USER_KEY);
+  window.location.href = "/connexion?redirect=/dashboard";
 }
 
 async function adminFetch<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
@@ -40,6 +76,29 @@ async function adminFetch<T>(endpoint: string, options: RequestInit = {}): Promi
     },
     ...options,
   });
+
+  // Token expired — try to refresh once then retry
+  if (res.status === 401) {
+    const newToken = await tryRefreshToken();
+    if (!newToken) {
+      redirectToLogin();
+      throw new Error("Session expirée. Veuillez vous reconnecter.");
+    }
+    const retry = await fetch(`${API}/api/v1${endpoint}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${newToken}`,
+        ...options.headers,
+      },
+      ...options,
+    });
+    const retryJson = await retry.json().catch(() => ({}));
+    if (!retry.ok) {
+      if (retry.status === 401) redirectToLogin();
+      throw new Error(retryJson.error?.message || `Erreur ${retry.status}`);
+    }
+    return retryJson.data as T;
+  }
 
   const json = await res.json().catch(() => ({}));
 

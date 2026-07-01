@@ -57,20 +57,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Load from localStorage on mount
   useEffect(() => {
-    const token = localStorage.getItem(TOKEN_KEY);
-    const userStr = localStorage.getItem(USER_KEY);
-    if (token && userStr) {
-      try {
-        const user = JSON.parse(userStr);
-        setState({ user, token, isLoading: false });
-      } catch {
-        localStorage.removeItem(TOKEN_KEY);
-        localStorage.removeItem(USER_KEY);
+    const load = () => {
+      const token = localStorage.getItem(TOKEN_KEY);
+      const userStr = localStorage.getItem(USER_KEY);
+      if (token && userStr) {
+        try {
+          const user = JSON.parse(userStr);
+          setState({ user, token, isLoading: false });
+        } catch {
+          localStorage.removeItem(TOKEN_KEY);
+          localStorage.removeItem(USER_KEY);
+          setState({ user: null, token: null, isLoading: false });
+        }
+      } else {
         setState({ user: null, token: null, isLoading: false });
       }
-    } else {
-      setState({ user: null, token: null, isLoading: false });
-    }
+    };
+
+    load();
+
+    // Sync state when adminFetch silently refreshes the token
+    window.addEventListener("storage", load);
+    return () => window.removeEventListener("storage", load);
   }, []);
 
   const saveAuth = useCallback((token: string, refreshToken: string, user: User) => {
