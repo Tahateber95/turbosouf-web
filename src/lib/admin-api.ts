@@ -178,6 +178,9 @@ export const adminGetCustomers = (search = "", customerType = "", page = 1, page
   return adminFetch<{ items: CustomerListItem[]; totalCount: number }>(`/customers?${params}`);
 };
 
+export const adminGetCustomer = (id: string) =>
+  adminFetch<CustomerListItem & { siret?: string; sageCustomerId?: string }>(`/customers/${id}`);
+
 // Orders
 export const adminGetOrders = (page = 1, pageSize = 50) =>
   adminFetch<{ items: OrderListItem[]; totalCount: number; page: number; pageSize: number }>(`/orders?Page=${page}&PageSize=${pageSize}`);
