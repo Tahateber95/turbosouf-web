@@ -27,6 +27,7 @@ export function DashboardProductsFilters({ categories, activeSearch, activeCateg
     } else {
       params.delete(key);
     }
+    params.delete("page"); // reset to page 1 on filter change
     router.push(`${pathname}?${params.toString()}`);
   };
 

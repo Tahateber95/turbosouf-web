@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Plus } from "lucide-react";
+import { Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import { StatusBadge } from "@/components/dashboard/status-badge";
 import { SERVER_API_URL, type ProductListItem, type Category } from "@/lib/api";
 import { DashboardProductsFilters, DeleteProductButton } from "@/components/dashboard/products-list-actions";
@@ -16,8 +16,12 @@ export default async function ProductsPage({ searchParams }: Props) {
   let totalCount = 0;
   let categories: Category[] = [];
 
+  const PAGE_SIZE = 25;
+  const currentPage = params.page ? parseInt(String(params.page)) : 1;
+
   const apiParams = new URLSearchParams();
-  apiParams.set("PageSize", "50");
+  apiParams.set("PageSize", String(PAGE_SIZE));
+  apiParams.set("Page", String(currentPage));
   if (params.search) apiParams.set("Search", String(params.search));
   if (params.category) apiParams.set("Category", String(params.category));
   if (params.stock === "low") apiParams.set("LowStock", "true");
@@ -34,6 +38,18 @@ export default async function ProductsPage({ searchParams }: Props) {
   } catch {
     // fallback to empty
   }
+
+  const totalPages = Math.ceil(totalCount / PAGE_SIZE);
+
+  const buildPageUrl = (page: number) => {
+    const p = new URLSearchParams();
+    if (params.search) p.set("search", String(params.search));
+    if (params.category) p.set("category", String(params.category));
+    if (params.stock) p.set("stock", String(params.stock));
+    if (page > 1) p.set("page", String(page));
+    const qs = p.toString();
+    return `/dashboard/produits${qs ? `?${qs}` : ""}`;
+  };
 
   return (
     <div>
@@ -121,6 +137,63 @@ export default async function ProductsPage({ searchParams }: Props) {
           </table>
         </div>
       </div>
+
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-2 mt-6">
+          <Link
+            href={buildPageUrl(currentPage - 1)}
+            className={`h-9 w-9 flex items-center justify-center rounded-lg border text-sm transition-colors ${
+              currentPage <= 1
+                ? "border-gray-100 text-gray-300 pointer-events-none"
+                : "border-gray-200 text-gray-600 hover:border-[var(--ts-primary-500)] hover:text-[var(--ts-primary-500)]"
+            }`}
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Link>
+
+          {Array.from({ length: totalPages }, (_, i) => i + 1)
+            .filter((p) => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 2)
+            .reduce<(number | "...")[]>((acc, p, i, arr) => {
+              if (i > 0 && p - (arr[i - 1] as number) > 1) acc.push("...");
+              acc.push(p);
+              return acc;
+            }, [])
+            .map((p, i) =>
+              p === "..." ? (
+                <span key={`e-${i}`} className="h-9 w-9 flex items-center justify-center text-sm text-gray-400">…</span>
+              ) : (
+                <Link
+                  key={p}
+                  href={buildPageUrl(p as number)}
+                  className={`h-9 w-9 flex items-center justify-center rounded-lg border text-sm font-medium transition-colors ${
+                    p === currentPage
+                      ? "bg-[var(--ts-primary-500)] border-[var(--ts-primary-500)] text-white"
+                      : "border-gray-200 text-gray-600 hover:border-[var(--ts-primary-500)] hover:text-[var(--ts-primary-500)]"
+                  }`}
+                >
+                  {p}
+                </Link>
+              )
+            )}
+
+          <Link
+            href={buildPageUrl(currentPage + 1)}
+            className={`h-9 w-9 flex items-center justify-center rounded-lg border text-sm transition-colors ${
+              currentPage >= totalPages
+                ? "border-gray-100 text-gray-300 pointer-events-none"
+                : "border-gray-200 text-gray-600 hover:border-[var(--ts-primary-500)] hover:text-[var(--ts-primary-500)]"
+            }`}
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Link>
+        </div>
+      )}
+
+      {totalPages > 1 && (
+        <p className="text-center text-xs text-gray-400 mt-3">
+          Page {currentPage} sur {totalPages} · {totalCount} produits
+        </p>
+      )}
     </div>
   );
 }
