@@ -542,12 +542,13 @@ export default function CheckoutPage() {
             {/* Steps 3 & 4: Wrapped in Stripe Elements */}
             {stripeSteps && (
               <StripeProvider clientSecret={clientSecret}>
-                {step === "payment" && (
+                {/* Keep PaymentElement mounted (hidden) during review so confirmPayment can collect card data */}
+                <div className={step === "payment" ? "" : "hidden"}>
                   <PaymentStepForm
                     onBack={() => setStep("shipping")}
                     onReady={() => setStep("review")}
                   />
-                )}
+                </div>
                 {step === "review" && (
                   <ReviewStep
                     items={items}
