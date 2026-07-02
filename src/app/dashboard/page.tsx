@@ -1,19 +1,15 @@
-import { ShoppingCart, DollarSign, Clock, AlertTriangle } from "lucide-react";
-import { StatsCard } from "@/components/dashboard/stats-card";
+import { AlertTriangle } from "lucide-react";
 import { StatusBadge } from "@/components/dashboard/status-badge";
+import { DashboardStats } from "@/components/dashboard/dashboard-stats";
 import Link from "next/link";
 import { SERVER_API_URL, type ProductListItem } from "@/lib/api";
-
-function formatPrice(amount: number): string {
-  return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(amount);
-}
 
 export default async function DashboardPage() {
   let products: ProductListItem[] = [];
   let totalProducts = 0;
 
   try {
-    const res = await fetch(`${SERVER_API_URL}/api/v1/products?PageSize=50`, { next: { revalidate: 30 } });
+    const res = await fetch(`${SERVER_API_URL}/api/v1/products?PageSize=50&IncludeInactive=true`, { next: { revalidate: 60 } });
     const json = await res.json();
     products = json.data?.items || [];
     totalProducts = json.data?.totalCount || 0;
@@ -21,7 +17,7 @@ export default async function DashboardPage() {
     // fallback
   }
 
-  const lowStock = products.filter(p => p.stockQuantity <= 5);
+  const lowStock = products.filter(p => p.stockQuantity > 0 && p.stockQuantity <= 5);
 
   return (
     <div>
@@ -33,17 +29,13 @@ export default async function DashboardPage() {
         <p className="text-xs text-gray-400">{totalProducts} produits en catalogue</p>
       </div>
 
-      {/* Stats */}
+      {/* Stats — real data from analytics API */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        {/* TODO: wire to orders API when available */}
-        <StatsCard icon={ShoppingCart} label="Commandes aujourd'hui" value="—" change="API en attente" changeType="neutral" />
-        <StatsCard icon={DollarSign} label="CA aujourd'hui" value="—" change="API en attente" changeType="neutral" />
-        <StatsCard icon={Clock} label="En attente" value="—" change="API en attente" changeType="neutral" />
-        <StatsCard icon={AlertTriangle} label="Stock faible" value={String(lowStock.length)} change="Produits à réapprovisionner" changeType={lowStock.length > 0 ? "negative" : "positive"} />
+        <DashboardStats />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Recent Orders - placeholder until orders API */}
+        {/* Recent Orders */}
         <div className="lg:col-span-2 bg-white rounded-xl border border-gray-100 overflow-hidden">
           <div className="flex items-center justify-between px-5 py-4 border-b border-gray-50">
             <h2 className="text-sm font-bold text-gray-900">Dernières commandes</h2>
@@ -52,7 +44,7 @@ export default async function DashboardPage() {
             </Link>
           </div>
           <div className="px-5 py-8 text-center text-sm text-gray-400">
-            Les commandes apparaîtront ici une fois l&apos;API connectée.
+            Consultez la liste complète des commandes pour voir le détail.
           </div>
         </div>
 
@@ -65,7 +57,7 @@ export default async function DashboardPage() {
                 <AlertTriangle className="h-4 w-4 text-amber-500" />
                 Stock faible
               </h2>
-              <Link href="/dashboard/produits" className="text-xs font-medium text-[var(--ts-primary-500)] hover:underline">
+              <Link href="/dashboard/produits?stock=low" className="text-xs font-medium text-[var(--ts-primary-500)] hover:underline">
                 Gérer →
               </Link>
             </div>

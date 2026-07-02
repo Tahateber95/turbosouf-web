@@ -192,5 +192,16 @@ export const adminGetOrders = (page = 1, pageSize = 25, search = "", status = ""
 export const adminGetOrder = (id: string) =>
   adminFetch<OrderDetail>(`/orders/${id}`);
 
+// Analytics
+export const adminGetDashboardStats = () =>
+  adminFetch<{
+    todayOrders: number;
+    todayRevenue: number;
+    pendingOrders: number;
+    lowStockCount: number;
+    totalProducts: number;
+    totalCustomers: number;
+  }>("/analytics/dashboard");
+
 export const adminUpdateOrderStatus = (id: string, status: string) =>
   adminFetch<void>(`/orders/${id}/status`, { method: "PATCH", body: JSON.stringify({ status }) });
