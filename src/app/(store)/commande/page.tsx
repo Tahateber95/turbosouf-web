@@ -88,7 +88,7 @@ function ReviewStep({
   totalDeposit,
   onBack,
 }: {
-  items: { productId: string; name: string; quantity: number; priceTTC: number }[];
+  items: { productId: string; name: string; quantity: number; priceTTC: number; selectedAddOns: { id: string; name: string; priceTTC: number }[] }[];
   form: CheckoutForm;
   grandTotal: number;
   shipping: number;
@@ -135,15 +135,23 @@ function ReviewStep({
 
       {/* Order items */}
       <div className="space-y-2 mb-5">
-        {items.map((item) => (
-          <div key={item.productId} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
-            <div>
-              <p className="text-sm font-medium text-gray-900">{item.name}</p>
-              <p className="text-xs text-gray-400">Qté: {item.quantity} × {formatPrice(item.priceTTC)}</p>
+        {items.map((item) => {
+          const addOnsTTC = item.selectedAddOns.reduce((s, a) => s + a.priceTTC, 0);
+          return (
+            <div key={item.productId} className="py-2 border-b border-gray-50 last:border-0">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-900">{item.name}</p>
+                  <p className="text-xs text-gray-400">Qté: {item.quantity} × {formatPrice(item.priceTTC)}</p>
+                </div>
+                <p className="text-sm font-semibold">{formatPrice((item.priceTTC + addOnsTTC) * item.quantity)}</p>
+              </div>
+              {item.selectedAddOns.map((a) => (
+                <p key={a.id} className="text-xs text-gray-400 mt-0.5 pl-2">+ {a.name} ({formatPrice(a.priceTTC)})</p>
+              ))}
             </div>
-            <p className="text-sm font-semibold">{formatPrice(item.priceTTC * item.quantity)}</p>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Totals */}
@@ -302,7 +310,11 @@ export default function CheckoutPage() {
     try {
       const result = await createCheckoutSession(
         {
-          items: items.map((i) => ({ productId: i.productId, quantity: i.quantity })),
+          items: items.map((i) => ({
+            productId: i.productId,
+            quantity: i.quantity,
+            selectedAddOns: i.selectedAddOns.map((a) => ({ addOnId: a.id, quantity: 1 })),
+          })),
           shippingAddress: {
             fullName: form.shippingFullName,
             street: form.shippingStreet,
@@ -551,7 +563,13 @@ export default function CheckoutPage() {
                 </div>
                 {step === "review" && (
                   <ReviewStep
-                    items={items}
+                    items={items.map((i) => ({
+                      productId: i.productId,
+                      name: i.name,
+                      quantity: i.quantity,
+                      priceTTC: i.priceTTC,
+                      selectedAddOns: i.selectedAddOns,
+                    }))}
                     form={form}
                     grandTotal={grandTotal}
                     shipping={shipping}
@@ -570,13 +588,24 @@ export default function CheckoutPage() {
             <div className="bg-white rounded-xl border border-gray-100 p-5 sticky top-24">
               <h3 className="text-sm font-bold text-gray-900 mb-3">Votre commande</h3>
 
-              <div className="space-y-2 mb-3">
-                {items.map((item) => (
-                  <div key={item.productId} className="flex justify-between text-xs">
-                    <span className="text-gray-600 truncate mr-2">{item.name} ×{item.quantity}</span>
-                    <span className="font-medium shrink-0">{formatPrice(item.priceTTC * item.quantity)}</span>
-                  </div>
-                ))}
+              <div className="space-y-3 mb-3">
+                {items.map((item) => {
+                  const addOnsTTC = item.selectedAddOns.reduce((s, a) => s + a.priceTTC, 0);
+                  return (
+                    <div key={item.productId}>
+                      <div className="flex justify-between text-xs">
+                        <span className="text-gray-600 truncate mr-2">{item.name} ×{item.quantity}</span>
+                        <span className="font-medium shrink-0">{formatPrice((item.priceTTC + addOnsTTC) * item.quantity)}</span>
+                      </div>
+                      {item.selectedAddOns.map((a) => (
+                        <div key={a.id} className="flex justify-between text-[10px] mt-0.5 pl-2">
+                          <span className="text-gray-400 truncate mr-2">+ {a.name}</span>
+                          <span className="text-gray-400 shrink-0">{formatPrice(a.priceTTC)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })}
               </div>
 
               <div className="border-t border-gray-100 pt-3 space-y-1.5 text-sm">

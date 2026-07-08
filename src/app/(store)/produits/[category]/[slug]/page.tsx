@@ -191,6 +191,7 @@ export default async function ProductDetailPage({
                 priceTTC={product.priceTTC}
                 depositAmount={product.depositAmount}
                 stockQuantity={product.stockQuantity}
+                addOns={product.addOns}
               />
             </div>
 

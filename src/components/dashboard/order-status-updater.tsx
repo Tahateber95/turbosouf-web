@@ -12,6 +12,7 @@ const ORDER_STATUSES = [
   { value: "Shipped", label: "Expédiée" },
   { value: "Delivered", label: "Livrée" },
   { value: "Cancelled", label: "Annulée" },
+  { value: "Refunded", label: "Remboursée" },
 ];
 
 interface Props {

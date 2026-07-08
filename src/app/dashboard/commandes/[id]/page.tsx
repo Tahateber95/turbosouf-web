@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 import { use } from "react";
 import Link from "next/link";
-import { ChevronLeft, Loader2 } from "lucide-react";
+import { ChevronLeft, Loader2, AlertTriangle, RotateCcw } from "lucide-react";
 import { StatusBadge } from "@/components/dashboard/status-badge";
 import { type OrderDetail } from "@/lib/api";
-import { adminGetOrder } from "@/lib/admin-api";
+import { adminGetOrder, adminRefundOrder } from "@/lib/admin-api";
 import { OrderStatusUpdater } from "@/components/dashboard/order-status-updater";
 
 function formatPrice(n: number) { return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(n); }
@@ -21,6 +21,8 @@ export default function OrderDetailPage({ params }: Props) {
   const [order, setOrder] = useState<OrderDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [refunding, setRefunding] = useState(false);
+  const [refundError, setRefundError] = useState<string | null>(null);
 
   useEffect(() => {
     adminGetOrder(id)
@@ -28,6 +30,24 @@ export default function OrderDetailPage({ params }: Props) {
       .catch((err) => setError(err instanceof Error ? err.message : "Erreur de chargement"))
       .finally(() => setLoading(false));
   }, [id]);
+
+  const handleRefund = async () => {
+    if (!order) return;
+    const confirmed = window.confirm(
+      `Rembourser cette commande ?\n\nMontant : ${new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(order.totalTTC)}\n\nCette action est irréversible.`
+    );
+    if (!confirmed) return;
+    setRefunding(true);
+    setRefundError(null);
+    try {
+      await adminRefundOrder(id);
+      window.location.reload();
+    } catch (err) {
+      setRefundError(err instanceof Error ? err.message : "Échec du remboursement.");
+    } finally {
+      setRefunding(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -58,6 +78,22 @@ export default function OrderDetailPage({ params }: Props) {
           <StatusBadge status={order.status} />
         </div>
       </div>
+
+      {/* Refund info banner */}
+      {order.paymentStatus === "Refunded" && (
+        <div className="mb-6 flex items-center gap-3 p-4 rounded-xl bg-purple-50 border border-purple-100 text-sm text-purple-800">
+          <RotateCcw className="h-4 w-4 shrink-0" />
+          <span>Commande remboursée — {formatPrice(order.totalTTC)}</span>
+        </div>
+      )}
+
+      {/* Refund error */}
+      {refundError && (
+        <div className="mb-6 flex items-center gap-3 p-4 rounded-xl bg-red-50 border border-red-100 text-sm text-red-700">
+          <AlertTriangle className="h-4 w-4 shrink-0" />
+          {refundError}
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main content */}
@@ -129,6 +165,21 @@ export default function OrderDetailPage({ params }: Props) {
         {/* Sidebar */}
         <div className="space-y-6">
           <OrderStatusUpdater orderId={order.id} currentStatus={order.status} />
+
+          {order.paymentStatus === "Paid" && order.status !== "Refunded" && (
+            <div className="bg-white rounded-xl border border-gray-100 p-5">
+              <h2 className="text-sm font-bold text-gray-900 mb-3">Remboursement</h2>
+              <p className="text-xs text-gray-500 mb-3">Remboursement intégral via Stripe. Le stock sera restauré automatiquement.</p>
+              <button
+                onClick={handleRefund}
+                disabled={refunding}
+                className="w-full h-10 flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50"
+              >
+                {refunding ? <Loader2 className="h-4 w-4 animate-spin" /> : <RotateCcw className="h-4 w-4" />}
+                {refunding ? "Remboursement..." : "Rembourser la commande"}
+              </button>
+            </div>
+          )}
 
           <div className="bg-white rounded-xl border border-gray-100 p-5">
             <h2 className="text-sm font-bold text-gray-900 mb-3">Client</h2>

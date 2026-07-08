@@ -49,6 +49,17 @@ export interface ProductListItem {
   vehicleSummary: string | null;
 }
 
+export interface ProductAddOn {
+  id: string;
+  name: string;
+  description: string | null;
+  priceHT: number;
+  tvaRate: number;
+  priceTTC: number;
+  isActive: boolean;
+  sortOrder: number;
+}
+
 export interface ProductDetail extends ProductListItem {
   description: string;
   tvaRate: number;
@@ -62,6 +73,7 @@ export interface ProductDetail extends ProductListItem {
   images: ProductImage[];
   attributes: ProductAttribute[];
   compatibleVehicles: VehicleCompatibility[];
+  addOns: ProductAddOn[];
 }
 
 export interface ProductImage {
@@ -159,7 +171,7 @@ export interface Faq {
 
 // Checkout / Stripe types
 export interface CheckoutRequest {
-  items: { productId: string; quantity: number }[];
+  items: { productId: string; quantity: number; selectedAddOns?: { addOnId: string; quantity: number }[] }[];
   shippingAddress: {
     fullName: string;
     street: string;
@@ -210,6 +222,7 @@ export interface CreateProductRequest {
   images?: { url: string; altText?: string | null; sortOrder: number; isPrimary: boolean }[];
   attributes?: { key: string; value: string; sortOrder: number }[];
   compatibleVehicleEngineIds?: string[];
+  addOns?: { name: string; description?: string | null; priceHT: number; tvaRate: number; isActive: boolean; sortOrder: number }[];
 }
 
 export type UpdateProductRequest = Partial<CreateProductRequest>;

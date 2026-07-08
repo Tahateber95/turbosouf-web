@@ -18,6 +18,7 @@ const STATUS_LABELS: Record<string, { label: string; color: string }> = {
   Shipped:   { label: "Expédiée",        color: "bg-indigo-100 text-indigo-700" },
   Delivered: { label: "Livrée",          color: "bg-emerald-100 text-emerald-700" },
   Cancelled: { label: "Annulée",         color: "bg-red-100 text-red-700" },
+  Refunded:  { label: "Remboursée",      color: "bg-purple-100 text-purple-700" },
 };
 
 interface Props { params: Promise<{ id: string }> }

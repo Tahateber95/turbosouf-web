@@ -42,6 +42,14 @@ const productSchema = z.object({
     value: z.string().min(1, "Valeur requise"),
     sortOrder: z.coerce.number().default(0),
   })).default([]),
+  addOns: z.array(z.object({
+    name: z.string().min(1, "Nom requis"),
+    description: z.string().nullable().optional(),
+    priceHT: z.coerce.number().min(0, "Prix requis"),
+    tvaRate: z.coerce.number().min(0).max(100).default(20),
+    isActive: z.boolean().default(true),
+    sortOrder: z.coerce.number().default(0),
+  })).default([]),
 });
 
 type ProductFormData = z.infer<typeof productSchema>;
@@ -104,6 +112,14 @@ export function ProductForm({ mode, product, categories, brands, makes }: Props)
       metaDescription: product.metaDescription,
       images: product.images || [],
       attributes: product.attributes || [],
+      addOns: (product.addOns || []).map(a => ({
+        name: a.name,
+        description: a.description,
+        priceHT: a.priceHT,
+        tvaRate: a.tvaRate,
+        isActive: a.isActive,
+        sortOrder: a.sortOrder,
+      })),
     } : {
       tvaRate: 20,
       condition: "Refurbished",
@@ -112,11 +128,13 @@ export function ProductForm({ mode, product, categories, brands, makes }: Props)
       stockQuantity: 0,
       images: [],
       attributes: [],
+      addOns: [],
     },
   });
 
   const { fields: imageFields, append: addImage, remove: removeImage } = useFieldArray({ control, name: "images" });
   const { fields: attrFields, append: addAttr, remove: removeAttr } = useFieldArray({ control, name: "attributes" });
+  const { fields: addOnFields, append: addAddOn, remove: removeAddOn } = useFieldArray({ control, name: "addOns" });
 
   // Fetch models when make changes
   useEffect(() => {
@@ -180,6 +198,7 @@ export function ProductForm({ mode, product, categories, brands, makes }: Props)
         metaTitle: data.metaTitle || null,
         metaDescription: data.metaDescription || null,
         compatibleVehicleEngineIds: compatibleEngineIds,
+        addOns: data.addOns.map((a, i) => ({ ...a, sortOrder: i })),
       };
 
       if (mode === "create") {
@@ -408,6 +427,76 @@ export function ProductForm({ mode, product, categories, brands, makes }: Props)
           </div>
         ) : (
           <p className="text-sm text-gray-400 text-center py-4">Aucun attribut.</p>
+        )}
+      </section>
+
+      {/* Add-ons */}
+      <section className="bg-white rounded-xl border border-gray-100 p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h2 className="text-lg font-bold text-gray-900">Options additionnelles</h2>
+            <p className="text-xs text-gray-400 mt-0.5">Articles optionnels que le client peut ajouter à sa commande (ex: Kit Joint, Kit Turbo Complet…)</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => addAddOn({ name: "", description: "", priceHT: 0, tvaRate: 20, isActive: true, sortOrder: addOnFields.length })}
+            className="text-sm text-[var(--ts-primary-500)] hover:underline flex items-center gap-1"
+          >
+            <Plus className="h-4 w-4" />
+            Ajouter
+          </button>
+        </div>
+        {addOnFields.length > 0 ? (
+          <div className="space-y-3">
+            {addOnFields.map((field, idx) => (
+              <div key={field.id} className="grid grid-cols-1 sm:grid-cols-[1fr_auto_auto_auto] gap-3 p-3 rounded-lg bg-gray-50 border border-gray-100 items-start">
+                <div className="space-y-2">
+                  <input
+                    {...register(`addOns.${idx}.name`)}
+                    placeholder="Nom de l'option (ex: Kit Joint)"
+                    className="w-full h-9 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]"
+                  />
+                  {errors.addOns?.[idx]?.name && <p className="text-xs text-red-500">{errors.addOns[idx]?.name?.message}</p>}
+                  <input
+                    {...register(`addOns.${idx}.description`)}
+                    placeholder="Description (optionnel)"
+                    className="w-full h-9 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[10px] font-medium text-gray-500 uppercase">Prix HT (€)</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    {...register(`addOns.${idx}.priceHT`)}
+                    className="w-28 h-9 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]"
+                  />
+                  {errors.addOns?.[idx]?.priceHT && <p className="text-xs text-red-500">{errors.addOns[idx]?.priceHT?.message}</p>}
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[10px] font-medium text-gray-500 uppercase">TVA (%)</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    {...register(`addOns.${idx}.tvaRate`)}
+                    className="w-20 h-9 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]"
+                  />
+                </div>
+                <div className="flex flex-col items-center gap-1.5 pt-5">
+                  <label className="flex items-center gap-1.5 text-xs text-gray-600 cursor-pointer">
+                    <input type="checkbox" {...register(`addOns.${idx}.isActive`)} className="rounded border-gray-300 text-[var(--ts-primary-500)]" />
+                    Actif
+                  </label>
+                  <button type="button" onClick={() => removeAddOn(idx)} className="text-red-500 hover:text-red-700 mt-1">
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-gray-400 text-center py-4">Aucune option additionnelle.</p>
         )}
       </section>
 

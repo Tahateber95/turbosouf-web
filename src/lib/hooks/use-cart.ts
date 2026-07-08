@@ -2,6 +2,14 @@
 
 import { useState, useCallback, useEffect } from "react";
 
+export interface CartAddOn {
+  id: string;
+  name: string;
+  priceHT: number;
+  tvaRate: number;
+  priceTTC: number;
+}
+
 export interface CartItem {
   productId: string;
   name: string;
@@ -12,6 +20,7 @@ export interface CartItem {
   depositAmount: number | null;
   quantity: number;
   stockQuantity: number;
+  selectedAddOns: CartAddOn[];
 }
 
 interface CartState {
@@ -55,7 +64,11 @@ export function useCart() {
         if (existing) {
           newItems = prev.items.map((i) =>
             i.productId === item.productId
-              ? { ...i, quantity: Math.min(i.quantity + quantity, i.stockQuantity) }
+              ? {
+                  ...i,
+                  quantity: Math.min(i.quantity + quantity, i.stockQuantity),
+                  selectedAddOns: item.selectedAddOns,
+                }
               : i
           );
         } else {
@@ -98,8 +111,17 @@ export function useCart() {
   }, [persist]);
 
   const itemCount = cart.items.reduce((sum, i) => sum + i.quantity, 0);
-  const subtotalHT = cart.items.reduce((sum, i) => sum + i.priceHT * i.quantity, 0);
-  const subtotalTTC = cart.items.reduce((sum, i) => sum + i.priceTTC * i.quantity, 0);
+
+  const subtotalHT = cart.items.reduce((sum, i) => {
+    const addOnsHT = i.selectedAddOns.reduce((a, ao) => a + ao.priceHT, 0);
+    return sum + (i.priceHT + addOnsHT) * i.quantity;
+  }, 0);
+
+  const subtotalTTC = cart.items.reduce((sum, i) => {
+    const addOnsTTC = i.selectedAddOns.reduce((a, ao) => a + ao.priceTTC, 0);
+    return sum + (i.priceTTC + addOnsTTC) * i.quantity;
+  }, 0);
+
   const totalDeposit = cart.items.reduce(
     (sum, i) => sum + (i.depositAmount || 0) * i.quantity,
     0

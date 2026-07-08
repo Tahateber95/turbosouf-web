@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ShoppingCart, Check, Minus, Plus } from "lucide-react";
 import { useCartContext } from "@/lib/cart-context";
+import type { CartAddOn } from "@/lib/hooks/use-cart";
 
 interface AddToCartProps {
   product: {
@@ -14,6 +15,7 @@ interface AddToCartProps {
     priceTTC: number;
     depositAmount: number | null;
     stockQuantity: number;
+    selectedAddOns?: CartAddOn[];
   };
   showQuantity?: boolean;
   className?: string;
@@ -29,7 +31,7 @@ export function AddToCartButton({ product, showQuantity = false, className = "" 
 
   const handleAdd = () => {
     if (maxQty <= 0) return;
-    addItem(product, quantity);
+    addItem({ ...product, selectedAddOns: product.selectedAddOns ?? [] }, quantity);
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
     setQuantity(1);

@@ -205,3 +205,6 @@ export const adminGetDashboardStats = () =>
 
 export const adminUpdateOrderStatus = (id: string, status: string) =>
   adminFetch<void>(`/orders/${id}/status`, { method: "PATCH", body: JSON.stringify({ status }) });
+
+export const adminRefundOrder = (id: string) =>
+  adminFetch<void>(`/orders/${id}/refund`, { method: "POST" });
