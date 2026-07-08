@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { ShieldCheck, Truck, RotateCcw, Package, ChevronRight, Camera } from "lucide-react";
+import { ShieldCheck, Truck, RotateCcw, Package, ChevronRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { notFound } from "next/navigation";
-import { ProductIllustration } from "@/components/store/product-illustration";
 import { PdpAddToCart } from "@/components/store/pdp-add-to-cart";
+import { ProductImageGallery } from "@/components/store/product-image-gallery";
 import { SERVER_API_URL, type ProductDetail } from "@/lib/api";
 
 const API = SERVER_API_URL;
@@ -65,46 +65,16 @@ export default async function ProductDetailPage({
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
           {/* Left: Image Gallery */}
           <div className="space-y-3">
-            {/* Main image */}
-            <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-              {product.images && product.images.length > 0 ? (
-                <div className="aspect-square relative bg-gray-50">
-                  <img
-                    src={product.images.find(img => img.isPrimary)?.url || product.images[0].url}
-                    alt={product.images.find(img => img.isPrimary)?.altText || product.name}
-                    className="w-full h-full object-contain p-6"
-                  />
-                  <div className="absolute bottom-3 right-3 flex items-center gap-1 bg-black/50 text-white text-[10px] font-medium px-2 py-1 rounded-full backdrop-blur-sm">
-                    <Camera className="h-3 w-3" />
-                    {product.images.length} photo{product.images.length > 1 ? "s" : ""}
-                  </div>
-                </div>
-              ) : (
-                <ProductIllustration
-                  categoryName={product.categoryName}
-                  brandName={product.brandName}
-                  sku={product.sku}
-                  condition={product.condition}
-                  size="lg"
-                />
-              )}
-            </div>
+            <ProductImageGallery
+              images={product.images || []}
+              productName={product.name}
+              categoryName={product.categoryName}
+              brandName={product.brandName}
+              sku={product.sku}
+              condition={product.condition}
+            />
 
-            {/* Thumbnail strip */}
-            {product.images && product.images.length > 1 && (
-              <div className="flex gap-2 overflow-x-auto pb-1">
-                {product.images.map((img, i) => (
-                  <div
-                    key={i}
-                    className="w-20 h-20 rounded-lg border-2 border-gray-100 hover:border-[var(--ts-primary-500)] overflow-hidden shrink-0 bg-gray-50 cursor-pointer transition-colors"
-                  >
-                    <img src={img.url} alt={img.altText || `Vue ${i + 1}`} className="w-full h-full object-contain p-1" />
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* Key info strip below image (no images case) */}
+            {/* Key info strip (no images case) */}
             {(!product.images || product.images.length === 0) && (
               <div className="grid grid-cols-3 gap-2">
                 <div className="bg-white rounded-lg border border-gray-100 p-3 text-center">

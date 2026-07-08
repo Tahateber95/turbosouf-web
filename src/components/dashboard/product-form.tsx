@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Save, Plus, Trash2, Loader2 } from "lucide-react";
+import { Save, Plus, Trash2, Loader2, Upload, ImageIcon, Star } from "lucide-react";
 import { toast } from "sonner";
-import { adminCreateProduct, adminUpdateProduct, adminDeleteProduct } from "@/lib/admin-api";
+import { adminCreateProduct, adminUpdateProduct, adminDeleteProduct, adminUploadProductImage } from "@/lib/admin-api";
 import { CLIENT_API_URL } from "@/lib/api";
 import type { ProductDetail, Category, Brand, VehicleMake, VehicleModel, VehicleEngine } from "@/lib/api";
 
@@ -65,6 +65,9 @@ interface Props {
 export function ProductForm({ mode, product, categories, brands, makes }: Props) {
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [uploadingIdx, setUploadingIdx] = useState<number | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const pendingUploadIdx = useRef<number | null>(null);
 
   // Vehicle compatibility state
   const [compatibleEngineIds, setCompatibleEngineIds] = useState<string[]>(
@@ -88,7 +91,7 @@ export function ProductForm({ mode, product, categories, brands, makes }: Props)
   const [loadingModels, setLoadingModels] = useState(false);
   const [loadingEngines, setLoadingEngines] = useState(false);
 
-  const { register, handleSubmit, control, formState: { errors } } = useForm<ProductFormData>({
+  const { register, handleSubmit, control, setValue, watch, formState: { errors } } = useForm<ProductFormData>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(productSchema) as any,
     defaultValues: product ? {
@@ -377,30 +380,147 @@ export function ProductForm({ mode, product, categories, brands, makes }: Props)
       {/* Images */}
       <section className="bg-white rounded-xl border border-gray-100 p-6">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-bold text-gray-900">Images</h2>
-          <button type="button" onClick={() => addImage({ url: "", altText: "", sortOrder: imageFields.length, isPrimary: imageFields.length === 0 })} className="text-sm text-[var(--ts-primary-500)] hover:underline flex items-center gap-1">
+          <div>
+            <h2 className="text-lg font-bold text-gray-900">Images</h2>
+            <p className="text-xs text-gray-400 mt-0.5">Cliquez sur une vignette pour la modifier. La première image est la principale.</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              addImage({ url: "", altText: "", sortOrder: imageFields.length, isPrimary: imageFields.length === 0 });
+            }}
+            className="text-sm text-[var(--ts-primary-500)] hover:underline flex items-center gap-1"
+          >
             <Plus className="h-4 w-4" />
             Ajouter
           </button>
         </div>
+
+        {/* Hidden file input */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp,image/gif"
+          className="hidden"
+          onChange={async (e) => {
+            const file = e.target.files?.[0];
+            const idx = pendingUploadIdx.current;
+            if (!file || idx === null) return;
+            e.target.value = "";
+            setUploadingIdx(idx);
+            try {
+              const url = await adminUploadProductImage(file);
+              setValue(`images.${idx}.url`, url, { shouldDirty: true });
+              toast.success("Image uploadée");
+            } catch (err) {
+              toast.error(err instanceof Error ? err.message : "Erreur upload");
+            } finally {
+              setUploadingIdx(null);
+              pendingUploadIdx.current = null;
+            }
+          }}
+        />
+
         {imageFields.length > 0 ? (
-          <div className="space-y-3">
-            {imageFields.map((field, idx) => (
-              <div key={field.id} className="flex items-center gap-3">
-                <input {...register(`images.${idx}.url`)} placeholder="URL de l'image" className="flex-1 h-10 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
-                <input {...register(`images.${idx}.altText`)} placeholder="Texte alt" className="w-40 h-10 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
-                <label className="flex items-center gap-1 text-xs text-gray-600 whitespace-nowrap">
-                  <input type="checkbox" {...register(`images.${idx}.isPrimary`)} className="rounded border-gray-300 text-[var(--ts-primary-500)]" />
-                  Principale
-                </label>
-                <button type="button" onClick={() => removeImage(idx)} className="text-red-500 hover:text-red-700">
-                  <Trash2 className="h-4 w-4" />
-                </button>
-              </div>
-            ))}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+            {imageFields.map((field, idx) => {
+              const url = watch(`images.${idx}.url`);
+              const isPrimary = watch(`images.${idx}.isPrimary`);
+              const isUploading = uploadingIdx === idx;
+
+              return (
+                <div key={field.id} className="group relative">
+                  {/* Thumbnail card */}
+                  <div
+                    className={`relative aspect-square rounded-xl border-2 overflow-hidden bg-gray-50 cursor-pointer transition-all ${
+                      isPrimary ? "border-[var(--ts-primary-500)]" : "border-gray-200 hover:border-gray-300"
+                    }`}
+                    onClick={() => {
+                      pendingUploadIdx.current = idx;
+                      fileInputRef.current?.click();
+                    }}
+                  >
+                    {isUploading ? (
+                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/80">
+                        <Loader2 className="h-6 w-6 text-[var(--ts-primary-500)] animate-spin" />
+                        <p className="text-[10px] text-gray-400 mt-1">Upload…</p>
+                      </div>
+                    ) : url ? (
+                      <>
+                        <img src={url} alt={`Image ${idx + 1}`} className="w-full h-full object-contain p-2" />
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                          <Upload className="h-5 w-5 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </div>
+                      </>
+                    ) : (
+                      <div className="absolute inset-0 flex flex-col items-center justify-center gap-1">
+                        <ImageIcon className="h-7 w-7 text-gray-300" />
+                        <p className="text-[10px] text-gray-400">Cliquer pour upload</p>
+                      </div>
+                    )}
+
+                    {/* Primary badge */}
+                    {isPrimary && (
+                      <div className="absolute top-1.5 left-1.5 flex items-center gap-0.5 bg-[var(--ts-primary-500)] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+                        <Star className="h-2.5 w-2.5" />
+                        Principale
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Controls below card */}
+                  <div className="mt-1.5 flex items-center gap-1.5">
+                    <input
+                      {...register(`images.${idx}.altText`)}
+                      placeholder="Texte alt"
+                      className="flex-1 min-w-0 h-7 px-2 rounded-md border border-gray-200 text-[11px] focus:outline-none focus:ring-1 focus:ring-[var(--ts-primary-500)]"
+                    />
+                    <button
+                      type="button"
+                      title={isPrimary ? "Image principale" : "Définir comme principale"}
+                      onClick={() => {
+                        // unset all, then set this one
+                        imageFields.forEach((_, i) => setValue(`images.${i}.isPrimary`, i === idx));
+                      }}
+                      className={`h-7 w-7 rounded-md flex items-center justify-center shrink-0 transition-colors ${
+                        isPrimary
+                          ? "bg-[var(--ts-primary-500)] text-white"
+                          : "border border-gray-200 text-gray-400 hover:text-[var(--ts-primary-500)]"
+                      }`}
+                    >
+                      <Star className="h-3.5 w-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => removeImage(idx)}
+                      className="h-7 w-7 rounded-md flex items-center justify-center border border-gray-200 text-red-400 hover:text-red-600 hover:border-red-200 shrink-0 transition-colors"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+
+            {/* Add slot */}
+            <button
+              type="button"
+              onClick={() => addImage({ url: "", altText: "", sortOrder: imageFields.length, isPrimary: imageFields.length === 0 })}
+              className="aspect-square rounded-xl border-2 border-dashed border-gray-200 hover:border-[var(--ts-primary-500)] flex flex-col items-center justify-center gap-1.5 text-gray-400 hover:text-[var(--ts-primary-500)] transition-colors"
+            >
+              <Plus className="h-6 w-6" />
+              <span className="text-[11px] font-medium">Ajouter</span>
+            </button>
           </div>
         ) : (
-          <p className="text-sm text-gray-400 text-center py-4">Aucune image.</p>
+          <button
+            type="button"
+            onClick={() => addImage({ url: "", altText: "", sortOrder: 0, isPrimary: true })}
+            className="w-full h-32 rounded-xl border-2 border-dashed border-gray-200 hover:border-[var(--ts-primary-500)] flex flex-col items-center justify-center gap-2 text-gray-400 hover:text-[var(--ts-primary-500)] transition-colors"
+          >
+            <Upload className="h-7 w-7" />
+            <span className="text-sm font-medium">Cliquez pour ajouter des images</span>
+          </button>
         )}
       </section>
 

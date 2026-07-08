@@ -130,6 +130,21 @@ export const adminUpdateBrand = (id: string, data: UpdateBrandRequest) =>
 export const adminDeleteBrand = (id: string) =>
   adminFetch<void>(`/brands/${id}`, { method: "DELETE" });
 
+// Image upload
+export async function adminUploadProductImage(file: File): Promise<string> {
+  const token = getToken();
+  const formData = new FormData();
+  formData.append("file", file);
+  const res = await fetch(`${API}/api/v1/upload/product-image`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+    body: formData,
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(json.error?.message || `Erreur ${res.status}`);
+  return json.data.url as string;
+}
+
 // Products
 export const adminCreateProduct = (data: CreateProductRequest) =>
   adminFetch<ProductDetail>("/products", { method: "POST", body: JSON.stringify(data) });
