@@ -21,6 +21,8 @@ import type {
   CustomerListItem,
   OrderListItem,
   OrderDetail,
+  InvoiceListResponse,
+  InvoiceDetail,
 } from "@/lib/api";
 
 const API = CLIENT_API_URL;
@@ -223,3 +225,24 @@ export const adminUpdateOrderStatus = (id: string, status: string) =>
 
 export const adminRefundOrder = (id: string) =>
   adminFetch<void>(`/orders/${id}/refund`, { method: "POST" });
+
+// Invoices
+export const adminGetInvoices = (page = 1, pageSize = 25, search = "", type = "", status = "") => {
+  const params = new URLSearchParams({ Page: String(page), PageSize: String(pageSize) });
+  if (search) params.set("Search", search);
+  if (type) params.set("Type", type);
+  if (status) params.set("Status", status);
+  return adminFetch<InvoiceListResponse>(`/invoices?${params}`);
+};
+
+export const adminGetInvoice = (id: string) =>
+  adminFetch<InvoiceDetail>(`/invoices/${id}`);
+
+export const adminGenerateInvoiceFromOrder = (orderId: string) =>
+  adminFetch<InvoiceDetail>(`/invoices/generate-from-order/${orderId}`, { method: "POST" });
+
+export const adminUpdateInvoiceStatus = (id: string, status: string) =>
+  adminFetch<void>(`/invoices/${id}/status`, { method: "PATCH", body: JSON.stringify({ status }) });
+
+export const adminDeleteInvoice = (id: string) =>
+  adminFetch<void>(`/invoices/${id}`, { method: "DELETE" });

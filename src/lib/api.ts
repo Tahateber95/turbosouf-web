@@ -349,6 +349,51 @@ export interface OrderDetail {
   updatedAt: string;
 }
 
+// --- Invoice types ---
+
+export interface InvoiceListItem {
+  id: string;
+  invoiceNumber: string;
+  type: string;
+  status: string;
+  orderNumber: string | null;
+  customerName: string | null;
+  customerEmail: string | null;
+  amountHT: number;
+  amountTVA: number;
+  amountTTC: number;
+  sageInvoiceId: string | null;
+  pdfUrl: string | null;
+  issuedAt: string;
+  dueAt: string | null;
+  paidAt: string | null;
+}
+
+export interface InvoiceLineResponse {
+  id: string;
+  description: string;
+  articleCode: string | null;
+  quantity: number;
+  unitPriceHT: number;
+  tvaRate: number;
+  lineTotalHT: number;
+  lineTotalTTC: number;
+}
+
+export interface InvoiceDetail extends InvoiceListItem {
+  orderId: string | null;
+  billingAddress: string | null;
+  createdAt: string;
+  lines: InvoiceLineResponse[];
+}
+
+export interface InvoiceListResponse {
+  items: InvoiceListItem[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+}
+
 // --- API functions (read) ---
 
 export const getCategories = () => api<Category[]>("/categories");
