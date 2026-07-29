@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { ChevronRight, ArrowLeft, FileText, Download } from "lucide-react";
+import { ChevronRight, ArrowLeft, FileText, Download, Loader2 } from "lucide-react";
 import { StatusBadge } from "@/components/dashboard/status-badge";
-import { adminGetInvoice, adminUpdateInvoiceStatus } from "@/lib/admin-api";
+import { adminGetInvoice, adminUpdateInvoiceStatus, downloadInvoicePdf } from "@/lib/admin-api";
 import type { InvoiceDetail } from "@/lib/api";
 
 function formatPrice(n: number) {
@@ -38,6 +38,7 @@ export default function InvoiceDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [updating, setUpdating] = useState(false);
+  const [downloading, setDownloading] = useState(false);
 
   useEffect(() => {
     adminGetInvoice(id)
@@ -45,6 +46,18 @@ export default function InvoiceDetailPage() {
       .catch((e: unknown) => setError(e instanceof Error ? e.message : "Erreur"))
       .finally(() => setLoading(false));
   }, [id]);
+
+  async function handleDownloadPdf() {
+    if (!invoice) return;
+    setDownloading(true);
+    try {
+      await downloadInvoicePdf(id, invoice.invoiceNumber);
+    } catch (e: unknown) {
+      alert(e instanceof Error ? e.message : "Erreur lors du téléchargement");
+    } finally {
+      setDownloading(false);
+    }
+  }
 
   async function handleStatusChange(next: string) {
     if (!invoice) return;
@@ -115,17 +128,18 @@ export default function InvoiceDetailPage() {
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
-          {invoice.pdfUrl && (
-            <a
-              href={invoice.pdfUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 h-9 px-4 bg-gray-50 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-100 border border-gray-200"
-            >
+          <button
+            onClick={handleDownloadPdf}
+            disabled={downloading}
+            className="inline-flex items-center gap-1.5 h-9 px-4 bg-gray-50 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-100 border border-gray-200 disabled:opacity-50"
+          >
+            {downloading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
               <Download className="h-4 w-4" />
-              PDF
-            </a>
-          )}
+            )}
+            PDF
+          </button>
           {transitions.map((t) => (
             <button
               key={t.next}

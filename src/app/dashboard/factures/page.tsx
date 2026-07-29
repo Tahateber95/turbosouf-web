@@ -2,9 +2,9 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import { Search, RefreshCw, FileText, CheckCircle2, AlertCircle, Clock, ChevronLeft, ChevronRight, Eye, Trash2 } from "lucide-react";
+import { Search, RefreshCw, FileText, CheckCircle2, AlertCircle, Clock, ChevronLeft, ChevronRight, Eye, Trash2, Download, Loader2 } from "lucide-react";
 import { StatusBadge } from "@/components/dashboard/status-badge";
-import { adminGetInvoices, adminDeleteInvoice, adminGenerateInvoiceFromOrder } from "@/lib/admin-api";
+import { adminGetInvoices, adminDeleteInvoice, adminGenerateInvoiceFromOrder, downloadInvoicePdf } from "@/lib/admin-api";
 import type { InvoiceListItem } from "@/lib/api";
 
 function formatPrice(n: number) {
@@ -27,6 +27,7 @@ export default function InvoicesPage() {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -59,6 +60,17 @@ export default function InvoicesPage() {
     draft: items.filter((i) => i.status === "Draft").length,
     total: totalCount,
   };
+
+  async function handleDownload(inv: InvoiceListItem) {
+    setDownloadingId(inv.id);
+    try {
+      await downloadInvoicePdf(inv.id, inv.invoiceNumber);
+    } catch (e: unknown) {
+      alert(e instanceof Error ? e.message : "Erreur lors du téléchargement");
+    } finally {
+      setDownloadingId(null);
+    }
+  }
 
   async function handleDelete(id: string) {
     if (!confirm("Supprimer cette facture brouillon ?")) return;
@@ -229,6 +241,16 @@ export default function InvoicesPage() {
                         >
                           <Eye className="h-4 w-4" />
                         </Link>
+                        <button
+                          onClick={() => handleDownload(inv)}
+                          disabled={downloadingId === inv.id}
+                          className="p-1.5 rounded hover:bg-gray-100 text-gray-400 hover:text-gray-700 disabled:opacity-50"
+                          title="Télécharger PDF"
+                        >
+                          {downloadingId === inv.id
+                            ? <Loader2 className="h-4 w-4 animate-spin" />
+                            : <Download className="h-4 w-4" />}
+                        </button>
                         {inv.status === "Draft" && (
                           <button
                             onClick={() => handleDelete(inv.id)}

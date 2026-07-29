@@ -246,3 +246,33 @@ export const adminUpdateInvoiceStatus = (id: string, status: string) =>
 
 export const adminDeleteInvoice = (id: string) =>
   adminFetch<void>(`/invoices/${id}`, { method: "DELETE" });
+
+export async function downloadInvoicePdf(id: string, invoiceNumber: string): Promise<void> {
+  const doFetch = (token: string) =>
+    fetch(`${API}/api/v1/invoices/${id}/pdf`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+  let res = await doFetch(getToken());
+
+  if (res.status === 401) {
+    const newToken = await tryRefreshToken();
+    if (!newToken) {
+      redirectToLogin();
+      throw new Error("Session expirée.");
+    }
+    res = await doFetch(newToken);
+  }
+
+  if (!res.ok) throw new Error(`Erreur ${res.status}`);
+
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${invoiceNumber}.pdf`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
