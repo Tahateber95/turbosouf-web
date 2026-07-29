@@ -78,6 +78,7 @@ interface DeleteProps {
 
 export function DeleteProductButton({ productId, productName }: DeleteProps) {
   const [deleting, setDeleting] = useState(false);
+  const router = useRouter();
 
   const handleDelete = async () => {
     if (!confirm(`Supprimer "${productName}" ? Cette action est irréversible.`)) return;
@@ -85,7 +86,7 @@ export function DeleteProductButton({ productId, productName }: DeleteProps) {
     try {
       await adminDeleteProduct(productId);
       toast.success("Produit supprimé");
-      window.location.reload();
+      router.refresh();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Erreur");
       setDeleting(false);

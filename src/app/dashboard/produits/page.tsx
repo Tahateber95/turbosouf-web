@@ -30,8 +30,8 @@ export default async function ProductsPage({ searchParams }: Props) {
 
   try {
     const [productsRes, categoriesRes] = await Promise.all([
-      fetch(`${SERVER_API_URL}/api/v1/products?${apiParams}`, { next: { revalidate: 30 } }).then(r => r.json()),
-      fetch(`${SERVER_API_URL}/api/v1/categories`, { next: { revalidate: 60 } }).then(r => r.json()),
+      fetch(`${SERVER_API_URL}/api/v1/products?${apiParams}`, { cache: "no-store" }).then(r => r.json()),
+      fetch(`${SERVER_API_URL}/api/v1/categories`, { cache: "no-store" }).then(r => r.json()),
     ]);
     products = productsRes.data?.items || [];
     totalCount = productsRes.data?.totalCount || 0;
