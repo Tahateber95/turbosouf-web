@@ -293,32 +293,42 @@ export function ProductForm({ mode, product, categories, brands, makes }: Props)
 
       {/* Pricing & Stock */}
       <section className="bg-white rounded-xl border border-gray-100 p-6">
-        <h2 className="text-lg font-bold text-gray-900 mb-4">Prix & Stock</h2>
+        <h2 className="text-lg font-bold text-gray-900 mb-4">Prix & Stock (condition principale)</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">État *</label>
+            <select {...register("condition")} className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]">
+              <option value="Refurbished">Reconditionné</option>
+              <option value="New">Neuf</option>
+              <option value="ExchangeStandard">Échange standard</option>
+              <option value="NewAdaptable">Neuf adaptable</option>
+              <option value="NewOriginal">Neuf d'origine</option>
+            </select>
+          </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Prix HT (€) *</label>
             <input type="number" step="0.01" {...register("priceHT")} className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
             {errors.priceHT && <p className="text-xs text-red-500 mt-1">{errors.priceHT.message}</p>}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">TVA (%)</label>
-            <input type="number" step="0.1" {...register("tvaRate")} className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
+            <label className="block text-sm font-medium text-gray-700 mb-1">Stock *</label>
+            <input type="number" {...register("stockQuantity")} className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Prix promo HT (€)</label>
-            <input type="number" step="0.01" {...register("salePriceHT")} className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
+            <label className="block text-sm font-medium text-gray-700 mb-1">TVA (%)</label>
+            <input type="number" step="0.1" {...register("tvaRate")} className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Consigne (€)</label>
             <input type="number" step="0.01" {...register("depositAmount")} className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Prix B2B HT (€)</label>
-            <input type="number" step="0.01" {...register("b2bPriceHT")} className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
+            <label className="block text-sm font-medium text-gray-700 mb-1">Prix promo HT (€)</label>
+            <input type="number" step="0.01" {...register("salePriceHT")} className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Stock *</label>
-            <input type="number" {...register("stockQuantity")} className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
+            <label className="block text-sm font-medium text-gray-700 mb-1">Prix B2B HT (€)</label>
+            <input type="number" step="0.01" {...register("b2bPriceHT")} className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
           </div>
         </div>
       </section>
@@ -340,16 +350,6 @@ export function ProductForm({ mode, product, categories, brands, makes }: Props)
             <select {...register("brandId")} className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]">
               <option value="">Aucune</option>
               {brands.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">État *</label>
-            <select {...register("condition")} className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]">
-              <option value="Refurbished">Reconditionné</option>
-              <option value="New">Neuf</option>
-              <option value="ExchangeStandard">Échange standard</option>
-              <option value="NewAdaptable">Neuf adaptable</option>
-              <option value="NewOriginal">Neuf d'origine</option>
             </select>
           </div>
           <div className="flex items-end gap-6">
