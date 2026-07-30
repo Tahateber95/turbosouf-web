@@ -47,6 +47,7 @@ export interface ProductListItem {
   primaryImageUrl: string | null;
   oemReference: string | null;
   vehicleSummary: string | null;
+  availableConditions: string[];
 }
 
 export interface ProductAddOn {
@@ -58,6 +59,17 @@ export interface ProductAddOn {
   priceTTC: number;
   isActive: boolean;
   sortOrder: number;
+}
+
+export interface ProductVariant {
+  id: string;
+  condition: string;
+  priceHT: number;
+  tvaRate: number;
+  priceTTC: number;
+  salePriceHT: number | null;
+  depositAmount: number | null;
+  stockQuantity: number;
 }
 
 export interface ProductDetail extends ProductListItem {
@@ -74,6 +86,7 @@ export interface ProductDetail extends ProductListItem {
   attributes: ProductAttribute[];
   compatibleVehicles: VehicleCompatibility[];
   addOns: ProductAddOn[];
+  variants: ProductVariant[];
 }
 
 export interface ProductImage {
@@ -223,6 +236,7 @@ export interface CreateProductRequest {
   attributes?: { key: string; value: string; sortOrder: number }[];
   compatibleVehicleEngineIds?: string[];
   addOns?: { name: string; description?: string | null; priceHT: number; tvaRate: number; isActive: boolean; sortOrder: number }[];
+  variants?: { condition: string; priceHT: number; tvaRate: number; salePriceHT?: number | null; depositAmount?: number | null; stockQuantity: number }[];
 }
 
 export type UpdateProductRequest = Partial<CreateProductRequest>;

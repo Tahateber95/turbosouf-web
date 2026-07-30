@@ -1,25 +1,13 @@
 import Link from "next/link";
-import { ShieldCheck, Truck, RotateCcw, Package, ChevronRight } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { ShieldCheck, Truck, Package, ChevronRight } from "lucide-react";
 import { notFound } from "next/navigation";
-import { PdpAddToCart } from "@/components/store/pdp-add-to-cart";
 import { ProductImageGallery } from "@/components/store/product-image-gallery";
+import { ProductPricingPanel } from "@/components/store/product-pricing-panel";
+import { Badge } from "@/components/ui/badge";
 import { SERVER_API_URL, type ProductDetail } from "@/lib/api";
 
 const API = SERVER_API_URL;
 
-function formatPrice(amount: number): string {
-  return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(amount);
-}
-
-function conditionLabel(condition: string): string {
-  switch (condition) {
-    case "Refurbished": return "Reconditionne";
-    case "New": return "Neuf";
-    case "ExchangeStandard": return "Echange Standard";
-    default: return condition;
-  }
-}
 
 export default async function ProductDetailPage({
   params,
@@ -43,8 +31,6 @@ export default async function ProductDetailPage({
   if (!product) {
     notFound();
   }
-
-  const installmentPrice = (product.priceTTC / 3).toFixed(2);
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -99,15 +85,6 @@ export default async function ProductDetailPage({
 
           {/* Right: Info */}
           <div>
-            <div className="flex items-center gap-2 mb-2">
-              <Badge variant="secondary" className="text-xs">{conditionLabel(product.condition)}</Badge>
-              {product.stockQuantity > 0 ? (
-                <Badge className="bg-emerald-100 text-emerald-700 text-xs">En stock</Badge>
-              ) : (
-                <Badge variant="destructive" className="text-xs">Rupture</Badge>
-              )}
-            </div>
-
             {product.brandName && (
               <p className="text-xs font-semibold text-[var(--ts-primary-500)] uppercase tracking-wider mb-1">
                 {product.brandName}
@@ -124,46 +101,10 @@ export default async function ProductDetailPage({
                 <> | OEM: <span className="font-mono text-gray-600">{product.oemReference}</span></>
               )}
             </p>
-            <p className="text-sm text-gray-500 mb-6">{product.shortDescription}</p>
+            <p className="text-sm text-gray-500 mb-4">{product.shortDescription}</p>
 
-            {/* Price block */}
-            <div className="bg-white rounded-xl border border-gray-100 p-5 mb-6">
-              <div className="flex items-end gap-3 mb-2">
-                <span className="text-3xl font-black text-[var(--ts-primary-900)]">
-                  {formatPrice(product.priceTTC)}
-                </span>
-                <span className="text-sm text-gray-400 mb-1">TTC</span>
-              </div>
-              <p className="text-xs text-gray-500 mb-3">
-                {formatPrice(product.priceHT)} HT | TVA {product.tvaRate}%
-              </p>
-
-              {product.depositAmount && product.depositAmount > 0 && (
-                <div className="flex items-center gap-2 p-2.5 rounded-lg bg-amber-50 border border-amber-100 mb-3">
-                  <RotateCcw className="h-4 w-4 text-amber-600 shrink-0" />
-                  <p className="text-xs text-amber-700">
-                    <span className="font-semibold">+{formatPrice(product.depositAmount)} de consigne</span> — remboursee au retour de votre ancienne piece
-                  </p>
-                </div>
-              )}
-
-              <p className="text-xs text-gray-500 mb-4">
-                ou <span className="font-semibold text-[var(--ts-primary-500)]">3x {installmentPrice} EUR</span> sans frais avec Alma
-              </p>
-
-              {/* Add to cart */}
-              <PdpAddToCart
-                productId={product.id}
-                name={product.name}
-                sku={product.sku}
-                primaryImageUrl={product.primaryImageUrl}
-                priceHT={product.priceHT}
-                priceTTC={product.priceTTC}
-                depositAmount={product.depositAmount}
-                stockQuantity={product.stockQuantity}
-                addOns={product.addOns}
-              />
-            </div>
+            {/* Pricing panel (client — handles condition switching) */}
+            <ProductPricingPanel product={product} addOns={product.addOns} />
 
             {/* Trust badges */}
             <div className="grid grid-cols-3 gap-3 mb-6">

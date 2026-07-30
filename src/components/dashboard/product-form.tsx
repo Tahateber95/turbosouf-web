@@ -50,6 +50,14 @@ const productSchema = z.object({
     isActive: z.boolean().default(true),
     sortOrder: z.coerce.number().default(0),
   })).default([]),
+  variants: z.array(z.object({
+    condition: z.string().min(1, "État requis"),
+    priceHT: z.coerce.number().min(0, "Prix HT requis"),
+    tvaRate: z.coerce.number().min(0).max(100).default(20),
+    salePriceHT: z.coerce.number().nullable().optional(),
+    depositAmount: z.coerce.number().nullable().optional(),
+    stockQuantity: z.coerce.number().int().min(0).default(0),
+  })).default([]),
 });
 
 type ProductFormData = z.infer<typeof productSchema>;
@@ -123,6 +131,14 @@ export function ProductForm({ mode, product, categories, brands, makes }: Props)
         isActive: a.isActive,
         sortOrder: a.sortOrder,
       })),
+      variants: (product.variants || []).map(v => ({
+        condition: v.condition,
+        priceHT: v.priceHT,
+        tvaRate: v.tvaRate,
+        salePriceHT: v.salePriceHT,
+        depositAmount: v.depositAmount,
+        stockQuantity: v.stockQuantity,
+      })),
     } : {
       tvaRate: 20,
       condition: "Refurbished",
@@ -132,12 +148,14 @@ export function ProductForm({ mode, product, categories, brands, makes }: Props)
       images: [],
       attributes: [],
       addOns: [],
+      variants: [],
     },
   });
 
   const { fields: imageFields, append: addImage, remove: removeImage } = useFieldArray({ control, name: "images" });
   const { fields: attrFields, append: addAttr, remove: removeAttr } = useFieldArray({ control, name: "attributes" });
   const { fields: addOnFields, append: addAddOn, remove: removeAddOn } = useFieldArray({ control, name: "addOns" });
+  const { fields: variantFields, append: addVariant, remove: removeVariant } = useFieldArray({ control, name: "variants" });
 
   // Fetch models when make changes
   useEffect(() => {
@@ -202,6 +220,11 @@ export function ProductForm({ mode, product, categories, brands, makes }: Props)
         metaDescription: data.metaDescription || null,
         compatibleVehicleEngineIds: compatibleEngineIds,
         addOns: data.addOns.map((a, i) => ({ ...a, sortOrder: i })),
+        variants: data.variants.map(v => ({
+          ...v,
+          salePriceHT: v.salePriceHT || null,
+          depositAmount: v.depositAmount || null,
+        })),
       };
 
       if (mode === "create") {
@@ -325,6 +348,8 @@ export function ProductForm({ mode, product, categories, brands, makes }: Props)
               <option value="Refurbished">Reconditionné</option>
               <option value="New">Neuf</option>
               <option value="ExchangeStandard">Échange standard</option>
+              <option value="NewAdaptable">Neuf adaptable</option>
+              <option value="NewOriginal">Neuf d'origine</option>
             </select>
           </div>
           <div className="flex items-end gap-6">
@@ -617,6 +642,81 @@ export function ProductForm({ mode, product, categories, brands, makes }: Props)
           </div>
         ) : (
           <p className="text-sm text-gray-400 text-center py-4">Aucune option additionnelle.</p>
+        )}
+      </section>
+
+      {/* Variants */}
+      <section className="bg-white rounded-xl border border-gray-100 p-6">
+        <div className="flex items-center justify-between mb-1">
+          <div>
+            <h2 className="text-lg font-bold text-gray-900">Variantes de condition</h2>
+            <p className="text-xs text-gray-400 mt-0.5">Ajoutez d'autres états disponibles pour ce même turbo, avec leurs prix et stocks distincts.</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => addVariant({ condition: "", priceHT: 0, tvaRate: 20, salePriceHT: null, depositAmount: null, stockQuantity: 0 })}
+            className="text-sm text-[var(--ts-primary-500)] hover:underline flex items-center gap-1"
+          >
+            <Plus className="h-4 w-4" />
+            Ajouter
+          </button>
+        </div>
+        {variantFields.length > 0 ? (
+          <div className="space-y-3 mt-4">
+            {variantFields.map((field, idx) => {
+              const primaryCondition = watch("condition");
+              const usedConditions = variantFields.map((_, i) => i !== idx ? watch(`variants.${i}.condition`) : "").filter(Boolean);
+              const allConditions = [
+                { v: "Refurbished", l: "Reconditionné" },
+                { v: "New", l: "Neuf" },
+                { v: "ExchangeStandard", l: "Échange standard" },
+                { v: "NewAdaptable", l: "Neuf adaptable" },
+                { v: "NewOriginal", l: "Neuf d'origine" },
+              ];
+              const available = allConditions.filter(c => c.v !== primaryCondition && !usedConditions.includes(c.v));
+              return (
+                <div key={field.id} className="grid grid-cols-1 sm:grid-cols-[1.5fr_1fr_0.5fr_1fr_0.5fr_auto] gap-3 p-3 rounded-lg bg-gray-50 border border-gray-100 items-start">
+                  <div className="flex flex-col gap-1">
+                    <label className="text-[10px] font-medium text-gray-500 uppercase">État</label>
+                    <select
+                      {...register(`variants.${idx}.condition`)}
+                      className="h-9 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]"
+                    >
+                      <option value="">Sélectionner...</option>
+                      {available.map(c => <option key={c.v} value={c.v}>{c.l}</option>)}
+                    </select>
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <label className="text-[10px] font-medium text-gray-500 uppercase">Prix HT (€)</label>
+                    <input type="number" step="0.01" min="0" {...register(`variants.${idx}.priceHT`)}
+                      className="h-9 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <label className="text-[10px] font-medium text-gray-500 uppercase">TVA (%)</label>
+                    <input type="number" step="0.1" {...register(`variants.${idx}.tvaRate`)}
+                      className="h-9 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <label className="text-[10px] font-medium text-gray-500 uppercase">Consigne (€)</label>
+                    <input type="number" step="0.01" {...register(`variants.${idx}.depositAmount`)}
+                      className="h-9 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <label className="text-[10px] font-medium text-gray-500 uppercase">Stock</label>
+                    <input type="number" {...register(`variants.${idx}.stockQuantity`)}
+                      className="h-9 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
+                  </div>
+                  <div className="flex items-end pb-0.5">
+                    <button type="button" onClick={() => removeVariant(idx)} className="h-9 w-9 flex items-center justify-center rounded-lg border border-gray-200 text-red-400 hover:text-red-600 hover:border-red-200 transition-colors">
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <p className="text-sm text-gray-400 text-center py-4 mt-2">Aucune variante. Ce produit n'a qu'un seul état.</p>
         )}
       </section>
 

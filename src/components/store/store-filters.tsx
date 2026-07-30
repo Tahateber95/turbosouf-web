@@ -126,6 +126,8 @@ export function StoreFilters({ categories, brands, activeCategory, activeBrand, 
               { l: "Reconditionné", v: "Refurbished" },
               { l: "Neuf", v: "New" },
               { l: "Échange standard", v: "ExchangeStandard" },
+              { l: "Neuf adaptable", v: "NewAdaptable" },
+              { l: "Neuf d'origine", v: "NewOriginal" },
             ].map((cond) => (
               <label key={cond.v} className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer hover:text-[var(--ts-primary-500)]">
                 <input
