@@ -28,9 +28,9 @@ export default async function ProductsPage({ searchParams }: Props) {
   if (params.page) apiParams.set("Page", String(params.page));
 
   const [productsRes, categoriesRes, brandsRes] = await Promise.all([
-    fetch(`${API}/api/v1/products?${apiParams}`, { next: { revalidate: 30 } }).then(r => r.json()).catch(() => ({ data: { items: [], totalCount: 0 } })),
-    fetch(`${API}/api/v1/categories`, { next: { revalidate: 60 } }).then(r => r.json()).catch(() => ({ data: [] })),
-    fetch(`${API}/api/v1/brands`, { next: { revalidate: 60 } }).then(r => r.json()).catch(() => ({ data: [] })),
+    fetch(`${API}/api/v1/products?${apiParams}`, { cache: "no-store" }).then(r => r.json()).catch(() => ({ data: { items: [], totalCount: 0 } })),
+    fetch(`${API}/api/v1/categories`, { cache: "no-store" }).then(r => r.json()).catch(() => ({ data: [] })),
+    fetch(`${API}/api/v1/brands`, { cache: "no-store" }).then(r => r.json()).catch(() => ({ data: [] })),
   ]);
 
   const products: ProductListItem[] = productsRes.data?.items || [];

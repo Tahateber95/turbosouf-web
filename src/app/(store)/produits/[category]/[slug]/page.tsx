@@ -31,7 +31,7 @@ export default async function ProductDetailPage({
   let product: ProductDetail | null = null;
 
   try {
-    const res = await fetch(`${API}/api/v1/products/${slug}`, { next: { revalidate: 30 } });
+    const res = await fetch(`${API}/api/v1/products/${slug}`, { cache: "no-store" });
     if (res.ok) {
       const json = await res.json();
       product = json.data || null;

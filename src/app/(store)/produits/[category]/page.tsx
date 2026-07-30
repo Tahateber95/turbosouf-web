@@ -14,7 +14,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
   try {
     const res = await fetch(
       `${API}/api/v1/products?CategorySlug=${encodeURIComponent(category)}&PageSize=12`,
-      { next: { revalidate: 30 } }
+      { cache: "no-store" }
     );
     const json = await res.json();
     products = json.data?.items || [];
