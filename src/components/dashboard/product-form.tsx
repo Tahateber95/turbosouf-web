@@ -12,23 +12,27 @@ import type { ProductDetail, Category, Brand, VehicleMake, VehicleModel, Vehicle
 
 const API = CLIENT_API_URL;
 
+const conditionRow = z.object({
+  condition: z.string().min(1, "État requis"),
+  priceHT: z.coerce.number().min(0, "Prix HT requis"),
+  tvaRate: z.coerce.number().min(0).max(100).default(20),
+  depositAmount: z.coerce.number().nullable().optional(),
+  stockQuantity: z.coerce.number().int().min(0).default(0),
+});
+
 const productSchema = z.object({
   name: z.string().min(1, "Nom requis"),
   sku: z.string().min(1, "SKU requis"),
   shortDescription: z.string().min(1, "Description courte requise"),
   description: z.string().min(1, "Description requise"),
-  priceHT: z.coerce.number().min(0, "Prix HT requis"),
-  tvaRate: z.coerce.number().min(0).max(100).default(20),
+  conditions: z.array(conditionRow).min(1, "Au moins un état requis"),
   salePriceHT: z.coerce.number().nullable().optional(),
-  depositAmount: z.coerce.number().nullable().optional(),
+  b2bPriceHT: z.coerce.number().nullable().optional(),
   categoryId: z.string().min(1, "Catégorie requise"),
   brandId: z.string().nullable().optional(),
-  condition: z.string().min(1, "État requis"),
-  stockQuantity: z.coerce.number().int().min(0).default(0),
   oemReference: z.string().nullable().optional(),
   isActive: z.boolean().default(true),
   isFeatured: z.boolean().default(false),
-  b2bPriceHT: z.coerce.number().nullable().optional(),
   metaTitle: z.string().nullable().optional(),
   metaDescription: z.string().nullable().optional(),
   images: z.array(z.object({
@@ -49,14 +53,6 @@ const productSchema = z.object({
     tvaRate: z.coerce.number().min(0).max(100).default(20),
     isActive: z.boolean().default(true),
     sortOrder: z.coerce.number().default(0),
-  })).default([]),
-  variants: z.array(z.object({
-    condition: z.string().min(1, "État requis"),
-    priceHT: z.coerce.number().min(0, "Prix HT requis"),
-    tvaRate: z.coerce.number().min(0).max(100).default(20),
-    salePriceHT: z.coerce.number().nullable().optional(),
-    depositAmount: z.coerce.number().nullable().optional(),
-    stockQuantity: z.coerce.number().int().min(0).default(0),
   })).default([]),
 });
 
@@ -107,18 +103,17 @@ export function ProductForm({ mode, product, categories, brands, makes }: Props)
       sku: product.sku,
       shortDescription: product.shortDescription,
       description: product.description,
-      priceHT: product.priceHT,
-      tvaRate: product.tvaRate,
+      conditions: [
+        { condition: product.condition, priceHT: product.priceHT, tvaRate: product.tvaRate, depositAmount: product.depositAmount, stockQuantity: product.stockQuantity },
+        ...(product.variants || []).map(v => ({ condition: v.condition, priceHT: v.priceHT, tvaRate: v.tvaRate, depositAmount: v.depositAmount, stockQuantity: v.stockQuantity })),
+      ],
       salePriceHT: product.salePriceHT,
-      depositAmount: product.depositAmount,
+      b2bPriceHT: product.b2bPriceHT,
       categoryId: product.categoryId,
       brandId: product.brandId,
-      condition: product.condition,
-      stockQuantity: product.stockQuantity,
       oemReference: product.oemReference,
       isActive: product.isActive,
       isFeatured: product.isFeatured,
-      b2bPriceHT: product.b2bPriceHT,
       metaTitle: product.metaTitle,
       metaDescription: product.metaDescription,
       images: product.images || [],
@@ -131,31 +126,20 @@ export function ProductForm({ mode, product, categories, brands, makes }: Props)
         isActive: a.isActive,
         sortOrder: a.sortOrder,
       })),
-      variants: (product.variants || []).map(v => ({
-        condition: v.condition,
-        priceHT: v.priceHT,
-        tvaRate: v.tvaRate,
-        salePriceHT: v.salePriceHT,
-        depositAmount: v.depositAmount,
-        stockQuantity: v.stockQuantity,
-      })),
     } : {
-      tvaRate: 20,
-      condition: "Refurbished",
+      conditions: [{ condition: "Refurbished", priceHT: 0, tvaRate: 20, depositAmount: null, stockQuantity: 0 }],
       isActive: true,
       isFeatured: false,
-      stockQuantity: 0,
       images: [],
       attributes: [],
       addOns: [],
-      variants: [],
     },
   });
 
+  const { fields: conditionFields, append: addCondition, remove: removeCondition } = useFieldArray({ control, name: "conditions" });
   const { fields: imageFields, append: addImage, remove: removeImage } = useFieldArray({ control, name: "images" });
   const { fields: attrFields, append: addAttr, remove: removeAttr } = useFieldArray({ control, name: "attributes" });
   const { fields: addOnFields, append: addAddOn, remove: removeAddOn } = useFieldArray({ control, name: "addOns" });
-  const { fields: variantFields, append: addVariant, remove: removeVariant } = useFieldArray({ control, name: "variants" });
 
   // Fetch models when make changes
   useEffect(() => {
@@ -209,10 +193,15 @@ export function ProductForm({ mode, product, categories, brands, makes }: Props)
   const onSubmit = async (data: ProductFormData) => {
     setSaving(true);
     try {
+      const [primary, ...rest] = data.conditions;
       const payload = {
         ...data,
+        condition: primary.condition,
+        priceHT: primary.priceHT,
+        tvaRate: primary.tvaRate,
+        depositAmount: primary.depositAmount || null,
+        stockQuantity: primary.stockQuantity,
         salePriceHT: data.salePriceHT || null,
-        depositAmount: data.depositAmount || null,
         brandId: data.brandId || null,
         oemReference: data.oemReference || null,
         b2bPriceHT: data.b2bPriceHT || null,
@@ -220,11 +209,7 @@ export function ProductForm({ mode, product, categories, brands, makes }: Props)
         metaDescription: data.metaDescription || null,
         compatibleVehicleEngineIds: compatibleEngineIds,
         addOns: data.addOns.map((a, i) => ({ ...a, sortOrder: i })),
-        variants: data.variants.map(v => ({
-          ...v,
-          salePriceHT: v.salePriceHT || null,
-          depositAmount: v.depositAmount || null,
-        })),
+        variants: rest.map(v => ({ ...v, depositAmount: v.depositAmount || null })),
       };
 
       if (mode === "create") {
@@ -291,37 +276,84 @@ export function ProductForm({ mode, product, categories, brands, makes }: Props)
         </div>
       </section>
 
-      {/* Pricing & Stock */}
+      {/* Conditions & Prix */}
       <section className="bg-white rounded-xl border border-gray-100 p-6">
-        <h2 className="text-lg font-bold text-gray-900 mb-4">Prix & Stock (condition principale)</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="flex items-center justify-between mb-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">État *</label>
-            <select {...register("condition")} className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]">
-              <option value="Refurbished">Reconditionné</option>
-              <option value="New">Neuf</option>
-              <option value="ExchangeStandard">Échange standard</option>
-              <option value="NewAdaptable">Neuf adaptable</option>
-              <option value="NewOriginal">Neuf d'origine</option>
-            </select>
+            <h2 className="text-lg font-bold text-gray-900">Conditions & Prix</h2>
+            <p className="text-xs text-gray-400 mt-0.5">Chaque ligne = un état du turbo avec son propre prix et stock. La première ligne est le défaut affiché.</p>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Prix HT (€) *</label>
-            <input type="number" step="0.01" {...register("priceHT")} className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
-            {errors.priceHT && <p className="text-xs text-red-500 mt-1">{errors.priceHT.message}</p>}
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Stock *</label>
-            <input type="number" {...register("stockQuantity")} className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">TVA (%)</label>
-            <input type="number" step="0.1" {...register("tvaRate")} className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Consigne (€)</label>
-            <input type="number" step="0.01" {...register("depositAmount")} className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
-          </div>
+          <button
+            type="button"
+            onClick={() => {
+              const used = conditionFields.map((_, i) => watch(`conditions.${i}.condition`));
+              const next = ["Refurbished","New","ExchangeStandard","NewAdaptable","NewOriginal"].find(c => !used.includes(c)) || "";
+              addCondition({ condition: next, priceHT: 0, tvaRate: 20, depositAmount: null, stockQuantity: 0 });
+            }}
+            className="text-sm text-[var(--ts-primary-500)] hover:underline flex items-center gap-1"
+          >
+            <Plus className="h-4 w-4" />
+            Ajouter un état
+          </button>
+        </div>
+
+        {/* Column headers */}
+        <div className="hidden sm:grid grid-cols-[1.6fr_1fr_0.6fr_1fr_0.7fr_2rem] gap-3 px-1 mb-1">
+          {["État","Prix HT (€)","TVA (%)","Consigne (€)","Stock",""].map(h => (
+            <span key={h} className="text-[10px] font-semibold text-gray-400 uppercase">{h}</span>
+          ))}
+        </div>
+
+        <div className="space-y-2">
+          {conditionFields.map((field, idx) => {
+            const usedConditions = conditionFields.map((_, i) => i !== idx ? watch(`conditions.${i}.condition`) : "").filter(Boolean);
+            const allConditions = [
+              { v: "Refurbished", l: "Reconditionné" },
+              { v: "New", l: "Neuf" },
+              { v: "ExchangeStandard", l: "Échange standard" },
+              { v: "NewAdaptable", l: "Neuf adaptable" },
+              { v: "NewOriginal", l: "Neuf d'origine" },
+            ];
+            const available = allConditions.filter(c => !usedConditions.includes(c.v));
+            const isPrimary = idx === 0;
+            return (
+              <div key={field.id} className={`grid grid-cols-1 sm:grid-cols-[1.6fr_1fr_0.6fr_1fr_0.7fr_2rem] gap-3 p-3 rounded-lg border items-center ${isPrimary ? "bg-[var(--ts-primary-500)]/5 border-[var(--ts-primary-500)]/20" : "bg-gray-50 border-gray-100"}`}>
+                <div className="relative">
+                  {isPrimary && <span className="absolute -top-5 left-0 text-[9px] font-bold text-[var(--ts-primary-500)] uppercase tracking-wide sm:hidden">Défaut</span>}
+                  <select
+                    {...register(`conditions.${idx}.condition`)}
+                    className="w-full h-9 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]"
+                  >
+                    <option value="">Sélectionner...</option>
+                    {available.map(c => <option key={c.v} value={c.v}>{c.l}</option>)}
+                  </select>
+                </div>
+                <input type="number" step="0.01" min="0" placeholder="0.00" {...register(`conditions.${idx}.priceHT`)}
+                  className="h-9 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
+                <input type="number" step="0.1" placeholder="20" {...register(`conditions.${idx}.tvaRate`)}
+                  className="h-9 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
+                <input type="number" step="0.01" placeholder="—" {...register(`conditions.${idx}.depositAmount`)}
+                  className="h-9 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
+                <input type="number" min="0" placeholder="0" {...register(`conditions.${idx}.stockQuantity`)}
+                  className="h-9 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
+                <div className="flex justify-end">
+                  {!isPrimary ? (
+                    <button type="button" onClick={() => removeCondition(idx)} className="h-9 w-8 flex items-center justify-center rounded-lg text-red-400 hover:text-red-600 transition-colors">
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  ) : (
+                    <div className="h-9 w-8 flex items-center justify-center">
+                      <span title="Condition principale" className="text-[var(--ts-primary-500)]">★</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Global pricing fields */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-5 pt-5 border-t border-gray-100">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Prix promo HT (€)</label>
             <input type="number" step="0.01" {...register("salePriceHT")} className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
@@ -642,81 +674,6 @@ export function ProductForm({ mode, product, categories, brands, makes }: Props)
           </div>
         ) : (
           <p className="text-sm text-gray-400 text-center py-4">Aucune option additionnelle.</p>
-        )}
-      </section>
-
-      {/* Variants */}
-      <section className="bg-white rounded-xl border border-gray-100 p-6">
-        <div className="flex items-center justify-between mb-1">
-          <div>
-            <h2 className="text-lg font-bold text-gray-900">Variantes de condition</h2>
-            <p className="text-xs text-gray-400 mt-0.5">Ajoutez d'autres états disponibles pour ce même turbo, avec leurs prix et stocks distincts.</p>
-          </div>
-          <button
-            type="button"
-            onClick={() => addVariant({ condition: "", priceHT: 0, tvaRate: 20, salePriceHT: null, depositAmount: null, stockQuantity: 0 })}
-            className="text-sm text-[var(--ts-primary-500)] hover:underline flex items-center gap-1"
-          >
-            <Plus className="h-4 w-4" />
-            Ajouter
-          </button>
-        </div>
-        {variantFields.length > 0 ? (
-          <div className="space-y-3 mt-4">
-            {variantFields.map((field, idx) => {
-              const primaryCondition = watch("condition");
-              const usedConditions = variantFields.map((_, i) => i !== idx ? watch(`variants.${i}.condition`) : "").filter(Boolean);
-              const allConditions = [
-                { v: "Refurbished", l: "Reconditionné" },
-                { v: "New", l: "Neuf" },
-                { v: "ExchangeStandard", l: "Échange standard" },
-                { v: "NewAdaptable", l: "Neuf adaptable" },
-                { v: "NewOriginal", l: "Neuf d'origine" },
-              ];
-              const available = allConditions.filter(c => c.v !== primaryCondition && !usedConditions.includes(c.v));
-              return (
-                <div key={field.id} className="grid grid-cols-1 sm:grid-cols-[1.5fr_1fr_0.5fr_1fr_0.5fr_auto] gap-3 p-3 rounded-lg bg-gray-50 border border-gray-100 items-start">
-                  <div className="flex flex-col gap-1">
-                    <label className="text-[10px] font-medium text-gray-500 uppercase">État</label>
-                    <select
-                      {...register(`variants.${idx}.condition`)}
-                      className="h-9 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]"
-                    >
-                      <option value="">Sélectionner...</option>
-                      {available.map(c => <option key={c.v} value={c.v}>{c.l}</option>)}
-                    </select>
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <label className="text-[10px] font-medium text-gray-500 uppercase">Prix HT (€)</label>
-                    <input type="number" step="0.01" min="0" {...register(`variants.${idx}.priceHT`)}
-                      className="h-9 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <label className="text-[10px] font-medium text-gray-500 uppercase">TVA (%)</label>
-                    <input type="number" step="0.1" {...register(`variants.${idx}.tvaRate`)}
-                      className="h-9 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <label className="text-[10px] font-medium text-gray-500 uppercase">Consigne (€)</label>
-                    <input type="number" step="0.01" {...register(`variants.${idx}.depositAmount`)}
-                      className="h-9 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <label className="text-[10px] font-medium text-gray-500 uppercase">Stock</label>
-                    <input type="number" {...register(`variants.${idx}.stockQuantity`)}
-                      className="h-9 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
-                  </div>
-                  <div className="flex items-end pb-0.5">
-                    <button type="button" onClick={() => removeVariant(idx)} className="h-9 w-9 flex items-center justify-center rounded-lg border border-gray-200 text-red-400 hover:text-red-600 hover:border-red-200 transition-colors">
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        ) : (
-          <p className="text-sm text-gray-400 text-center py-4 mt-2">Aucune variante. Ce produit n'a qu'un seul état.</p>
         )}
       </section>
 
