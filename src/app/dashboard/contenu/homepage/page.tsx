@@ -11,14 +11,40 @@ interface HomepageConfig {
   heroTitleHighlight: string;
   heroDescription: string;
   stats: { value: string; label: string }[];
+  applicationsTagline: string;
+  applicationsTitle: string;
+  applicationsSubtitle: string;
+  applications: { title: string; desc: string; href: string }[];
+  whyTagline: string;
+  whyTitle: string;
+  whyItems: { title: string; desc: string }[];
   ctaTitle: string;
   ctaDescription: string;
   ctaPhone: string;
 }
 
+const APPLICATION_LABELS = ["Automobile", "Marine", "Industriel"];
+
 const EMPTY: HomepageConfig = {
-  heroTagline: "", heroTitle: "", heroTitleHighlight: "", heroDescription: "",
-  stats: [], ctaTitle: "", ctaDescription: "", ctaPhone: "",
+  heroTagline: "",
+  heroTitle: "",
+  heroTitleHighlight: "",
+  heroDescription: "",
+  stats: [],
+  applicationsTagline: "",
+  applicationsTitle: "",
+  applicationsSubtitle: "",
+  applications: [
+    { title: "Automobile", desc: "", href: "/produits?application=automobile" },
+    { title: "Marine", desc: "", href: "/produits?application=marine" },
+    { title: "Industriel", desc: "", href: "/produits?application=industriel" },
+  ],
+  whyTagline: "",
+  whyTitle: "",
+  whyItems: [],
+  ctaTitle: "",
+  ctaDescription: "",
+  ctaPhone: "",
 };
 
 export default function HomepageEditorPage() {
@@ -29,7 +55,17 @@ export default function HomepageEditorPage() {
   useEffect(() => {
     fetch("/api/content/homepage")
       .then(r => r.json())
-      .then(json => setConfig({ ...EMPTY, ...(json.data || {}) }))
+      .then(json => {
+        const data = json.data || {};
+        setConfig({
+          ...EMPTY,
+          ...data,
+          applications:
+            Array.isArray(data.applications) && data.applications.length === 3
+              ? data.applications
+              : EMPTY.applications,
+        });
+      })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
@@ -52,6 +88,7 @@ export default function HomepageEditorPage() {
     }
   };
 
+  // ── Stats helpers ──────────────────────────────────────────────────────────
   const updateStat = (idx: number, field: "value" | "label", val: string) => {
     setConfig(prev => ({
       ...prev,
@@ -61,6 +98,25 @@ export default function HomepageEditorPage() {
 
   const addStat = () => setConfig(prev => ({ ...prev, stats: [...prev.stats, { value: "", label: "" }] }));
   const removeStat = (idx: number) => setConfig(prev => ({ ...prev, stats: prev.stats.filter((_, i) => i !== idx) }));
+
+  // ── Applications helpers ───────────────────────────────────────────────────
+  const updateApplication = (idx: number, field: keyof HomepageConfig["applications"][number], val: string) => {
+    setConfig(prev => ({
+      ...prev,
+      applications: prev.applications.map((a, i) => i === idx ? { ...a, [field]: val } : a),
+    }));
+  };
+
+  // ── Why items helpers ──────────────────────────────────────────────────────
+  const updateWhyItem = (idx: number, field: "title" | "desc", val: string) => {
+    setConfig(prev => ({
+      ...prev,
+      whyItems: prev.whyItems.map((w, i) => i === idx ? { ...w, [field]: val } : w),
+    }));
+  };
+
+  const addWhyItem = () => setConfig(prev => ({ ...prev, whyItems: [...prev.whyItems, { title: "", desc: "" }] }));
+  const removeWhyItem = (idx: number) => setConfig(prev => ({ ...prev, whyItems: prev.whyItems.filter((_, i) => i !== idx) }));
 
   if (loading) return <div className="flex items-center justify-center py-20"><Loader2 className="h-6 w-6 animate-spin text-gray-400" /></div>;
 
@@ -72,7 +128,7 @@ export default function HomepageEditorPage() {
         </Link>
         <div>
           <h1 className="text-2xl font-black text-gray-900">Page d&apos;accueil</h1>
-          <p className="text-sm text-gray-500">Editez le contenu du hero, les stats et le bandeau CTA</p>
+          <p className="text-sm text-gray-500">Editez le contenu du hero, les stats, les applications, pourquoi nous et le bandeau CTA</p>
         </div>
       </div>
 
@@ -123,6 +179,78 @@ export default function HomepageEditorPage() {
           ) : (
             <p className="text-sm text-gray-400 text-center py-4">Aucune statistique.</p>
           )}
+        </section>
+
+        {/* Applications */}
+        <section className="bg-white rounded-xl border border-gray-100 p-6">
+          <h2 className="text-lg font-bold text-gray-900 mb-4">Section Applications</h2>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Tagline</label>
+              <input value={config.applicationsTagline} onChange={e => setConfig(p => ({ ...p, applicationsTagline: e.target.value }))} placeholder="Nos domaines" className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Titre</label>
+              <input value={config.applicationsTitle} onChange={e => setConfig(p => ({ ...p, applicationsTitle: e.target.value }))} placeholder="Turbos pour toutes les applications" className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Sous-titre</label>
+              <input value={config.applicationsSubtitle} onChange={e => setConfig(p => ({ ...p, applicationsSubtitle: e.target.value }))} placeholder="Automobile, marine, industriel — on couvre tout" className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
+            </div>
+            <div className="space-y-4 pt-2">
+              {config.applications.map((app, idx) => (
+                <div key={idx} className="rounded-lg border border-gray-100 bg-gray-50 p-4 space-y-3">
+                  <p className="text-xs font-bold text-gray-500 uppercase tracking-wide">{APPLICATION_LABELS[idx]}</p>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Titre</label>
+                    <input value={app.title} onChange={e => updateApplication(idx, "title", e.target.value)} className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <textarea value={app.desc} onChange={e => updateApplication(idx, "desc", e.target.value)} rows={2} className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Why TurboSouf */}
+        <section className="bg-white rounded-xl border border-gray-100 p-6">
+          <h2 className="text-lg font-bold text-gray-900 mb-4">Pourquoi TurboSouf</h2>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Tagline</label>
+              <input value={config.whyTagline} onChange={e => setConfig(p => ({ ...p, whyTagline: e.target.value }))} placeholder="Notre difference" className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Titre</label>
+              <input value={config.whyTitle} onChange={e => setConfig(p => ({ ...p, whyTitle: e.target.value }))} placeholder="Pourquoi TurboSouf ?" className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
+            </div>
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <label className="block text-sm font-medium text-gray-700">Arguments</label>
+                <button type="button" onClick={addWhyItem} className="text-sm text-[var(--ts-primary-500)] hover:underline flex items-center gap-1">
+                  <Plus className="h-4 w-4" /> Ajouter
+                </button>
+              </div>
+              {config.whyItems.length > 0 ? (
+                <div className="space-y-3">
+                  {config.whyItems.map((item, idx) => (
+                    <div key={idx} className="rounded-lg border border-gray-100 bg-gray-50 p-4 space-y-3">
+                      <div className="flex items-center gap-3">
+                        <input value={item.title} onChange={e => updateWhyItem(idx, "title", e.target.value)} placeholder="Titre de l'argument" className="flex-1 h-10 px-3 rounded-lg border border-gray-200 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
+                        <button type="button" onClick={() => removeWhyItem(idx)} className="text-red-500 hover:text-red-700 shrink-0"><Trash2 className="h-4 w-4" /></button>
+                      </div>
+                      <textarea value={item.desc} onChange={e => updateWhyItem(idx, "desc", e.target.value)} placeholder="Description de l'argument" rows={2} className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-gray-400 text-center py-4">Aucun argument. Cliquez sur &quot;Ajouter&quot; pour en creer un.</p>
+              )}
+            </div>
+          </div>
         </section>
 
         {/* CTA Banner */}

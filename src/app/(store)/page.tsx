@@ -18,12 +18,21 @@ interface HomepageConfig {
   heroTitleHighlight: string;
   heroDescription: string;
   stats: { value: string; label: string }[];
+  applicationsTagline: string;
+  applicationsTitle: string;
+  applicationsSubtitle: string;
+  applications: { title: string; desc: string; href: string }[];
+  whyTagline: string;
+  whyTitle: string;
+  whyItems: { title: string; desc: string }[];
   ctaTitle: string;
   ctaDescription: string;
   ctaPhone: string;
 }
 
 interface Banner { id: string; text: string; link: string; active: boolean; bgColor: string }
+
+interface FaqCategory { category: string; items: { q: string; a: string }[] }
 
 async function fetchVehicleMakes(): Promise<VehicleMake[]> {
   try {
@@ -40,8 +49,48 @@ async function getConfig<T>(file: string, fallback: T): Promise<T> {
   } catch { return fallback; }
 }
 
+const HARDCODED_APPLICATIONS = [
+  {
+    title: "Automobile",
+    desc: "Voitures, utilitaires, poids lourds. Toutes marques, tous modeles. Turbo neuf ou reconditionne.",
+    href: "/produits?application=automobile",
+  },
+  {
+    title: "Marine",
+    desc: "Bateaux, yachts, navires de croisiere. Turbos marins adaptes aux conditions extremes.",
+    href: "/produits?application=marine",
+  },
+  {
+    title: "Industriel",
+    desc: "Groupes electrogenes, engins de chantier, machines agricoles. Solutions sur mesure.",
+    href: "/produits?application=industriel",
+  },
+];
+
+const APPLICATION_ICONS = [Car, Anchor, Factory];
+const APPLICATION_ACCENT_CLASSES = ["app-card-auto", "app-card-marine", "app-card-indus"];
+
+const WHY_ICONS = [Wrench, Shield, Award, Users, Star, Cog];
+
+const HARDCODED_WHY_ITEMS = [
+  { title: "Atelier integre", desc: "Reconditionnement professionnel dans notre propre atelier. Chaque turbo est teste sur banc d'essai et calibre avant expedition." },
+  { title: "Garantie 2 ans", desc: "Tous nos turbos reconditionnes sont couverts par une garantie de 2 ans pieces et main-d'oeuvre." },
+  { title: "Prix competitifs", desc: "Jusqu'a 50% d'economie par rapport au neuf, sans compromis sur la qualite. Paiement en 3x/4x sans frais." },
+  { title: "Conseil expert", desc: "Notre equipe de specialistes vous accompagne pour trouver le bon turbo compatible avec votre vehicule ou application." },
+  { title: "Multi-applications", desc: "Automobile, marine, industriel — nous couvrons toutes les applications avec des turbos adaptes a chaque usage." },
+  { title: "Reconditionnement", desc: "Confiez-nous votre turbo, on le remet a neuf. Diagnostic, reparation et test complet en atelier." },
+];
+
+const HARDCODED_FAQ = [
+  { q: "Quelle est la garantie sur les turbos reconditionnes ?", a: "Tous nos turbos reconditionnes sont garantis 2 ans, pieces et main-d'oeuvre." },
+  { q: "Qu'est-ce que la consigne ?", a: "La consigne est un montant remboursable que vous payez a l'achat d'un turbo en echange standard. Renvoyez votre ancien turbo et nous vous remboursons la consigne." },
+  { q: "Quels sont les delais de livraison ?", a: "Livraison standard en 2-3 jours ouvres. Express en 24h. Gratuite des 150 euros." },
+  { q: "Faites-vous les turbos pour bateaux et industriel ?", a: "Oui, nous couvrons toutes les applications : automobile, marine (bateaux, yachts) et industriel (groupes electrogenes, engins de chantier)." },
+  { q: "Puis-je faire reconditionner mon propre turbo ?", a: "Absolument. Envoyez-nous votre turbo, nous le diagnostiquons et le remettons a neuf dans notre atelier. Devis gratuit." },
+];
+
 export default async function HomePage() {
-  const [vehicleMakes, hc, banners] = await Promise.all([
+  const [vehicleMakes, hc, banners, faqCategories] = await Promise.all([
     fetchVehicleMakes(),
     getConfig<HomepageConfig>("homepage-config.json", {
       heroTagline: "SPECIALISTE TURBO DEPUIS 2010",
@@ -49,14 +98,28 @@ export default async function HomePage() {
       heroTitleHighlight: "turbocompresseur",
       heroDescription: "",
       stats: [],
+      applicationsTagline: "",
+      applicationsTitle: "",
+      applicationsSubtitle: "",
+      applications: [],
+      whyTagline: "",
+      whyTitle: "",
+      whyItems: [],
       ctaTitle: "",
       ctaDescription: "",
       ctaPhone: "",
     }),
     getConfig<Banner[]>("banners-config.json", []),
+    getConfig<FaqCategory[]>("faq-config.json", []),
   ]);
 
   const activeBanners = banners.filter(b => b.active && b.text);
+
+  const applications = hc.applications && hc.applications.length > 0 ? hc.applications : HARDCODED_APPLICATIONS;
+  const whyItems = hc.whyItems && hc.whyItems.length > 0 ? hc.whyItems : HARDCODED_WHY_ITEMS;
+
+  const flatFaqItems = faqCategories.flatMap(cat => cat.items).slice(0, 5);
+  const faqItems = flatFaqItems.length > 0 ? flatFaqItems : HARDCODED_FAQ;
 
   return (
     <>
@@ -186,56 +249,42 @@ export default async function HomePage() {
       <section className="py-20 bg-white">
         <div className="mx-auto max-w-7xl px-4">
           <div className="text-center mb-12">
-            <p className="text-xs font-bold tracking-[0.16em] uppercase text-[#E85D26] mb-3">Nos domaines</p>
+            <p className="text-xs font-bold tracking-[0.16em] uppercase text-[#E85D26] mb-3">
+              {hc.applicationsTagline || "Nos domaines"}
+            </p>
             <h2 className="text-2xl sm:text-3xl font-black text-[#0A0A0A] tracking-tight mb-3">
-              Turbos pour toutes les applications
+              {hc.applicationsTitle || "Turbos pour toutes les applications"}
             </h2>
-            <p className="text-[#6B6B6B]">Automobile, marine, industriel — on couvre tout</p>
+            <p className="text-[#6B6B6B]">
+              {hc.applicationsSubtitle || "Automobile, marine, industriel — on couvre tout"}
+            </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            {[
-              {
-                icon: Car,
-                title: "Automobile",
-                desc: "Voitures, utilitaires, poids lourds. Toutes marques, tous modeles. Turbo neuf ou reconditionne.",
-                href: "/produits?application=automobile",
-                accentClass: "app-card-auto",
-              },
-              {
-                icon: Anchor,
-                title: "Marine",
-                desc: "Bateaux, yachts, navires de croisiere. Turbos marins adaptes aux conditions extremes.",
-                href: "/produits?application=marine",
-                accentClass: "app-card-marine",
-              },
-              {
-                icon: Factory,
-                title: "Industriel",
-                desc: "Groupes electrogenes, engins de chantier, machines agricoles. Solutions sur mesure.",
-                href: "/produits?application=industriel",
-                accentClass: "app-card-indus",
-              },
-            ].map((app) => (
-              <Link
-                key={app.title}
-                href={app.href}
-                className={`group relative rounded-2xl p-8 border transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${app.accentClass}`}
-              >
-                {/* Top accent line */}
-                <div className="app-card-line absolute top-0 left-8 right-8 h-0.5 rounded-b-full opacity-70" />
+            {applications.map((app, idx) => {
+              const Icon = APPLICATION_ICONS[idx] ?? Car;
+              const accentClass = APPLICATION_ACCENT_CLASSES[idx] ?? "app-card-auto";
+              return (
+                <Link
+                  key={app.title}
+                  href={app.href}
+                  className={`group relative rounded-2xl p-8 border transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${accentClass}`}
+                >
+                  {/* Top accent line */}
+                  <div className="app-card-line absolute top-0 left-8 right-8 h-0.5 rounded-b-full opacity-70" />
 
-                <div className="app-card-icon w-14 h-14 rounded-xl flex items-center justify-center mb-5">
-                  <app.icon className="h-7 w-7 app-card-icon-svg" />
-                </div>
-                <h3 className="text-xl font-bold text-[#0A0A0A] mb-2">{app.title}</h3>
-                <p className="text-sm text-[#6B6B6B] leading-relaxed mb-5">{app.desc}</p>
-                <span className="app-card-link inline-flex items-center gap-1.5 text-sm font-bold">
-                  Decouvrir
-                  <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                </span>
-              </Link>
-            ))}
+                  <div className="app-card-icon w-14 h-14 rounded-xl flex items-center justify-center mb-5">
+                    <Icon className="h-7 w-7 app-card-icon-svg" />
+                  </div>
+                  <h3 className="text-xl font-bold text-[#0A0A0A] mb-2">{app.title}</h3>
+                  <p className="text-sm text-[#6B6B6B] leading-relaxed mb-5">{app.desc}</p>
+                  <span className="app-card-link inline-flex items-center gap-1.5 text-sm font-bold">
+                    Decouvrir
+                    <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                  </span>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -275,32 +324,31 @@ export default async function HomePage() {
       <section className="py-20 bg-white border-t border-[rgba(0,0,0,0.05)]">
         <div className="mx-auto max-w-7xl px-4">
           <div className="text-center mb-12">
-            <p className="text-xs font-bold tracking-[0.16em] uppercase text-[#E85D26] mb-3">Notre difference</p>
+            <p className="text-xs font-bold tracking-[0.16em] uppercase text-[#E85D26] mb-3">
+              {hc.whyTagline || "Notre difference"}
+            </p>
             <h2 className="text-2xl sm:text-3xl font-black text-[#0A0A0A] tracking-tight">
-              Pourquoi TurboSouf ?
+              {hc.whyTitle || "Pourquoi TurboSouf ?"}
             </h2>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {[
-              { icon: Wrench, title: "Atelier integre", desc: "Reconditionnement professionnel dans notre propre atelier. Chaque turbo est teste sur banc d'essai et calibre avant expedition.", accent: "#E85D26" },
-              { icon: Shield, title: "Garantie 2 ans", desc: "Tous nos turbos reconditionnes sont couverts par une garantie de 2 ans pieces et main-d'oeuvre.", accent: "#1A3A5C" },
-              { icon: Award, title: "Prix competitifs", desc: "Jusqu'a 50% d'economie par rapport au neuf, sans compromis sur la qualite. Paiement en 3x/4x sans frais.", accent: "#E85D26" },
-              { icon: Users, title: "Conseil expert", desc: "Notre equipe de specialistes vous accompagne pour trouver le bon turbo compatible avec votre vehicule ou application.", accent: "#1A3A5C" },
-              { icon: Star, title: "Multi-applications", desc: "Automobile, marine, industriel — nous couvrons toutes les applications avec des turbos adaptes a chaque usage.", accent: "#E85D26" },
-              { icon: Cog, title: "Reconditionnement", desc: "Confiez-nous votre turbo, on le remet a neuf. Diagnostic, reparation et test complet en atelier.", accent: "#1A3A5C" },
-            ].map((item) => (
-              <div
-                key={item.title}
-                className="group p-7 rounded-2xl border border-[rgba(0,0,0,0.07)] bg-white hover:border-[rgba(232,93,38,0.25)] hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 shadow-sm"
-              >
-                <div className="w-11 h-11 rounded-lg flex items-center justify-center mb-4" style={{ backgroundColor: `${item.accent}12`, border: `1px solid ${item.accent}20` }}>
-                  <item.icon className="h-5 w-5" style={{ color: item.accent }} />
+            {whyItems.map((item, idx) => {
+              const Icon = WHY_ICONS[idx] ?? Wrench;
+              const accent = idx % 2 === 0 ? "#E85D26" : "#1A3A5C";
+              return (
+                <div
+                  key={item.title}
+                  className="group p-7 rounded-2xl border border-[rgba(0,0,0,0.07)] bg-white hover:border-[rgba(232,93,38,0.25)] hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 shadow-sm"
+                >
+                  <div className="w-11 h-11 rounded-lg flex items-center justify-center mb-4" style={{ backgroundColor: `${accent}12`, border: `1px solid ${accent}20` }}>
+                    <Icon className="h-5 w-5" style={{ color: accent }} />
+                  </div>
+                  <h3 className="text-base font-bold text-[#0A0A0A] mb-2">{item.title}</h3>
+                  <p className="text-sm text-[#6B6B6B] leading-relaxed">{item.desc}</p>
                 </div>
-                <h3 className="text-base font-bold text-[#0A0A0A] mb-2">{item.title}</h3>
-                <p className="text-sm text-[#6B6B6B] leading-relaxed">{item.desc}</p>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -342,13 +390,7 @@ export default async function HomePage() {
             </h2>
           </div>
           <div className="space-y-2.5">
-            {[
-              { q: "Quelle est la garantie sur les turbos reconditionnes ?", a: "Tous nos turbos reconditionnes sont garantis 2 ans, pieces et main-d'oeuvre." },
-              { q: "Qu'est-ce que la consigne ?", a: "La consigne est un montant remboursable que vous payez a l'achat d'un turbo en echange standard. Renvoyez votre ancien turbo et nous vous remboursons la consigne." },
-              { q: "Quels sont les delais de livraison ?", a: "Livraison standard en 2-3 jours ouvres. Express en 24h. Gratuite des 150 euros." },
-              { q: "Faites-vous les turbos pour bateaux et industriel ?", a: "Oui, nous couvrons toutes les applications : automobile, marine (bateaux, yachts) et industriel (groupes electrogenes, engins de chantier)." },
-              { q: "Puis-je faire reconditionner mon propre turbo ?", a: "Absolument. Envoyez-nous votre turbo, nous le diagnostiquons et le remettons a neuf dans notre atelier. Devis gratuit." },
-            ].map((faq) => (
+            {faqItems.map((faq) => (
               <details key={faq.q} className="group rounded-xl border border-[rgba(0,0,0,0.08)] bg-white overflow-hidden">
                 <summary className="flex items-center justify-between px-5 py-4 cursor-pointer text-sm font-semibold text-[#0A0A0A] hover:bg-[#FAFAF8] transition-colors list-none">
                   {faq.q}

@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 const CONFIG_MAP: Record<string, { file: string; revalidate: string[] }> = {
   homepage: { file: "homepage-config.json", revalidate: ["/"] },
-  faq: { file: "faq-config.json", revalidate: ["/faq"] },
+  faq: { file: "faq-config.json", revalidate: ["/faq", "/"] },
   banners: { file: "banners-config.json", revalidate: ["/"] },
 };
 

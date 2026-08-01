@@ -9,6 +9,24 @@
     { "value": "98%", "label": "Clients satisfaits" },
     { "value": "-50%", "label": "vs prix du neuf" }
   ],
+  "applicationsTagline": "Nos domaines",
+  "applicationsTitle": "Turbos pour toutes les applications",
+  "applicationsSubtitle": "Automobile, marine, industriel — on couvre tout",
+  "applications": [
+    { "title": "Automobile", "desc": "Voitures, utilitaires, poids lourds. Toutes marques, tous modeles. Turbo neuf ou reconditionne.", "href": "/produits?application=automobile" },
+    { "title": "Marine", "desc": "Bateaux, yachts, navires de croisiere. Turbos marins adaptes aux conditions extremes.", "href": "/produits?application=marine" },
+    { "title": "Industriel", "desc": "Groupes electrogenes, engins de chantier, machines agricoles. Solutions sur mesure.", "href": "/produits?application=industriel" }
+  ],
+  "whyTagline": "Notre difference",
+  "whyTitle": "Pourquoi TurboSouf ?",
+  "whyItems": [
+    { "title": "Atelier integre", "desc": "Reconditionnement professionnel dans notre propre atelier. Chaque turbo est teste sur banc d'essai et calibre avant expedition." },
+    { "title": "Garantie 2 ans", "desc": "Tous nos turbos reconditionnes sont couverts par une garantie de 2 ans pieces et main-d'oeuvre." },
+    { "title": "Prix competitifs", "desc": "Jusqu'a 50% d'economie par rapport au neuf, sans compromis sur la qualite. Paiement en 3x/4x sans frais." },
+    { "title": "Conseil expert", "desc": "Notre equipe de specialistes vous accompagne pour trouver le bon turbo compatible avec votre vehicule ou application." },
+    { "title": "Multi-applications", "desc": "Automobile, marine, industriel — nous couvrons toutes les applications avec des turbos adaptes a chaque usage." },
+    { "title": "Reconditionnement", "desc": "Confiez-nous votre turbo, on le remet a neuf. Diagnostic, reparation et test complet en atelier." }
+  ],
   "ctaTitle": "Besoin d'un devis ou d'un conseil ?",
   "ctaDescription": "Nos experts turbo sont disponibles du lundi au vendredi, 9h-18h.",
   "ctaPhone": "+33 1 23 45 67 89"
