@@ -19,6 +19,7 @@ interface HomepageConfig {
   heroTitleHighlight: string;
   heroDescription: string;
   stats: { value: string; label: string }[];
+  applicationsVisible: boolean;
   applicationsTagline: string;
   applicationsTitle: string;
   applicationsSubtitle: string;
@@ -212,7 +213,7 @@ export default async function HomePage() {
       <TrustBar />
 
       {/* ── APPLICATIONS — White, colored accent cards ────────────────────── */}
-      <section className="py-20 bg-white">
+      {hc.applicationsVisible !== false && <section className="py-20 bg-white">
         <div className="mx-auto max-w-7xl px-4">
           <div className="text-center mb-12">
             <p className="text-xs font-bold tracking-[0.16em] uppercase text-[#E85D26] mb-3">
@@ -253,7 +254,7 @@ export default async function HomePage() {
             })}
           </div>
         </div>
-      </section>
+      </section>}
 
       {/* ── VEHICLE FINDER — dark stays ───────────────────────────────────── */}
       <VehicleFinder />

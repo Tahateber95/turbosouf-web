@@ -9,6 +9,7 @@
     { "value": "98%", "label": "Clients satisfaits" },
     { "value": "-50%", "label": "vs prix du neuf" }
   ],
+  "applicationsVisible": true,
   "applicationsTagline": "Nos domaines",
   "applicationsTitle": "Turbos pour toutes les applications",
   "applicationsSubtitle": "Automobile, marine, industriel — on couvre tout",

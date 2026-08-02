@@ -11,6 +11,7 @@ interface HomepageConfig {
   heroTitleHighlight: string;
   heroDescription: string;
   stats: { value: string; label: string }[];
+  applicationsVisible: boolean;
   applicationsTagline: string;
   applicationsTitle: string;
   applicationsSubtitle: string;
@@ -31,6 +32,7 @@ const EMPTY: HomepageConfig = {
   heroTitleHighlight: "",
   heroDescription: "",
   stats: [],
+  applicationsVisible: true,
   applicationsTagline: "",
   applicationsTitle: "",
   applicationsSubtitle: "",
@@ -183,7 +185,18 @@ export default function HomepageEditorPage() {
 
         {/* Applications */}
         <section className="bg-white rounded-xl border border-gray-100 p-6">
-          <h2 className="text-lg font-bold text-gray-900 mb-4">Section Applications</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold text-gray-900">Section Applications</h2>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={config.applicationsVisible}
+              onClick={() => setConfig(p => ({ ...p, applicationsVisible: !p.applicationsVisible }))}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)] focus:ring-offset-2 ${config.applicationsVisible ? "bg-[var(--ts-primary-500)]" : "bg-gray-200"}`}
+            >
+              <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${config.applicationsVisible ? "translate-x-6" : "translate-x-1"}`} />
+            </button>
+          </div>
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Tagline</label>
