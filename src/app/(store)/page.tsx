@@ -149,7 +149,7 @@ export default async function HomePage() {
             {/* Eyebrow */}
             <div className="flex items-center gap-2 mb-6 animate-fade-up">
               <span className="inline-block w-8 h-0.5 bg-[#E85D26] rounded-full" />
-              <span className="text-[11px] font-bold tracking-[0.18em] uppercase text-[#E85D26]">
+              <span className="text-[13px] font-bold tracking-[0.18em] uppercase text-white">
                 {hc.heroTagline}
               </span>
             </div>
