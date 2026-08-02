@@ -4,6 +4,7 @@ import { VehicleFinder } from "@/components/store/vehicle-finder";
 import { TrustBar } from "@/components/store/trust-bar";
 import { MakeLogo } from "@/components/store/make-logo";
 import { TikTokFeed } from "@/components/store/tiktok-feed";
+import { HeroSlider } from "@/components/store/hero-slider";
 import { SERVER_API_URL, type VehicleMake } from "@/lib/api";
 import { readFile } from "fs/promises";
 import { join } from "path";
@@ -130,115 +131,80 @@ export default async function HomePage() {
         </div>
       ))}
 
-      {/* ── HERO — Warm cream mesh gradient ───────────────────────────────── */}
-      <section
-        className="relative overflow-hidden"
-        style={{
-          background: [
-            "radial-gradient(ellipse 70% 60% at 8% 60%, rgba(232,93,38,0.13) 0%, transparent 65%)",
-            "radial-gradient(ellipse 55% 65% at 88% 20%, rgba(26,58,92,0.07) 0%, transparent 60%)",
-            "radial-gradient(ellipse 40% 40% at 50% 110%, rgba(232,93,38,0.06) 0%, transparent 60%)",
-            "#F8F7F4",
-          ].join(", "),
-        }}
-      >
-        {/* Blueprint crosshatch texture */}
-        <div className="absolute inset-0 bg-blueprint opacity-100 pointer-events-none" />
+      {/* ── HERO — Full-bleed image slider ────────────────────────────────── */}
+      <section className="relative overflow-hidden min-h-[600px] lg:min-h-[680px] flex items-center">
+        {/* Background slider (client component) */}
+        <HeroSlider />
 
-        <div className="relative mx-auto max-w-7xl px-4 pt-16 pb-20 lg:pt-24 lg:pb-28">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+        {/* Blueprint crosshatch texture on top of images */}
+        <div className="absolute inset-0 bg-blueprint opacity-30 pointer-events-none" />
 
-            {/* Left: Copy */}
-            <div>
-              {/* Eyebrow */}
-              <div className="flex items-center gap-2 mb-6 animate-fade-up">
-                <span className="inline-block w-8 h-0.5 bg-[#E85D26] rounded-full" />
-                <span className="text-[11px] font-bold tracking-[0.18em] uppercase text-[#E85D26]">
-                  {hc.heroTagline}
-                </span>
-              </div>
+        <div className="relative z-10 mx-auto max-w-7xl px-4 pt-16 pb-20 lg:pt-24 lg:pb-28 w-full">
+          <div className="max-w-2xl">
 
-              <h1 className="text-4xl sm:text-5xl lg:text-[3.6rem] font-black text-[#0A0A0A] tracking-tight leading-[1.07] mb-6 animate-fade-up">
-                {hc.heroTitle}
-                <br />
-                <span className="text-[#E85D26]">{hc.heroTitleHighlight}</span>
-              </h1>
-
-              <p className="text-lg text-[#6B6B6B] mb-9 max-w-lg leading-relaxed animate-fade-up-delay">
-                {hc.heroDescription}
-              </p>
-
-              <div className="flex flex-wrap gap-3 mb-10 animate-fade-up-delay">
-                <Link
-                  href="/produits"
-                  className="inline-flex items-center h-13 px-7 font-bold rounded-lg text-base text-white transition-all hover:shadow-xl hover:shadow-[#E85D26]/25 active:scale-[0.98]"
-                  style={{ background: "linear-gradient(180deg,#FF7A45 0%,#E85D26 100%)" }}
-                >
-                  Voir nos turbos
-                  <ArrowRight className="h-4 w-4 ml-2" />
-                </Link>
-                <Link
-                  href="/contact"
-                  className="inline-flex items-center h-13 px-7 bg-white text-[#3A3A3A] font-semibold rounded-lg text-base transition-all border border-[rgba(0,0,0,0.12)] shadow-sm hover:border-[rgba(0,0,0,0.20)] hover:shadow-md"
-                >
-                  <Phone className="h-4 w-4 mr-2 text-[#E85D26]" />
-                  Nous contacter
-                </Link>
-              </div>
-
-              {/* Trust signals */}
-              <div className="flex flex-wrap gap-x-6 gap-y-3 animate-fade-up-delay-2">
-                {[
-                  { icon: CheckCircle2, text: "Garantie 2 ans" },
-                  { icon: Clock, text: "Livraison 24-48h" },
-                  { icon: Shield, text: "Paiement securise" },
-                  { icon: Award, text: "Atelier certifie" },
-                ].map((item) => (
-                  <div key={item.text} className="flex items-center gap-2 text-sm text-[#6B6B6B]">
-                    <item.icon className="h-4 w-4 text-[#E85D26] shrink-0" />
-                    <span>{item.text}</span>
-                  </div>
-                ))}
-              </div>
+            {/* Eyebrow */}
+            <div className="flex items-center gap-2 mb-6 animate-fade-up">
+              <span className="inline-block w-8 h-0.5 bg-[#E85D26] rounded-full" />
+              <span className="text-[11px] font-bold tracking-[0.18em] uppercase text-[#E85D26]">
+                {hc.heroTagline}
+              </span>
             </div>
 
-            {/* Right: Turbo image */}
-            <div className="relative hidden lg:flex items-center justify-center animate-fade-up-delay">
-              <div className="relative w-[440px] h-[440px]">
-                {/* Warm glow circle */}
-                <div className="absolute inset-8 rounded-full bg-gradient-to-br from-[#E85D26]/12 via-[#F7941D]/8 to-transparent blur-2xl" />
-                {/* Rings */}
-                <div className="absolute inset-4 rounded-full border border-[#E85D26]/10" />
-                <div className="absolute inset-10 rounded-full border border-[#E85D26]/6" />
+            <h1 className="text-4xl sm:text-5xl lg:text-[3.6rem] font-black text-white tracking-tight leading-[1.07] mb-6 animate-fade-up">
+              {hc.heroTitle}
+              <br />
+              <span className="text-[#FF7A45]">{hc.heroTitleHighlight}</span>
+            </h1>
 
-                <img
-                  src="/images/turbo-default.jpg"
-                  alt="Turbocompresseur"
-                  className="relative w-full h-full object-contain p-6 drop-shadow-xl"
-                />
+            <p className="text-lg text-white/80 mb-9 max-w-lg leading-relaxed animate-fade-up-delay">
+              {hc.heroDescription}
+            </p>
 
-                {/* Floating badges — glass style on light */}
-                <div className="absolute top-10 right-2 bg-white/90 backdrop-blur-sm rounded-xl shadow-lg shadow-black/8 px-4 py-2.5 border border-white animate-bounce-slow">
-                  <p className="text-xs font-bold text-[#E85D26]">Garantie 2 ans</p>
-                </div>
-                <div className="absolute bottom-14 -left-2 bg-white/90 backdrop-blur-sm rounded-xl shadow-lg shadow-black/8 px-4 py-2.5 border border-white animate-bounce-slow" style={{ animationDelay: "1.2s" }}>
-                  <p className="text-xs font-bold text-[#1A3A5C]">-50% vs neuf</p>
-                </div>
-              </div>
+            <div className="flex flex-wrap gap-3 mb-10 animate-fade-up-delay">
+              <Link
+                href="/produits"
+                className="inline-flex items-center h-13 px-7 font-bold rounded-lg text-base text-white transition-all hover:shadow-xl hover:shadow-[#E85D26]/40 active:scale-[0.98]"
+                style={{ background: "linear-gradient(180deg,#FF7A45 0%,#E85D26 100%)" }}
+              >
+                Voir nos turbos
+                <ArrowRight className="h-4 w-4 ml-2" />
+              </Link>
+              <Link
+                href="/contact"
+                className="inline-flex items-center h-13 px-7 bg-white/10 backdrop-blur-sm text-white font-semibold rounded-lg text-base transition-all border border-white/25 hover:bg-white/20 hover:border-white/40"
+              >
+                <Phone className="h-4 w-4 mr-2 text-[#FF7A45]" />
+                Nous contacter
+              </Link>
             </div>
-          </div>
 
-          {/* Stats */}
-          {hc.stats.length > 0 && (
-            <div className="mt-14 grid grid-cols-2 lg:grid-cols-4 gap-4 animate-fade-up-delay-2">
-              {hc.stats.map((stat) => (
-                <div key={stat.label} className="rounded-xl p-5 bg-white border border-[rgba(0,0,0,0.08)] shadow-sm hover:shadow-md transition-shadow">
-                  <p className="text-2xl sm:text-3xl font-black text-[#E85D26]">{stat.value}</p>
-                  <p className="text-xs text-[#6B6B6B] mt-1">{stat.label}</p>
+            {/* Trust signals */}
+            <div className="flex flex-wrap gap-x-6 gap-y-3 animate-fade-up-delay-2">
+              {[
+                { icon: CheckCircle2, text: "Garantie 2 ans" },
+                { icon: Clock, text: "Livraison 24-48h" },
+                { icon: Shield, text: "Paiement securise" },
+                { icon: Award, text: "Atelier certifie" },
+              ].map((item) => (
+                <div key={item.text} className="flex items-center gap-2 text-sm text-white/80">
+                  <item.icon className="h-4 w-4 text-[#FF7A45] shrink-0" />
+                  <span>{item.text}</span>
                 </div>
               ))}
             </div>
-          )}
+
+            {/* Stats */}
+            {hc.stats.length > 0 && (
+              <div className="mt-14 grid grid-cols-2 sm:grid-cols-4 gap-4 animate-fade-up-delay-2">
+                {hc.stats.map((stat) => (
+                  <div key={stat.label} className="rounded-xl p-5 bg-white/10 backdrop-blur-sm border border-white/15">
+                    <p className="text-2xl sm:text-3xl font-black text-[#FF7A45]">{stat.value}</p>
+                    <p className="text-xs text-white/70 mt-1">{stat.label}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
