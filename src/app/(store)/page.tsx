@@ -100,6 +100,7 @@ export default async function HomePage() {
       heroTitleHighlight: "turbocompresseur",
       heroDescription: "",
       stats: [],
+      applicationsVisible: true,
       applicationsTagline: "",
       applicationsTitle: "",
       applicationsSubtitle: "",
