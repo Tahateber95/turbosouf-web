@@ -1,25 +1,37 @@
 import { NextRequest, NextResponse } from "next/server";
-import { readFile, writeFile } from "fs/promises";
-import { join } from "path";
 import { revalidatePath } from "next/cache";
-
-const CONFIG_PATH = join(process.cwd(), "src/data/site-config.json");
 
 export const dynamic = "force-dynamic";
 
+const BACKEND = process.env.INTERNAL_API_URL ?? "http://turbosouf-api:8080";
+
 export async function GET() {
   try {
-    const data = await readFile(CONFIG_PATH, "utf-8");
-    return NextResponse.json({ data: JSON.parse(data) });
+    const res = await fetch(`${BACKEND}/api/v1/site-content/site-config`, { cache: "no-store" });
+    if (!res.ok) return NextResponse.json({ data: {} });
+    const json = await res.json();
+    return NextResponse.json({ data: JSON.parse(json.data.value) });
   } catch {
     return NextResponse.json({ data: {} });
   }
 }
 
 export async function PUT(request: NextRequest) {
+  const authHeader = request.headers.get("authorization") ?? "";
   try {
     const body = await request.json();
-    await writeFile(CONFIG_PATH, JSON.stringify(body, null, 2), "utf-8");
+    const res = await fetch(`${BACKEND}/api/v1/site-content/site-config`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        ...(authHeader ? { Authorization: authHeader } : {}),
+      },
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      return NextResponse.json({ error: err.error ?? { message: "Erreur backend" } }, { status: res.status });
+    }
     revalidatePath("/contact");
     return NextResponse.json({ data: body });
   } catch {

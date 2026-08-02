@@ -6,8 +6,6 @@ import { MakeLogo } from "@/components/store/make-logo";
 import { TikTokFeed } from "@/components/store/tiktok-feed";
 import { HeroSlider } from "@/components/store/hero-slider";
 import { SERVER_API_URL, type VehicleMake } from "@/lib/api";
-import { readFile } from "fs/promises";
-import { join } from "path";
 
 export const dynamic = "force-dynamic";
 
@@ -44,10 +42,14 @@ async function fetchVehicleMakes(): Promise<VehicleMake[]> {
   } catch { return []; }
 }
 
-async function getConfig<T>(file: string, fallback: T): Promise<T> {
+const BACKEND = SERVER_API_URL;
+
+async function getSiteContent<T>(key: string, fallback: T): Promise<T> {
   try {
-    const data = await readFile(join(process.cwd(), "src/data", file), "utf-8");
-    return JSON.parse(data);
+    const res = await fetch(`${BACKEND}/api/v1/site-content/${key}`, { cache: "no-store" });
+    if (!res.ok) return fallback;
+    const json = await res.json();
+    return JSON.parse(json.data.value) as T;
   } catch { return fallback; }
 }
 
@@ -94,7 +96,7 @@ const HARDCODED_FAQ = [
 export default async function HomePage() {
   const [vehicleMakes, hc, banners, faqCategories] = await Promise.all([
     fetchVehicleMakes(),
-    getConfig<HomepageConfig>("homepage-config.json", {
+    getSiteContent<HomepageConfig>("homepage", {
       heroTagline: "SPECIALISTE TURBO DEPUIS 2010",
       heroTitle: "Votre expert",
       heroTitleHighlight: "turbocompresseur",
@@ -112,8 +114,8 @@ export default async function HomePage() {
       ctaDescription: "",
       ctaPhone: "",
     }),
-    getConfig<Banner[]>("banners-config.json", []),
-    getConfig<FaqCategory[]>("faq-config.json", []),
+    getSiteContent<Banner[]>("banners", []),
+    getSiteContent<FaqCategory[]>("faq", []),
   ]);
 
   const activeBanners = banners.filter(b => b.active && b.text);

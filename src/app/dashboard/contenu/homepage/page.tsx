@@ -78,7 +78,10 @@ export default function HomepageEditorPage() {
     try {
       const res = await fetch("/api/content/homepage", {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("turbosouf_token") ?? ""}`,
+        },
         body: JSON.stringify(config),
       });
       if (!res.ok) throw new Error();

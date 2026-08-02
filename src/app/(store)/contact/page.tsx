@@ -4,8 +4,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import Link from "next/link";
-import { readFile } from "fs/promises";
-import { join } from "path";
 
 interface SiteConfig {
   phone: string;
@@ -20,10 +18,14 @@ interface SiteConfig {
 // Force dynamic rendering so config changes are reflected immediately
 export const dynamic = "force-dynamic";
 
+const BACKEND = process.env.INTERNAL_API_URL ?? "http://turbosouf-api:8080";
+
 async function getConfig(): Promise<SiteConfig> {
   try {
-    const data = await readFile(join(process.cwd(), "src/data/site-config.json"), "utf-8");
-    return JSON.parse(data);
+    const res = await fetch(`${BACKEND}/api/v1/site-content/site-config`, { cache: "no-store" });
+    if (!res.ok) return { phone: "", email: "", whatsapp: "", address: "", city: "", hours: "", mapUrl: "" };
+    const json = await res.json();
+    return JSON.parse(json.data.value) as SiteConfig;
   } catch {
     return { phone: "", email: "", whatsapp: "", address: "", city: "", hours: "", mapUrl: "" };
   }

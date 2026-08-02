@@ -27,7 +27,10 @@ export default function FaqEditorPage() {
     try {
       const res = await fetch("/api/content/faq", {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("turbosouf_token") ?? ""}`,
+        },
         body: JSON.stringify(sections),
       });
       if (!res.ok) throw new Error();

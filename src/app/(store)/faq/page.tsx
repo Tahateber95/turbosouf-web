@@ -1,17 +1,19 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
-import { readFile } from "fs/promises";
-import { join } from "path";
 
 export const dynamic = "force-dynamic";
 
 interface FaqItem { q: string; a: string }
 interface FaqCategory { category: string; items: FaqItem[] }
 
+const BACKEND = process.env.INTERNAL_API_URL ?? "http://turbosouf-api:8080";
+
 async function getFaqs(): Promise<FaqCategory[]> {
   try {
-    const data = await readFile(join(process.cwd(), "src/data/faq-config.json"), "utf-8");
-    return JSON.parse(data);
+    const res = await fetch(`${BACKEND}/api/v1/site-content/faq`, { cache: "no-store" });
+    if (!res.ok) return [];
+    const json = await res.json();
+    return JSON.parse(json.data.value) as FaqCategory[];
   } catch { return []; }
 }
 

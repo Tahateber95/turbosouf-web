@@ -32,7 +32,10 @@ export default function BannersEditorPage() {
     try {
       const res = await fetch("/api/content/banners", {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("turbosouf_token") ?? ""}`,
+        },
         body: JSON.stringify(banners),
       });
       if (!res.ok) throw new Error();
