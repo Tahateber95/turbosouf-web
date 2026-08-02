@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 
 const SLIDES = [
   "https://i.postimg.cc/xjh1S823/Sans-titre-1440-x-880-px.png",
-  "https://i.postimg.cc/htrJgnMt/pexels-garvin-st-villier-719266-14277607-(1).jpg",
+  "https://i.postimg.cc/vTc7xBqQ/pexels-cottonbro-7565160.jpg",
 ];
 
 const INTERVAL = 5000; // ms per slide
