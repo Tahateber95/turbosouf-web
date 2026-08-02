@@ -25,7 +25,7 @@ export function HeroSlider() {
   }, []);
 
   return (
-    <div className="absolute inset-0 overflow-hidden">
+    <div className="absolute inset-0 overflow-hidden bg-black">
       {/* Slides */}
       {SLIDES.map((src, i) => (
         <img
@@ -33,7 +33,7 @@ export function HeroSlider() {
           src={src}
           alt=""
           aria-hidden="true"
-          className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700"
+          className="absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-700"
           style={{
             opacity: i === current ? (transitioning ? 0 : 1) : 0,
           }}

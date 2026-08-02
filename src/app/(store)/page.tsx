@@ -157,7 +157,7 @@ export default async function HomePage() {
               <span className="text-[#FF7A45]">{hc.heroTitleHighlight}</span>
             </h1>
 
-            <p className="text-lg text-white/80 mb-9 max-w-lg leading-relaxed animate-fade-up-delay">
+            <p className="text-xl font-semibold text-white/90 mb-9 max-w-lg leading-relaxed animate-fade-up-delay">
               {hc.heroDescription}
             </p>
 
