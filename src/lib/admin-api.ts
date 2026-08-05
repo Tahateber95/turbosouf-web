@@ -23,6 +23,8 @@ import type {
   OrderDetail,
   InvoiceListResponse,
   InvoiceDetail,
+  BlogPostListItem,
+  BlogPostDetail,
 } from "@/lib/api";
 
 const API = CLIENT_API_URL;
@@ -246,6 +248,34 @@ export const adminUpdateInvoiceStatus = (id: string, status: string) =>
 
 export const adminDeleteInvoice = (id: string) =>
   adminFetch<void>(`/invoices/${id}`, { method: "DELETE" });
+
+// Blog
+export const adminGetBlogPosts = (page = 1, pageSize = 50) =>
+  adminFetch<{ items: BlogPostListItem[]; total: number; page: number; pageSize: number }>(`/blog?adminAll=true&page=${page}&pageSize=${pageSize}`);
+
+export const adminGetBlogPost = (id: string) =>
+  adminFetch<BlogPostDetail>(`/blog/${id}`);
+
+export interface CreateBlogPostRequest {
+  title: string;
+  excerpt: string;
+  content: string;
+  featuredImageUrl?: string | null;
+  author?: string | null;
+  status: string;
+  tags?: string | null;
+}
+
+export type UpdateBlogPostRequest = CreateBlogPostRequest;
+
+export const adminCreateBlogPost = (data: CreateBlogPostRequest) =>
+  adminFetch<BlogPostListItem>("/blog", { method: "POST", body: JSON.stringify(data) });
+
+export const adminUpdateBlogPost = (id: string, data: UpdateBlogPostRequest) =>
+  adminFetch<BlogPostListItem>(`/blog/${id}`, { method: "PUT", body: JSON.stringify(data) });
+
+export const adminDeleteBlogPost = (id: string) =>
+  adminFetch<void>(`/blog/${id}`, { method: "DELETE" });
 
 export async function downloadInvoicePdf(id: string, invoiceNumber: string): Promise<void> {
   const doFetch = (token: string) =>

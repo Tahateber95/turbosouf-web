@@ -408,6 +408,26 @@ export interface InvoiceListResponse {
   pageSize: number;
 }
 
+// --- Blog types ---
+
+export interface BlogPostListItem {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  featuredImageUrl: string | null;
+  author: string | null;
+  status: string;
+  tags: string | null;
+  createdAt: string;
+  publishedAt: string | null;
+}
+
+export interface BlogPostDetail extends BlogPostListItem {
+  content: string;
+  updatedAt: string;
+}
+
 // --- API functions (read) ---
 
 export const getCategories = () => api<Category[]>("/categories");

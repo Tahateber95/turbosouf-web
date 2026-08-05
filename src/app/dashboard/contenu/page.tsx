@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { Home, HelpCircle, Image } from "lucide-react";
+import { Home, HelpCircle, Image, FileText } from "lucide-react";
 
 const CMS_SECTIONS = [
   { icon: Home, label: "Page d'accueil", desc: "Texte du hero, statistiques, bandeau CTA", href: "/dashboard/contenu/homepage" },
   { icon: HelpCircle, label: "FAQ", desc: "Questions frequentes par categorie", href: "/dashboard/contenu/faq" },
   { icon: Image, label: "Bannieres", desc: "Bannieres promotionnelles en haut du site", href: "/dashboard/contenu/banners" },
+  { icon: FileText, label: "Articles", desc: "Blog et actualites du site", href: "/dashboard/contenu/articles" },
 ];
 
 export default function ContentPage() {

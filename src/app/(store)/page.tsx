@@ -5,7 +5,7 @@ import { TrustBar } from "@/components/store/trust-bar";
 import { MakeLogo } from "@/components/store/make-logo";
 import { TikTokFeed } from "@/components/store/tiktok-feed";
 import { HeroSlider } from "@/components/store/hero-slider";
-import { SERVER_API_URL, type VehicleMake } from "@/lib/api";
+import { SERVER_API_URL, type VehicleMake, type BlogPostListItem } from "@/lib/api";
 
 export const dynamic = "force-dynamic";
 
@@ -94,7 +94,7 @@ const HARDCODED_FAQ = [
 ];
 
 export default async function HomePage() {
-  const [vehicleMakes, hc, banners, faqCategories] = await Promise.all([
+  const [vehicleMakes, hc, banners, faqCategories, latestPosts] = await Promise.all([
     fetchVehicleMakes(),
     getSiteContent<HomepageConfig>("homepage", {
       heroTagline: "SPECIALISTE TURBO DEPUIS 2010",
@@ -116,6 +116,8 @@ export default async function HomePage() {
     }),
     getSiteContent<Banner[]>("banners", []),
     getSiteContent<FaqCategory[]>("faq", []),
+    fetch(`${API}/api/v1/blog?pageSize=3`, { cache: "no-store" })
+      .then(r => r.json()).then(j => j.data?.items ?? []).catch(() => []),
   ]);
 
   const activeBanners = banners.filter(b => b.active && b.text);
@@ -349,6 +351,42 @@ export default async function HomePage() {
 
       {/* ── TIKTOK FEED ──────────────────────────────────────────────────── */}
       <TikTokFeed />
+
+      {/* ── NOS ARTICLES ────────────────────────────────────────────────── */}
+      {latestPosts.length > 0 && (
+        <section className="py-20 bg-white">
+          <div className="mx-auto max-w-7xl px-4">
+            <div className="flex items-end justify-between mb-10">
+              <div>
+                <p className="text-xs font-bold tracking-[0.16em] uppercase text-[#E85D26] mb-2">BLOG</p>
+                <h2 className="text-2xl sm:text-3xl font-black text-[#0A0A0A] tracking-tight">Nos Articles</h2>
+              </div>
+              <Link href="/articles" className="hidden sm:flex items-center gap-1.5 text-sm font-semibold text-[#E85D26] hover:underline">
+                Voir tous <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              {latestPosts.map((post: BlogPostListItem) => (
+                <Link key={post.id} href={`/articles/${post.slug}`} className="group bg-gray-50 rounded-2xl overflow-hidden border border-gray-100 hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col">
+                  <div className="h-40 bg-gradient-to-br from-[#E85D26]/10 to-[#1A3A5C]/10 overflow-hidden">
+                    {post.featuredImageUrl
+                      ? <img src={post.featuredImageUrl} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      : <div className="w-full h-full flex items-center justify-center"><span className="text-3xl font-black text-[#E85D26]/20">TS</span></div>
+                    }
+                  </div>
+                  <div className="p-4 flex flex-col flex-1">
+                    <h3 className="text-sm font-bold text-[#0A0A0A] mb-1 line-clamp-2 group-hover:text-[#E85D26] transition-colors">{post.title}</h3>
+                    <p className="text-xs text-[#6B6B6B] line-clamp-2 flex-1">{post.excerpt}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+            <div className="sm:hidden mt-6 text-center">
+              <Link href="/articles" className="text-sm font-semibold text-[#E85D26] hover:underline">Voir tous les articles →</Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ── FAQ — Warm muted ──────────────────────────────────────────────── */}
       <section className="py-16" style={{ backgroundColor: "var(--ts-muted)" }}>
