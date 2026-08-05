@@ -1,6 +1,31 @@
 import Link from "next/link";
 import { Phone, Mail, MapPin } from "lucide-react";
 
+const BACKEND = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000";
+
+interface FooterConfig {
+  description: string;
+  phone: string;
+  email: string;
+  address: string;
+}
+
+async function getFooterConfig(): Promise<FooterConfig> {
+  try {
+    const res = await fetch(`${BACKEND}/api/v1/site-content/footer`, { cache: "no-store" });
+    if (!res.ok) throw new Error();
+    const json = await res.json();
+    return JSON.parse(json.data.value) as FooterConfig;
+  } catch {
+    return {
+      description: "Specialiste en turbocompresseurs neufs et reconditionnes pour automobile, marine et industriel. Garantie 2 ans, prix competitifs.",
+      phone: "+33 1 23 45 67 89",
+      email: "contact@turbosouf.com",
+      address: "Strasbourg, France",
+    };
+  }
+}
+
 const PRODUCT_LINKS = [
   { href: "/produits", label: "Tous nos turbos" },
   { href: "/produits?application=automobile", label: "Turbos automobile" },
@@ -17,7 +42,9 @@ const INFO_LINKS = [
   { href: "/politique-confidentialite", label: "Confidentialite" },
 ];
 
-export function Footer() {
+export async function Footer() {
+  const config = await getFooterConfig();
+
   return (
     <footer style={{ backgroundColor: "#0F1923" }} className="text-white/60">
       <div className="mx-auto max-w-7xl px-4 py-14 lg:py-18">
@@ -29,21 +56,20 @@ export function Footer() {
               <span className="text-lg font-black text-white">TurboSouf</span>
             </div>
             <p className="text-sm leading-relaxed text-white/45 mb-5">
-              Specialiste en turbocompresseurs neufs et reconditionnes pour automobile, marine et industriel.
-              Garantie 2 ans, prix competitifs.
+              {config.description}
             </p>
             <div className="space-y-2.5 text-sm">
-              <a href="tel:+33123456789" className="flex items-center gap-2 text-white/55 hover:text-white transition-colors">
+              <a href={`tel:${config.phone.replace(/\s/g, "")}`} className="flex items-center gap-2 text-white/55 hover:text-white transition-colors">
                 <Phone className="h-4 w-4 text-[#E85D26] shrink-0" />
-                +33 1 23 45 67 89
+                {config.phone}
               </a>
-              <a href="mailto:contact@turbosouf.com" className="flex items-center gap-2 text-white/55 hover:text-white transition-colors">
+              <a href={`mailto:${config.email}`} className="flex items-center gap-2 text-white/55 hover:text-white transition-colors">
                 <Mail className="h-4 w-4 text-[#E85D26] shrink-0" />
-                contact@turbosouf.com
+                {config.email}
               </a>
               <p className="flex items-center gap-2 text-white/55">
                 <MapPin className="h-4 w-4 text-[#E85D26] shrink-0" />
-                Strasbourg, France
+                {config.address}
               </p>
             </div>
           </div>
