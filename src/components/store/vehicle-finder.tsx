@@ -186,8 +186,9 @@ export function VehicleFinder() {
   };
 
   return (
-    <section className="relative bg-gradient-to-br from-[var(--ts-primary-900)] via-[var(--ts-primary-800)] to-[var(--ts-primary-700)] overflow-hidden">
-      <div className="absolute inset-0 opacity-[0.03]">
+    <section className="relative bg-gradient-to-br from-[var(--ts-primary-900)] via-[var(--ts-primary-800)] to-[var(--ts-primary-700)]">
+      {/* Decorative circles — isolated overflow so the combobox dropdown is not clipped */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-[0.03]">
         <div className="absolute top-10 left-10 w-72 h-72 border border-white rounded-full" />
         <div className="absolute bottom-10 right-10 w-96 h-96 border border-white rounded-full" />
       </div>
