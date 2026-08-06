@@ -375,30 +375,49 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* ── FAQ — Warm muted ──────────────────────────────────────────────── */}
-      <section className="py-16" style={{ backgroundColor: "var(--ts-muted)" }}>
-        <div className="mx-auto max-w-3xl px-4">
-          <div className="text-center mb-10">
-            <p className="text-xs font-bold tracking-[0.16em] uppercase text-[#E85D26] mb-3">FAQ</p>
-            <h2 className="text-2xl font-black text-[#0A0A0A]">
-              Questions frequentes
-            </h2>
-          </div>
-          <div className="space-y-2.5">
-            {faqItems.map((faq) => (
-              <details key={faq.q} className="group rounded-xl border border-[rgba(0,0,0,0.08)] bg-white overflow-hidden">
-                <summary className="flex items-center justify-between px-5 py-4 cursor-pointer text-sm font-semibold text-[#0A0A0A] hover:bg-[#FAFAF8] transition-colors list-none">
-                  {faq.q}
-                  <ChevronRight className="h-4 w-4 text-[#E85D26] group-open:rotate-90 transition-transform shrink-0 ml-3" />
-                </summary>
-                <p className="px-5 pb-5 text-sm text-[#6B6B6B] leading-relaxed border-t border-[rgba(0,0,0,0.05)] pt-3">{faq.a}</p>
-              </details>
-            ))}
-          </div>
-          <div className="text-center mt-8">
-            <Link href="/faq" className="text-sm font-bold text-[#E85D26] hover:underline">
-              Voir toutes les FAQ →
-            </Link>
+      {/* ── FAQ ───────────────────────────────────────────────────────────── */}
+      <section className="py-20 bg-white border-t border-[rgba(0,0,0,0.05)]">
+        <div className="mx-auto max-w-7xl px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-16 items-start">
+
+            {/* Left — sticky heading */}
+            <div className="lg:col-span-2 lg:sticky lg:top-24">
+              <p className="text-xs font-bold tracking-[0.16em] uppercase text-[#E85D26] mb-3">FAQ</p>
+              <h2 className="text-3xl sm:text-4xl font-black text-[#0A0A0A] tracking-tight leading-tight mb-4">
+                Questions<br />fréquentes
+              </h2>
+              <p className="text-[#6B6B6B] text-sm leading-relaxed mb-8">
+                Tout ce que vous devez savoir sur nos turbos reconditionnés, la garantie et la livraison.
+              </p>
+              <Link
+                href="/faq"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-[#E85D26] hover:bg-[#d44f1e] text-white text-sm font-bold rounded-xl transition-colors shadow-md shadow-[rgba(232,93,38,0.25)]"
+              >
+                Voir toutes les FAQ
+                <ChevronRight className="h-4 w-4" />
+              </Link>
+            </div>
+
+            {/* Right — accordion */}
+            <div className="lg:col-span-3 space-y-3">
+              {faqItems.map((faq, idx) => (
+                <details key={faq.q} className="group rounded-2xl border border-[rgba(0,0,0,0.08)] bg-[#FAFAF8] overflow-hidden hover:border-[rgba(232,93,38,0.25)] transition-colors">
+                  <summary className="flex items-center gap-4 px-6 py-5 cursor-pointer list-none select-none">
+                    <span className="shrink-0 w-7 h-7 rounded-lg bg-[rgba(232,93,38,0.1)] text-[#E85D26] text-xs font-black flex items-center justify-center">
+                      {String(idx + 1).padStart(2, "0")}
+                    </span>
+                    <span className="flex-1 text-sm font-semibold text-[#0A0A0A]">{faq.q}</span>
+                    <span className="shrink-0 w-7 h-7 rounded-full border border-[rgba(0,0,0,0.1)] group-open:border-[#E85D26] group-open:bg-[rgba(232,93,38,0.08)] flex items-center justify-center transition-colors">
+                      <ChevronRight className="h-3.5 w-3.5 text-[#E85D26] group-open:rotate-90 transition-transform" />
+                    </span>
+                  </summary>
+                  <div className="px-6 pb-5 pl-[4.25rem]">
+                    <p className="text-sm text-[#6B6B6B] leading-relaxed">{faq.a}</p>
+                  </div>
+                </details>
+              ))}
+            </div>
+
           </div>
         </div>
       </section>
