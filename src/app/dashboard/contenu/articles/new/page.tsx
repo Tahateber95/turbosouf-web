@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ChevronLeft, Save, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { adminCreateBlogPost, type CreateBlogPostRequest } from "@/lib/admin-api";
+import { RichTextEditor } from "@/components/dashboard/rich-text-editor";
 
 const EMPTY_FORM: CreateBlogPostRequest = {
   title: "",
@@ -90,13 +91,10 @@ export default function NewArticlePage() {
 
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-1">Contenu *</label>
-            <textarea
+            <RichTextEditor
               value={form.content}
-              onChange={e => set("content", e.target.value)}
-              placeholder="Contenu de l'article (HTML supporte)"
-              rows={12}
-              className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#E85D26]/30 focus:border-[#E85D26] resize-y font-mono"
-              required
+              onChange={v => set("content", v)}
+              placeholder="Rédigez le contenu de l'article..."
             />
           </div>
         </div>
