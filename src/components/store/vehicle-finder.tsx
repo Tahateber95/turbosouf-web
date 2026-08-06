@@ -88,7 +88,7 @@ function MakeCombobox({
 
       {/* Dropdown */}
       {open && (
-        <div className="absolute z-50 mt-1 w-full bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden">
+        <div className="absolute z-50 mt-1 w-full bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden py-1">
           {/* Search input */}
           <div className="p-2 border-b border-gray-100">
             <div className="flex items-center gap-2 px-2 py-1.5 bg-gray-50 rounded-lg">
@@ -113,7 +113,7 @@ function MakeCombobox({
                 <li
                   key={m.id}
                   onPointerDown={() => select(m)}
-                  className={`px-4 py-2.5 text-sm cursor-pointer hover:bg-orange-50 hover:text-[var(--ts-accent-600)] transition-colors ${
+                  className={`px-5 py-2.5 text-sm cursor-pointer hover:bg-orange-50 hover:text-[var(--ts-accent-600)] transition-colors ${
                     m.id === value ? "bg-orange-50 text-[var(--ts-accent-600)] font-medium" : "text-gray-700"
                   }`}
                 >
