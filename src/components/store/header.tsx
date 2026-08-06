@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
-import { ShoppingCart, Search, Menu, X, User, Phone, Truck, LogOut, ChevronDown, Package } from "lucide-react";
+import { ShoppingCart, Search, Menu, X, User, Phone, LogOut, ChevronDown, Package } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { useCartContext } from "@/lib/cart-context";
 
@@ -59,11 +59,7 @@ export function Header() {
           <div className="flex items-center gap-5">
             <span className="flex items-center gap-1.5">
               <Phone className="h-3 w-3" />
-              +33 1 23 45 67 89
-            </span>
-            <span className="hidden sm:flex items-center gap-1.5 text-white/85">
-              <Truck className="h-3 w-3" />
-              Livraison gratuite des 150€
+              +33 7 79 49 05 55
             </span>
           </div>
           <div className="flex items-center gap-4 text-white/85">
