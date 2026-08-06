@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Wrench, Shield, Award, Star, ChevronRight, Users, CheckCircle2, Clock, Phone, Anchor, Car, Factory, Cog, ArrowRight } from "lucide-react";
 import { VehicleFinder } from "@/components/store/vehicle-finder";
 import { TrustBar } from "@/components/store/trust-bar";
-import { MakeLogo } from "@/components/store/make-logo";
+import { MakesGrid } from "@/components/store/makes-grid";
 import { TikTokFeed } from "@/components/store/tiktok-feed";
 import { HeroSlider } from "@/components/store/hero-slider";
 import { SERVER_API_URL, type VehicleMake, type BlogPostListItem } from "@/lib/api";
@@ -275,20 +275,7 @@ export default async function HomePage() {
             <p className="text-[#6B6B6B]">Selectionnez votre marque pour voir les turbos compatibles</p>
           </div>
 
-          <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-3">
-            {vehicleMakes.map((make) => (
-              <Link
-                key={make.id}
-                href={`/produits?make=${make.slug}`}
-                className="group flex flex-col items-center justify-center p-4 bg-white rounded-xl border border-[rgba(0,0,0,0.07)] hover:border-[rgba(232,93,38,0.35)] hover:shadow-lg hover:shadow-[rgba(232,93,38,0.08)] transition-all"
-              >
-                <div className="w-12 h-12 rounded-full bg-[#F8F7F4] group-hover:bg-[rgba(232,93,38,0.06)] flex items-center justify-center mb-2 transition-colors p-2">
-                  <MakeLogo name={make.name} logoUrl={make.logoUrl} className="w-full h-full" />
-                </div>
-                <span className="text-xs font-semibold text-[#3A3A3A] group-hover:text-[#E85D26] transition-colors">{make.name}</span>
-              </Link>
-            ))}
-          </div>
+          <MakesGrid makes={vehicleMakes} />
         </div>
       </section>
 
