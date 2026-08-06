@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Search, Car } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Search, Car, ChevronDown, X } from "lucide-react";
 
 import { CLIENT_API_URL } from "@/lib/api";
 
@@ -11,18 +11,135 @@ interface Make { id: string; name: string; slug: string; }
 interface Model { id: string; name: string; slug: string; }
 interface Engine { id: string; name: string; engineCode: string | null; fuelType: string; powerCV: number | null; }
 
+// ── Searchable combobox for Make ────────────────────────────────────────────
+function MakeCombobox({
+  makes,
+  loading,
+  value,
+  onChange,
+}: {
+  makes: Make[];
+  loading: boolean;
+  value: string;
+  onChange: (id: string) => void;
+}) {
+  const [open, setOpen]       = useState(false);
+  const [query, setQuery]     = useState("");
+  const containerRef          = useRef<HTMLDivElement>(null);
+  const inputRef              = useRef<HTMLInputElement>(null);
+
+  const selected = makes.find((m) => m.id === value);
+
+  // Sort alphabetically then filter
+  const filtered = makes
+    .slice()
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .filter((m) => m.name.toLowerCase().includes(query.toLowerCase()));
+
+  // Close on outside click
+  useEffect(() => {
+    function onPointerDown(e: PointerEvent) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node))
+        setOpen(false);
+    }
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
+  }, []);
+
+  function openDropdown() {
+    setOpen(true);
+    setQuery("");
+    setTimeout(() => inputRef.current?.focus(), 0);
+  }
+
+  function select(make: Make) {
+    onChange(make.id);
+    setOpen(false);
+    setQuery("");
+  }
+
+  function clear(e: React.MouseEvent) {
+    e.stopPropagation();
+    onChange("");
+    setOpen(false);
+    setQuery("");
+  }
+
+  return (
+    <div ref={containerRef} className="relative">
+      {/* Trigger button */}
+      <button
+        type="button"
+        onClick={openDropdown}
+        className="w-full h-12 px-3 rounded-xl bg-white text-sm text-left flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-[var(--ts-accent-500)]"
+      >
+        <span className={selected ? "text-gray-800" : "text-gray-400"}>
+          {loading ? "Chargement..." : selected ? selected.name : "Marque"}
+        </span>
+        <span className="flex items-center gap-1 text-gray-400 shrink-0">
+          {selected && (
+            <span onClick={clear} className="hover:text-gray-700 p-0.5">
+              <X className="h-3.5 w-3.5" />
+            </span>
+          )}
+          <ChevronDown className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`} />
+        </span>
+      </button>
+
+      {/* Dropdown */}
+      {open && (
+        <div className="absolute z-50 mt-1 w-full bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden">
+          {/* Search input */}
+          <div className="p-2 border-b border-gray-100">
+            <div className="flex items-center gap-2 px-2 py-1.5 bg-gray-50 rounded-lg">
+              <Search className="h-3.5 w-3.5 text-gray-400 shrink-0" />
+              <input
+                ref={inputRef}
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Rechercher une marque..."
+                className="flex-1 bg-transparent text-sm text-gray-700 placeholder-gray-400 outline-none"
+              />
+            </div>
+          </div>
+
+          {/* List */}
+          <ul className="max-h-56 overflow-y-auto">
+            {filtered.length === 0 ? (
+              <li className="px-4 py-3 text-sm text-gray-400 text-center">Aucun résultat</li>
+            ) : (
+              filtered.map((m) => (
+                <li
+                  key={m.id}
+                  onPointerDown={() => select(m)}
+                  className={`px-4 py-2.5 text-sm cursor-pointer hover:bg-orange-50 hover:text-[var(--ts-accent-600)] transition-colors ${
+                    m.id === value ? "bg-orange-50 text-[var(--ts-accent-600)] font-medium" : "text-gray-700"
+                  }`}
+                >
+                  {m.name}
+                </li>
+              ))
+            )}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Main component ──────────────────────────────────────────────────────────
 export function VehicleFinder() {
-  const [makes, setMakes] = useState<Make[]>([]);
-  const [models, setModels] = useState<Model[]>([]);
-  const [engines, setEngines] = useState<Engine[]>([]);
-  const [selectedMake, setSelectedMake] = useState("");
-  const [selectedModel, setSelectedModel] = useState("");
+  const [makes, setMakes]           = useState<Make[]>([]);
+  const [models, setModels]         = useState<Model[]>([]);
+  const [engines, setEngines]       = useState<Engine[]>([]);
+  const [selectedMake, setSelectedMake]     = useState("");
+  const [selectedModel, setSelectedModel]   = useState("");
   const [selectedEngine, setSelectedEngine] = useState("");
-  const [loadingMakes, setLoadingMakes] = useState(false);
-  const [loadingModels, setLoadingModels] = useState(false);
+  const [loadingMakes, setLoadingMakes]     = useState(false);
+  const [loadingModels, setLoadingModels]   = useState(false);
   const [loadingEngines, setLoadingEngines] = useState(false);
 
-  // Fetch makes on mount
   useEffect(() => {
     setLoadingMakes(true);
     fetch(`${API}/api/v1/vehicles/makes`)
@@ -32,7 +149,6 @@ export function VehicleFinder() {
       .finally(() => setLoadingMakes(false));
   }, []);
 
-  // Fetch models when make changes
   useEffect(() => {
     setModels([]);
     setEngines([]);
@@ -47,7 +163,6 @@ export function VehicleFinder() {
       .finally(() => setLoadingModels(false));
   }, [selectedMake]);
 
-  // Fetch engines when model changes
   useEffect(() => {
     setEngines([]);
     setSelectedEngine("");
@@ -92,53 +207,52 @@ export function VehicleFinder() {
         </div>
 
         <form onSubmit={handleManualSearch} className="max-w-3xl mx-auto">
-            <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
-              <select
-                value={selectedMake}
-                onChange={(e) => setSelectedMake(e.target.value)}
-                className="h-12 px-3 rounded-xl bg-white text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--ts-accent-500)]"
-              >
-                <option value="">{loadingMakes ? "Chargement..." : "Marque"}</option>
-                {makes.map((m) => (
-                  <option key={m.id} value={m.id}>{m.name}</option>
-                ))}
-              </select>
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+            {/* Marque — searchable combobox */}
+            <MakeCombobox
+              makes={makes}
+              loading={loadingMakes}
+              value={selectedMake}
+              onChange={setSelectedMake}
+            />
 
-              <select
-                value={selectedModel}
-                onChange={(e) => setSelectedModel(e.target.value)}
-                disabled={!selectedMake || loadingModels}
-                className="h-12 px-3 rounded-xl bg-white text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--ts-accent-500)] disabled:opacity-50"
-              >
-                <option value="">{loadingModels ? "Chargement..." : "Modèle"}</option>
-                {models.map((m) => (
-                  <option key={m.id} value={m.id}>{m.name}</option>
-                ))}
-              </select>
+            {/* Modèle — plain select */}
+            <select
+              value={selectedModel}
+              onChange={(e) => setSelectedModel(e.target.value)}
+              disabled={!selectedMake || loadingModels}
+              className="h-12 px-3 rounded-xl bg-white text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--ts-accent-500)] disabled:opacity-50"
+            >
+              <option value="">{loadingModels ? "Chargement..." : "Modèle"}</option>
+              {models.map((m) => (
+                <option key={m.id} value={m.id}>{m.name}</option>
+              ))}
+            </select>
 
-              <select
-                value={selectedEngine}
-                onChange={(e) => setSelectedEngine(e.target.value)}
-                disabled={!selectedModel || loadingEngines}
-                className="h-12 px-3 rounded-xl bg-white text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--ts-accent-500)] disabled:opacity-50"
-              >
-                <option value="">{loadingEngines ? "Chargement..." : "Motorisation"}</option>
-                {engines.map((e) => (
-                  <option key={e.id} value={e.id}>
-                    {e.name}{e.powerCV ? ` (${e.powerCV}cv)` : ""}
-                  </option>
-                ))}
-              </select>
+            {/* Motorisation — plain select */}
+            <select
+              value={selectedEngine}
+              onChange={(e) => setSelectedEngine(e.target.value)}
+              disabled={!selectedModel || loadingEngines}
+              className="h-12 px-3 rounded-xl bg-white text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--ts-accent-500)] disabled:opacity-50"
+            >
+              <option value="">{loadingEngines ? "Chargement..." : "Motorisation"}</option>
+              {engines.map((e) => (
+                <option key={e.id} value={e.id}>
+                  {e.name}{e.powerCV ? ` (${e.powerCV}cv)` : ""}
+                </option>
+              ))}
+            </select>
 
-              <button
-                type="submit"
-                disabled={!selectedMake}
-                className="h-12 flex items-center justify-center gap-2 bg-[var(--ts-accent-500)] hover:bg-[var(--ts-accent-600)] text-white font-semibold rounded-xl transition-colors disabled:opacity-50"
-              >
-                <Search className="h-5 w-5" />
-                Chercher
-              </button>
-            </div>
+            <button
+              type="submit"
+              disabled={!selectedMake}
+              className="h-12 flex items-center justify-center gap-2 bg-[var(--ts-accent-500)] hover:bg-[var(--ts-accent-600)] text-white font-semibold rounded-xl transition-colors disabled:opacity-50"
+            >
+              <Search className="h-5 w-5" />
+              Chercher
+            </button>
+          </div>
         </form>
       </div>
     </section>
