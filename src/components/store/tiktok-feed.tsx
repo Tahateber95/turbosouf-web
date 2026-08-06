@@ -19,28 +19,23 @@ const TikTokIcon = () => (
 
 export function TikTokFeed() {
   return (
-    <section className="py-20 relative overflow-hidden" style={{ background: "linear-gradient(160deg, #0f0f0f 0%, #1a1a2e 60%, #0f0f0f 100%)" }}>
-      {/* Background decoration */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#E85D26] opacity-[0.04] rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[#69C9D0] opacity-[0.05] rounded-full blur-3xl" />
-      </div>
+    <section className="py-20 bg-white border-t border-gray-100 relative overflow-hidden">
 
       <div className="relative mx-auto max-w-7xl px-4">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 text-white/70 text-xs font-semibold mb-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/5 text-gray-600 text-xs font-semibold mb-4">
               <TikTokIcon />
               @{TIKTOK_USERNAME}
             </div>
-            <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight leading-tight">
+            <h2 className="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight leading-tight">
               Suivez-nous sur<br />
               <span className="text-transparent bg-clip-text" style={{ backgroundImage: "linear-gradient(90deg, #69C9D0, #EE1D52)" }}>
                 TikTok
               </span>
             </h2>
-            <p className="text-white/50 text-sm mt-2">
+            <p className="text-gray-500 text-sm mt-2">
               Nos dernières vidéos turbo directement depuis notre atelier
             </p>
           </div>
@@ -49,7 +44,7 @@ export function TikTokFeed() {
             href={`https://www.tiktok.com/@${TIKTOK_USERNAME}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="shrink-0 inline-flex items-center gap-2 h-11 px-6 rounded-xl text-sm font-bold text-white border border-white/20 hover:bg-white/10 transition-colors"
+            className="shrink-0 inline-flex items-center gap-2 h-11 px-6 rounded-xl text-sm font-bold text-gray-800 border border-gray-200 hover:bg-gray-50 transition-colors"
           >
             <TikTokIcon />
             Voir toutes nos vidéos
@@ -78,7 +73,7 @@ export function TikTokFeed() {
 
         {/* Bottom CTA */}
         <div className="mt-10 flex items-center gap-4">
-          <div className="flex-1 h-px bg-white/10" />
+          <div className="flex-1 h-px bg-gray-200" />
           <Link
             href={`https://www.tiktok.com/@${TIKTOK_USERNAME}`}
             target="_blank"
@@ -89,7 +84,7 @@ export function TikTokFeed() {
             <TikTokIcon />
             Suivre @{TIKTOK_USERNAME}
           </Link>
-          <div className="flex-1 h-px bg-white/10" />
+          <div className="flex-1 h-px bg-gray-200" />
         </div>
       </div>
     </section>
