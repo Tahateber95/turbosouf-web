@@ -5,7 +5,7 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import Link from "next/link";
 import { Search, Trash2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { adminDeleteProduct } from "@/lib/admin-api";
+import { adminDeleteProduct, adminGetProductsList } from "@/lib/admin-api";
 import { StatusBadge } from "@/components/dashboard/status-badge";
 import type { Category, ProductListItem } from "@/lib/api";
 
@@ -82,22 +82,40 @@ interface ProductsTableProps {
 }
 
 export function ProductsTable({ initialProducts }: ProductsTableProps) {
+  const searchParams = useSearchParams();
   const [products, setProducts] = useState<ProductListItem[]>(initialProducts);
+
+  const buildApiParams = () => {
+    const p = new URLSearchParams();
+    p.set("PageSize", "25");
+    const page = searchParams.get("page");
+    if (page) p.set("Page", page);
+    const search = searchParams.get("search");
+    if (search) p.set("Search", search);
+    const category = searchParams.get("category");
+    if (category) p.set("CategorySlug", category);
+    const stock = searchParams.get("stock");
+    if (stock === "low") p.set("LowStock", "true");
+    if (stock === "out") p.set("OutOfStock", "true");
+    return p;
+  };
 
   const handleDelete = async (productId: string, productName: string) => {
     if (!confirm(`Supprimer "${productName}" ? Cette action est irréversible.`)) return;
-    // Capture current state for rollback before optimistic removal
+    // Optimistic removal so the UI feels instant
     const snapshot = products;
     setProducts(prev => prev.filter(p => p.id !== productId));
     try {
       await adminDeleteProduct(productId);
+      // Re-fetch from the dedicated admin endpoint to get the ground truth from the API.
+      // The admin-list endpoint always excludes IsDeleted products, so the deleted
+      // product will not appear regardless of any IsActive flag.
+      const fresh = await adminGetProductsList(buildApiParams());
+      setProducts(fresh.items);
       toast.success("Produit supprimé");
-      // Do NOT call router.refresh() — it causes the server to re-send the deleted
-      // product (IncludeInactive=true) and can remount this component, undoing the
-      // optimistic removal. The local state is already correct.
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Erreur");
-      setProducts(snapshot); // restore exact state before this deletion attempt
+      setProducts(snapshot);
     }
   };
 

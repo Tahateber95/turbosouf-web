@@ -13,6 +13,7 @@ import type {
   CreateBrandRequest,
   UpdateBrandRequest,
   ProductDetail,
+  ProductListItem,
   VehicleMake,
   VehicleModel,
   VehicleEngine,
@@ -150,6 +151,11 @@ export async function adminUploadProductImage(file: File): Promise<string> {
 }
 
 // Products
+export const adminGetProductsList = (params: URLSearchParams) =>
+  adminFetch<{ items: ProductListItem[]; totalCount: number; page: number; pageSize: number }>(
+    `/products/admin-list?${params.toString()}`
+  );
+
 export const adminCreateProduct = (data: CreateProductRequest) =>
   adminFetch<ProductDetail>("/products", { method: "POST", body: JSON.stringify(data) });
 
