@@ -100,22 +100,26 @@ export async function LandingPage({ locale }: { locale: Locale }) {
         </div>
       ))}
 
-      {/* ── HERO — White + orange diagonal split ─────────────────────────── */}
+      {/* ── HERO — White + orange panel split ───────────────────────────── */}
       <section className="relative min-h-[92vh] flex items-start bg-white overflow-hidden">
 
-        {/* ── Desktop: bold orange diagonal on the right ── */}
+        {/* ── Desktop: orange right panel with diagonal left edge ── */}
         <div
-          className="absolute inset-0 hidden lg:block pointer-events-none"
-          style={{ background: "linear-gradient(112deg, transparent 0%, transparent 56%, #E85D26 56%, #E05020 100%)" }}
+          className="absolute inset-y-0 right-0 hidden lg:block pointer-events-none"
+          style={{
+            width: "43%",
+            background: "linear-gradient(160deg, #F06030 0%, #CC4010 100%)",
+            clipPath: "polygon(8% 0%, 100% 0%, 100% 100%, 0% 100%)",
+          }}
         />
 
-        {/* ── Decorative: subtle orange glow on white side ── */}
-        <div className="absolute -top-24 -left-24 w-[500px] h-[500px] rounded-full pointer-events-none"
-          style={{ background: "radial-gradient(circle, rgba(232,93,38,0.07) 0%, transparent 70%)" }} />
+        {/* ── Decorative: rings in orange zone ── */}
+        <div className="absolute top-8 right-8 w-72 h-72 rounded-full border border-white/10 pointer-events-none hidden lg:block" />
+        <div className="absolute top-20 right-20 w-48 h-48 rounded-full border border-white/10 pointer-events-none hidden lg:block" />
 
-        {/* ── Decorative: faint concentric arc on white side ── */}
-        <div className="absolute top-16 left-[38%] w-96 h-96 rounded-full border border-orange-100 pointer-events-none hidden lg:block" />
-        <div className="absolute top-28 left-[42%] w-64 h-64 rounded-full border border-orange-50 pointer-events-none hidden lg:block" />
+        {/* ── Decorative: subtle glow on white side ── */}
+        <div className="absolute -top-24 -left-24 w-[500px] h-[500px] rounded-full pointer-events-none"
+          style={{ background: "radial-gradient(circle, rgba(232,93,38,0.06) 0%, transparent 70%)" }} />
 
         {/* ── Mobile: light orange gradient ── */}
         <div
@@ -185,7 +189,7 @@ export async function LandingPage({ locale }: { locale: Locale }) {
             </div>
 
             {/* ── Right: stats + CTA buttons (orange side, desktop only) ── */}
-            <div className="hidden lg:flex flex-col gap-4 animate-fade-up-delay pt-2">
+            <div className="hidden lg:flex flex-col gap-4 animate-fade-up-delay pl-6">
               {/* Stats grid */}
               {hc.stats.length > 0 && (
                 <div className="grid grid-cols-2 gap-3">
