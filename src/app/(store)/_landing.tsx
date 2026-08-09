@@ -100,76 +100,54 @@ export async function LandingPage({ locale }: { locale: Locale }) {
         </div>
       ))}
 
-      {/* ── HERO — White + orange panel split ───────────────────────────── */}
-      <section className="relative min-h-[92vh] flex items-start bg-white overflow-hidden">
+      {/* ── HERO — Blended white-to-orange gradient ───────────────────── */}
+      <section className="relative min-h-[88vh] flex items-center overflow-hidden"
+        style={{ background: "linear-gradient(135deg, #ffffff 0%, #fff7f2 30%, #fde4d0 60%, #F06030 85%, #C84010 100%)" }}
+      >
+        {/* Decorative rings */}
+        <div className="absolute top-10 right-10 w-80 h-80 rounded-full border border-white/20 pointer-events-none" />
+        <div className="absolute top-24 right-24 w-52 h-52 rounded-full border border-white/15 pointer-events-none" />
+        <div className="absolute -bottom-16 -left-16 w-64 h-64 rounded-full border border-[#E85D26]/10 pointer-events-none" />
 
-        {/* ── Desktop: orange right panel with diagonal left edge ── */}
-        <div
-          className="absolute inset-y-0 right-0 hidden lg:block pointer-events-none"
-          style={{
-            width: "43%",
-            background: "linear-gradient(160deg, #F06030 0%, #CC4010 100%)",
-            clipPath: "polygon(8% 0%, 100% 0%, 100% 100%, 0% 100%)",
-          }}
-        />
+        <div className="relative z-10 mx-auto max-w-7xl px-4 py-16 lg:py-20 w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-10 lg:gap-16 items-center">
 
-        {/* ── Decorative: rings in orange zone ── */}
-        <div className="absolute top-8 right-8 w-72 h-72 rounded-full border border-white/10 pointer-events-none hidden lg:block" />
-        <div className="absolute top-20 right-20 w-48 h-48 rounded-full border border-white/10 pointer-events-none hidden lg:block" />
-
-        {/* ── Decorative: subtle glow on white side ── */}
-        <div className="absolute -top-24 -left-24 w-[500px] h-[500px] rounded-full pointer-events-none"
-          style={{ background: "radial-gradient(circle, rgba(232,93,38,0.06) 0%, transparent 70%)" }} />
-
-        {/* ── Mobile: light orange gradient ── */}
-        <div
-          className="absolute inset-0 lg:hidden pointer-events-none"
-          style={{ background: "linear-gradient(160deg, #fff 60%, #FFF0E8 100%)" }}
-        />
-
-        <div className="relative z-10 mx-auto max-w-7xl px-4 pt-20 pb-10 lg:pt-24 lg:pb-12 w-full">
-          <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-8 lg:gap-16 items-start">
-
-            {/* ── Left: text + search (white background) ── */}
+            {/* ── Left: tagline + title + trust + CTA ── */}
             <div>
-              {/* Eyebrow */}
-              <div className="flex items-center gap-2 mb-5 animate-fade-up">
+              <div className="flex items-center gap-2 mb-5">
                 <span className="inline-block w-8 h-0.5 bg-[#E85D26] rounded-full" />
                 <span className="text-[13px] font-bold tracking-[0.18em] uppercase text-[#E85D26]">
                   {hc.heroTagline}
                 </span>
               </div>
 
-              <h1 className="text-4xl sm:text-5xl lg:text-[3.4rem] font-black text-[#0A0A0A] tracking-tight leading-[1.07] mb-5 animate-fade-up">
+              <h1 className="text-4xl sm:text-5xl lg:text-[3.4rem] font-black text-[#0A0A0A] tracking-tight leading-[1.07] mb-5">
                 {hc.heroTitle}
                 <br />
                 <span className="text-[#E85D26]">{hc.heroTitleHighlight}</span>
               </h1>
 
-              <p className="text-base text-gray-500 mb-7 max-w-xl leading-relaxed animate-fade-up-delay">
+              <p className="text-base text-gray-600 mb-8 max-w-lg leading-relaxed">
                 {hc.heroDescription}
               </p>
 
               {/* Trust signals */}
-              <div className="flex flex-wrap gap-x-5 gap-y-2.5 mb-1 animate-fade-up-delay-2">
+              <div className="flex flex-wrap gap-x-5 gap-y-2.5 mb-8">
                 {[
                   { icon: CheckCircle2, text: t.hero.trust.warranty },
                   { icon: Clock, text: t.hero.trust.delivery },
                   { icon: Shield, text: t.hero.trust.payment },
                   { icon: Award, text: t.hero.trust.workshop },
                 ].map((item) => (
-                  <div key={item.text} className="flex items-center gap-1.5 text-sm text-gray-500">
+                  <div key={item.text} className="flex items-center gap-1.5 text-sm text-gray-600">
                     <item.icon className="h-3.5 w-3.5 text-[#E85D26] shrink-0" />
                     <span>{item.text}</span>
                   </div>
                 ))}
               </div>
 
-              {/* Vehicle search */}
-              <VehicleFinderHeroSearch locale={locale} />
-
-              {/* CTA buttons — mobile only */}
-              <div className="flex flex-wrap gap-3 mt-5 lg:hidden">
+              {/* CTA buttons */}
+              <div className="flex flex-wrap gap-3">
                 <Link
                   href="/produits"
                   className="inline-flex items-center h-11 px-6 font-bold rounded-lg text-sm text-white transition-all hover:shadow-xl hover:shadow-[#E85D26]/40 active:scale-[0.98]"
@@ -180,7 +158,7 @@ export async function LandingPage({ locale }: { locale: Locale }) {
                 </Link>
                 <Link
                   href="/contact"
-                  className="inline-flex items-center h-11 px-6 border border-gray-200 text-gray-700 font-semibold rounded-lg text-sm transition-all hover:border-[#E85D26] hover:text-[#E85D26]"
+                  className="inline-flex items-center h-11 px-6 border border-gray-300 bg-white/70 text-gray-700 font-semibold rounded-lg text-sm transition-all hover:border-[#E85D26] hover:text-[#E85D26] backdrop-blur-sm"
                 >
                   <Phone className="h-4 w-4 mr-2 text-[#E85D26]" />
                   {t.hero.cta.contact}
@@ -188,42 +166,50 @@ export async function LandingPage({ locale }: { locale: Locale }) {
               </div>
             </div>
 
-            {/* ── Right: stats + CTA buttons (orange side, desktop only) ── */}
-            <div className="hidden lg:flex flex-col gap-4 animate-fade-up-delay pl-6">
-              {/* Stats grid */}
-              {hc.stats.length > 0 && (
-                <div className="grid grid-cols-2 gap-3">
-                  {hc.stats.map((stat) => (
-                    <div key={stat.label} className="rounded-xl p-5 bg-white/15 border border-white/25 backdrop-blur-sm">
-                      <p className="text-2xl sm:text-3xl font-black text-white">{stat.value}</p>
-                      <p className="text-xs text-white/75 mt-1">{stat.label}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* CTA buttons — white on orange background */}
-              <div className="flex gap-2 mt-1">
-                <Link
-                  href="/produits"
-                  className="inline-flex items-center justify-center h-9 px-4 font-bold rounded-lg text-xs bg-white text-[#E85D26] hover:bg-orange-50 transition-colors shadow-sm"
-                >
-                  {t.hero.cta.viewTurbos}
-                  <ArrowRight className="h-3.5 w-3.5 ml-1.5" />
-                </Link>
-                <Link
-                  href="/contact"
-                  className="inline-flex items-center justify-center h-9 px-4 font-semibold rounded-lg text-xs border border-white/40 text-white hover:bg-white/15 transition-colors"
-                >
-                  <Phone className="h-3.5 w-3.5 mr-1.5" />
-                  {t.hero.cta.contact}
-                </Link>
-              </div>
+            {/* ── Right: vertical vehicle search card ── */}
+            <div className="w-full">
+              <VehicleFinderHeroSearch locale={locale} />
             </div>
 
           </div>
         </div>
       </section>
+
+      {/* ── STATS — Orange banner below hero ─────────────────────────────── */}
+      {hc.stats.length > 0 && (
+        <section className="relative overflow-hidden" style={{ background: "linear-gradient(135deg, #F06030 0%, #CC4010 100%)" }}>
+          {/* Decorative ring */}
+          <div className="absolute -top-16 right-20 w-64 h-64 rounded-full border border-white/10 pointer-events-none" />
+          <div className="absolute -bottom-12 left-10 w-48 h-48 rounded-full border border-white/10 pointer-events-none" />
+
+          <div className="relative z-10 mx-auto max-w-7xl px-4 py-12">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+              {hc.stats.map((stat) => (
+                <div key={stat.label} className="rounded-xl p-5 bg-white/15 border border-white/20 backdrop-blur-sm">
+                  <p className="text-2xl sm:text-3xl font-black text-white">{stat.value}</p>
+                  <p className="text-xs text-white/80 mt-1 leading-snug">{stat.label}</p>
+                </div>
+              ))}
+            </div>
+            <div className="flex flex-wrap gap-3 justify-center">
+              <Link
+                href="/produits"
+                className="inline-flex items-center h-11 px-7 font-bold rounded-xl text-sm bg-white text-[#E85D26] hover:bg-orange-50 transition-colors shadow-md"
+              >
+                {t.hero.cta.viewTurbos}
+                <ArrowRight className="h-4 w-4 ml-2" />
+              </Link>
+              <Link
+                href="/contact"
+                className="inline-flex items-center h-11 px-7 font-semibold rounded-xl text-sm border-2 border-white/40 text-white hover:bg-white/10 transition-colors"
+              >
+                <Phone className="h-4 w-4 mr-2" />
+                {t.hero.cta.contact}
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ── TRUST BAR — White ─────────────────────────────────────────────── */}
       <TrustBar />

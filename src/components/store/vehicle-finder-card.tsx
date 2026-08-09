@@ -80,14 +80,15 @@ export function VehicleFinderHeroSearch({ locale: localeProp }: { locale?: Local
     "disabled:opacity-40 disabled:bg-gray-50 transition-colors appearance-none";
 
   return (
-    <div className="mt-8 rounded-2xl border border-gray-200 bg-white shadow-lg p-5">
-      <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-4">
-        {t.search.title}
-      </p>
-      <form
-        onSubmit={handleSearch}
-        className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_1fr_auto] gap-3 items-end"
-      >
+    <div className="rounded-2xl border border-white/20 bg-white/95 shadow-xl backdrop-blur-sm p-5">
+      <div className="flex items-center gap-2 mb-4">
+        <Search className="h-4 w-4 text-[#E85D26]" />
+        <p className="text-[11px] font-bold uppercase tracking-widest text-gray-500">
+          {t.search.title}
+        </p>
+      </div>
+      <form onSubmit={handleSearch} className="flex flex-col gap-3">
+
         {/* Make */}
         <div>
           <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5">{t.search.make}</label>
@@ -136,7 +137,7 @@ export function VehicleFinderHeroSearch({ locale: localeProp }: { locale?: Local
         <button
           type="submit"
           disabled={!selectedMake}
-          className="h-10 px-5 flex items-center gap-2 bg-[#E85D26] hover:bg-[#d44f1e] disabled:opacity-40 text-white font-bold rounded-lg transition-colors whitespace-nowrap text-sm shadow-md shadow-[#E85D26]/20"
+          className="w-full h-11 flex items-center justify-center gap-2 bg-[#E85D26] hover:bg-[#d44f1e] disabled:opacity-40 text-white font-bold rounded-lg transition-colors text-sm shadow-md shadow-[#E85D26]/30 mt-1"
         >
           <Search className="h-4 w-4 shrink-0" />
           {t.search.searchBtn}
