@@ -102,11 +102,11 @@ export async function LandingPage({ locale }: { locale: Locale }) {
       ))}
 
       {/* ── HERO — Full-bleed image slider ────────────────────────────────── */}
-      <section className="relative min-h-[92vh] flex items-center">
+      <section className="relative min-h-[92vh] flex items-start">
         <HeroSlider />
         <div className="absolute inset-0 bg-blueprint opacity-30 pointer-events-none" />
 
-        <div className="relative z-10 mx-auto max-w-7xl px-4 pt-12 pb-10 lg:pt-16 lg:pb-14 w-full">
+        <div className="relative z-10 mx-auto max-w-7xl px-4 pt-20 pb-10 lg:pt-24 lg:pb-12 w-full">
           <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-8 lg:gap-12 items-start">
 
             {/* ── Left: text + search ── */}
@@ -182,20 +182,20 @@ export async function LandingPage({ locale }: { locale: Locale }) {
               )}
 
               {/* CTA buttons */}
-              <div className="flex flex-col gap-3 mt-2">
+              <div className="flex gap-2 mt-2">
                 <Link
                   href="/produits"
-                  className="inline-flex items-center justify-center h-12 px-6 font-bold rounded-xl text-sm text-white transition-all hover:shadow-xl hover:shadow-[#E85D26]/40 active:scale-[0.98]"
+                  className="inline-flex items-center justify-center h-9 px-4 font-bold rounded-lg text-xs text-white transition-all hover:shadow-lg hover:shadow-[#E85D26]/40 active:scale-[0.98]"
                   style={{ background: "linear-gradient(180deg,#FF7A45 0%,#E85D26 100%)" }}
                 >
                   {t.hero.cta.viewTurbos}
-                  <ArrowRight className="h-4 w-4 ml-2" />
+                  <ArrowRight className="h-3.5 w-3.5 ml-1.5" />
                 </Link>
                 <Link
                   href="/contact"
-                  className="inline-flex items-center justify-center h-12 px-6 bg-white/10 backdrop-blur-sm text-white font-semibold rounded-xl text-sm transition-all border border-white/25 hover:bg-white/20 hover:border-white/40"
+                  className="inline-flex items-center justify-center h-9 px-4 bg-white/10 backdrop-blur-sm text-white font-semibold rounded-lg text-xs transition-all border border-white/25 hover:bg-white/20 hover:border-white/40"
                 >
-                  <Phone className="h-4 w-4 mr-2 text-[#FF7A45]" />
+                  <Phone className="h-3.5 w-3.5 mr-1.5 text-[#FF7A45]" />
                   {t.hero.cta.contact}
                 </Link>
               </div>

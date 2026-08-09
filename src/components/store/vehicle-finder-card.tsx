@@ -75,13 +75,13 @@ export function VehicleFinderHeroSearch({ locale: localeProp }: { locale?: Local
   };
 
   const selectCls =
-    "w-full h-11 px-3 rounded-xl bg-white/15 border border-white/25 text-white text-sm " +
-    "placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#FF7A45]/50 focus:border-[#FF7A45]/60 " +
-    "disabled:opacity-40 transition-colors appearance-none";
+    "w-full h-10 px-3 rounded-lg bg-white border border-gray-200 text-gray-700 text-sm " +
+    "focus:outline-none focus:ring-2 focus:ring-[#E85D26]/30 focus:border-[#E85D26] " +
+    "disabled:opacity-40 disabled:bg-gray-50 transition-colors appearance-none";
 
   return (
-    <div className="mt-10 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 p-5">
-      <p className="text-[11px] font-bold uppercase tracking-widest text-white/50 mb-4">
+    <div className="mt-8 rounded-2xl bg-white shadow-2xl shadow-black/20 p-5">
+      <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-4">
         {t.search.title}
       </p>
       <form
@@ -90,7 +90,7 @@ export function VehicleFinderHeroSearch({ locale: localeProp }: { locale?: Local
       >
         {/* Make */}
         <div>
-          <label className="block text-[10px] font-bold uppercase tracking-wider text-white/60 mb-1.5">{t.search.make}</label>
+          <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5">{t.search.make}</label>
           <MakeCombobox
             makes={makes}
             loading={loadingMakes}
@@ -102,30 +102,30 @@ export function VehicleFinderHeroSearch({ locale: localeProp }: { locale?: Local
 
         {/* Model */}
         <div>
-          <label className="block text-[10px] font-bold uppercase tracking-wider text-white/60 mb-1.5">{t.search.model}</label>
+          <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5">{t.search.model}</label>
           <select
             value={selectedModel}
             onChange={e => setSelectedModel(e.target.value)}
             disabled={!selectedMake || loadingModels}
             className={selectCls}
           >
-            <option value="" className="text-gray-700 bg-white">{loadingModels ? t.search.loading : t.search.select}</option>
-            {models.map(m => <option key={m.id} value={m.id} className="text-gray-700 bg-white">{m.name}</option>)}
+            <option value="">{loadingModels ? t.search.loading : t.search.select}</option>
+            {models.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
           </select>
         </div>
 
         {/* Engine */}
         <div>
-          <label className="block text-[10px] font-bold uppercase tracking-wider text-white/60 mb-1.5">{t.search.engine}</label>
+          <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5">{t.search.engine}</label>
           <select
             value={selectedEngine}
             onChange={e => setSelectedEngine(e.target.value)}
             disabled={!selectedModel || loadingEngines}
             className={selectCls}
           >
-            <option value="" className="text-gray-700 bg-white">{loadingEngines ? t.search.loading : t.search.select}</option>
+            <option value="">{loadingEngines ? t.search.loading : t.search.select}</option>
             {engines.map(e => (
-              <option key={e.id} value={e.id} className="text-gray-700 bg-white">
+              <option key={e.id} value={e.id}>
                 {e.name}{e.powerCV ? ` (${e.powerCV} CV)` : ""}
               </option>
             ))}
@@ -136,12 +136,18 @@ export function VehicleFinderHeroSearch({ locale: localeProp }: { locale?: Local
         <button
           type="submit"
           disabled={!selectedMake}
-          className="h-11 px-6 flex items-center gap-2 bg-[#E85D26] hover:bg-[#d44f1e] disabled:opacity-40 text-white font-bold rounded-xl transition-colors whitespace-nowrap text-sm"
+          className="h-10 px-5 flex items-center gap-2 bg-[#E85D26] hover:bg-[#d44f1e] disabled:opacity-40 text-white font-bold rounded-lg transition-colors whitespace-nowrap text-sm shadow-md shadow-[#E85D26]/25"
         >
           <Search className="h-4 w-4 shrink-0" />
           {t.search.searchBtn}
         </button>
       </form>
+
+      <div className="mt-3 pt-3 border-t border-gray-100 text-center">
+        <a href="/produits" className="text-xs text-gray-400 hover:text-[#E85D26] transition-colors">
+          {t.search.viewAll} →
+        </a>
+      </div>
     </div>
   );
 }
