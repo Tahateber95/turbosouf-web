@@ -177,7 +177,7 @@ export async function LandingPage({ locale }: { locale: Locale }) {
 
       {/* ── STATS — Orange banner below hero ─────────────────────────────── */}
       {hc.stats.length > 0 && (
-        <section className="relative overflow-hidden" style={{ background: "linear-gradient(135deg, #fde4d0 0%, #F06030 45%, #C84010 100%)" }}>
+        <section className="relative overflow-hidden" style={{ background: "linear-gradient(135deg, #C84010 0%, #9A2E06 50%, #6B1A02 100%)" }}>
           {/* Decorative ring */}
           <div className="absolute -top-16 right-20 w-64 h-64 rounded-full border border-white/10 pointer-events-none" />
           <div className="absolute -bottom-12 left-10 w-48 h-48 rounded-full border border-white/10 pointer-events-none" />
