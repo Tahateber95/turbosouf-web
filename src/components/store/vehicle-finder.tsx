@@ -2,8 +2,10 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Search, Car, ChevronDown, X } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 import { CLIENT_API_URL } from "@/lib/api";
+import { getT, type Locale } from "@/i18n/translations";
 
 const API = CLIENT_API_URL;
 
@@ -11,18 +13,30 @@ interface Make { id: string; name: string; slug: string; }
 interface Model { id: string; name: string; slug: string; }
 interface Engine { id: string; name: string; engineCode: string | null; fuelType: string; powerCV: number | null; }
 
+function detectLocale(pathname: string): Locale {
+  if (pathname.startsWith("/en")) return "en";
+  if (pathname.startsWith("/es")) return "es";
+  return "fr";
+}
+
 // ── Searchable combobox for Make ────────────────────────────────────────────
 export function MakeCombobox({
   makes,
   loading,
   value,
   onChange,
+  locale: localeProp,
 }: {
   makes: Make[];
   loading: boolean;
   value: string;
   onChange: (id: string) => void;
+  locale?: Locale;
 }) {
+  const pathname = usePathname();
+  const locale = localeProp ?? detectLocale(pathname);
+  const t = getT(locale);
+
   const [open, setOpen]       = useState(false);
   const [query, setQuery]     = useState("");
   const containerRef          = useRef<HTMLDivElement>(null);
@@ -74,7 +88,7 @@ export function MakeCombobox({
         className="w-full h-11 px-4 rounded-xl bg-white/15 border border-white/25 text-sm text-left flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-[#FF7A45]/50 focus:border-[#FF7A45]/60 gap-2 transition-colors"
       >
         <span className={`truncate ${selected ? "text-white font-medium" : "text-white/50"}`}>
-          {loading ? "Chargement..." : selected ? selected.name : "Marque"}
+          {loading ? t.search.loading : selected ? selected.name : t.search.make}
         </span>
         <span className="flex items-center gap-1 text-white/50 shrink-0">
           {selected && (
@@ -98,7 +112,7 @@ export function MakeCombobox({
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Rechercher une marque..."
+                placeholder={t.search.searchMake}
                 className="flex-1 bg-transparent text-sm text-gray-700 placeholder-gray-400 outline-none min-w-0"
               />
               {query && (
@@ -112,7 +126,7 @@ export function MakeCombobox({
           {/* List */}
           <ul className="max-h-60 overflow-y-auto py-1.5">
             {filtered.length === 0 ? (
-              <li className="px-4 py-4 text-sm text-gray-400 text-center">Aucune marque trouvée</li>
+              <li className="px-4 py-4 text-sm text-gray-400 text-center">{t.search.noMake}</li>
             ) : (
               filtered.map((m) => (
                 <li

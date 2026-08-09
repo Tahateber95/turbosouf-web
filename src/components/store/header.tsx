@@ -5,14 +5,15 @@ import { useState, useRef, useEffect } from "react";
 import { ShoppingCart, Search, Menu, X, User, Phone, LogOut, ChevronDown, Package } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { useCartContext } from "@/lib/cart-context";
+import { usePathname } from "next/navigation";
+import { getT, type Locale } from "@/i18n/translations";
+import { LocaleSwitcher } from "./locale-switcher";
 
-const NAV_LINKS = [
-  { href: "/produits", label: "Nos Turbos" },
-  { href: "/services", label: "Reconditionnement" },
-  { href: "/articles", label: "Nos Articles" },
-  { href: "/contact", label: "Contact" },
-  { href: "/faq", label: "FAQ" },
-];
+function detectLocale(pathname: string): Locale {
+  if (pathname.startsWith("/en")) return "en";
+  if (pathname.startsWith("/es")) return "es";
+  return "fr";
+}
 
 export function Header() {
   const { user, logout, isLoading } = useAuth();
@@ -23,6 +24,17 @@ export function Header() {
   const [searchQuery, setSearchQuery] = useState("");
   const [scrolled, setScrolled] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+  const locale = detectLocale(pathname);
+  const t = getT(locale);
+
+  const NAV_LINKS = [
+    { href: "/produits", label: t.nav.turbos },
+    { href: "/services", label: t.nav.reconditioning },
+    { href: "/articles", label: t.nav.articles },
+    { href: "/contact", label: t.nav.contact },
+    { href: "/faq", label: t.nav.faq },
+  ];
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -63,8 +75,9 @@ export function Header() {
             </span>
           </div>
           <div className="flex items-center gap-4 text-white/85">
-            <Link href="/faq" className="hover:text-white transition-colors">FAQ</Link>
-            <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
+            <LocaleSwitcher />
+            <Link href="/faq" className="hover:text-white transition-colors">{t.nav.faq}</Link>
+            <Link href="/contact" className="hover:text-white transition-colors">{t.nav.contact}</Link>
           </div>
         </div>
       </div>
@@ -88,7 +101,7 @@ export function Header() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Rechercher un turbo par reference, vehicule..."
+                placeholder={t.nav.searchPlaceholder}
                 className="w-full h-10 pl-4 pr-12 rounded-lg border border-[rgba(0,0,0,0.12)] bg-[#F8F7F4] text-sm text-[#0A0A0A] placeholder:text-[#A0A0A0] focus:outline-none focus:ring-2 focus:ring-[#E85D26]/40 focus:bg-white focus:border-transparent transition-all"
               />
               <button
@@ -127,16 +140,16 @@ export function Header() {
                         <p className="text-xs text-[#A0A0A0] truncate">{user.email}</p>
                       </div>
                       <Link href="/compte" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-3 py-2 text-sm text-[#3A3A3A] hover:bg-[#F8F7F4]">
-                        <User className="h-4 w-4" /> Mon compte
+                        <User className="h-4 w-4" /> {t.nav.myAccount}
                       </Link>
                       <Link href="/compte/commandes" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-3 py-2 text-sm text-[#3A3A3A] hover:bg-[#F8F7F4]">
-                        <Package className="h-4 w-4" /> Mes commandes
+                        <Package className="h-4 w-4" /> {t.nav.myOrders}
                       </Link>
                       <button
                         onClick={() => { logout(); setUserMenuOpen(false); }}
                         className="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 hover:bg-red-50"
                       >
-                        <LogOut className="h-4 w-4" /> Deconnexion
+                        <LogOut className="h-4 w-4" /> {t.nav.logout}
                       </button>
                     </div>
                   )}
@@ -144,7 +157,7 @@ export function Header() {
               ) : (
                 <Link href="/connexion" className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-[#3A3A3A] hover:bg-[#F2F0EC] transition-colors">
                   <User className="h-4 w-4" />
-                  <span>Connexion</span>
+                  <span>{t.nav.login}</span>
                 </Link>
               )
             )}
@@ -156,7 +169,7 @@ export function Header() {
               style={{ background: "linear-gradient(180deg,#FF7A45 0%,#E85D26 100%)" }}
             >
               <ShoppingCart className="h-4 w-4" />
-              <span className="hidden sm:inline">Panier</span>
+              <span className="hidden sm:inline">{t.nav.cart}</span>
               {itemCount > 0 && (
                 <span className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-[#1A3A5C] text-[10px] font-black flex items-center justify-center text-white shadow">
                   {itemCount}
@@ -192,7 +205,7 @@ export function Header() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Rechercher un turbo..."
+              placeholder={t.nav.searchPlaceholder}
               className="w-full h-10 pl-4 pr-10 rounded-lg border border-[rgba(0,0,0,0.12)] bg-white text-sm text-[#0A0A0A] placeholder:text-[#A0A0A0] focus:outline-none focus:ring-2 focus:ring-[#E85D26]/40"
               autoFocus
             />
@@ -219,14 +232,14 @@ export function Header() {
           <hr className="my-2 border-[rgba(0,0,0,0.06)]" />
           {user ? (
             <>
-              <div className="px-3 py-2 text-sm text-[#A0A0A0]">Connecte : {user.fullName}</div>
+              <div className="px-3 py-2 text-sm text-[#A0A0A0]">{user.fullName}</div>
               <button onClick={() => { logout(); setMobileOpen(false); }} className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg text-sm text-red-600 hover:bg-red-50">
-                <LogOut className="h-4 w-4" /> Deconnexion
+                <LogOut className="h-4 w-4" /> {t.nav.logout}
               </button>
             </>
           ) : (
             <Link href="/connexion" onClick={() => setMobileOpen(false)} className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-[#3A3A3A] hover:bg-[#F8F7F4]">
-              <User className="h-4 w-4" /> Connexion / Inscription
+              <User className="h-4 w-4" /> {t.nav.login}
             </Link>
           )}
         </nav>

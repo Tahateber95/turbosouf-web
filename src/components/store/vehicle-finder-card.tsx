@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { Search } from "lucide-react";
 import { CLIENT_API_URL } from "@/lib/api";
 import { MakeCombobox } from "./vehicle-finder";
+import { usePathname } from "next/navigation";
+import { getT, type Locale } from "@/i18n/translations";
 
 const API = CLIENT_API_URL;
 
@@ -11,11 +13,21 @@ interface Make   { id: string; name: string; slug: string; }
 interface Model  { id: string; name: string; slug: string; }
 interface Engine { id: string; name: string; engineCode: string | null; fuelType: string; powerCV: number | null; }
 
+function detectLocale(pathname: string): Locale {
+  if (pathname.startsWith("/en")) return "en";
+  if (pathname.startsWith("/es")) return "es";
+  return "fr";
+}
+
 /**
  * Horizontal glass search bar — designed to sit inside the hero section.
  * Uses backdrop-blur + white/10 so it blends with the dark hero background.
  */
-export function VehicleFinderHeroSearch() {
+export function VehicleFinderHeroSearch({ locale: localeProp }: { locale?: Locale }) {
+  const pathname = usePathname();
+  const locale = localeProp ?? detectLocale(pathname);
+  const t = getT(locale);
+
   const [makes,          setMakes]          = useState<Make[]>([]);
   const [models,         setModels]         = useState<Model[]>([]);
   const [engines,        setEngines]        = useState<Engine[]>([]);
@@ -70,47 +82,48 @@ export function VehicleFinderHeroSearch() {
   return (
     <div className="mt-10 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 p-5">
       <p className="text-[11px] font-bold uppercase tracking-widest text-white/50 mb-4">
-        Rechercher par véhicule
+        {t.search.title}
       </p>
       <form
         onSubmit={handleSearch}
         className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_1fr_auto] gap-3 items-end"
       >
-        {/* Marque */}
+        {/* Make */}
         <div>
-          <label className="block text-[10px] font-bold uppercase tracking-wider text-white/60 mb-1.5">Marque</label>
+          <label className="block text-[10px] font-bold uppercase tracking-wider text-white/60 mb-1.5">{t.search.make}</label>
           <MakeCombobox
             makes={makes}
             loading={loadingMakes}
             value={selectedMake}
             onChange={setSelectedMake}
+            locale={locale}
           />
         </div>
 
-        {/* Modèle */}
+        {/* Model */}
         <div>
-          <label className="block text-[10px] font-bold uppercase tracking-wider text-white/60 mb-1.5">Modèle</label>
+          <label className="block text-[10px] font-bold uppercase tracking-wider text-white/60 mb-1.5">{t.search.model}</label>
           <select
             value={selectedModel}
             onChange={e => setSelectedModel(e.target.value)}
             disabled={!selectedMake || loadingModels}
             className={selectCls}
           >
-            <option value="" className="text-gray-700 bg-white">{loadingModels ? "Chargement..." : "Sélectionner"}</option>
+            <option value="" className="text-gray-700 bg-white">{loadingModels ? t.search.loading : t.search.select}</option>
             {models.map(m => <option key={m.id} value={m.id} className="text-gray-700 bg-white">{m.name}</option>)}
           </select>
         </div>
 
-        {/* Motorisation */}
+        {/* Engine */}
         <div>
-          <label className="block text-[10px] font-bold uppercase tracking-wider text-white/60 mb-1.5">Motorisation</label>
+          <label className="block text-[10px] font-bold uppercase tracking-wider text-white/60 mb-1.5">{t.search.engine}</label>
           <select
             value={selectedEngine}
             onChange={e => setSelectedEngine(e.target.value)}
             disabled={!selectedModel || loadingEngines}
             className={selectCls}
           >
-            <option value="" className="text-gray-700 bg-white">{loadingEngines ? "Chargement..." : "Sélectionner"}</option>
+            <option value="" className="text-gray-700 bg-white">{loadingEngines ? t.search.loading : t.search.select}</option>
             {engines.map(e => (
               <option key={e.id} value={e.id} className="text-gray-700 bg-white">
                 {e.name}{e.powerCV ? ` (${e.powerCV} CV)` : ""}
@@ -126,7 +139,7 @@ export function VehicleFinderHeroSearch() {
           className="h-11 px-6 flex items-center gap-2 bg-[#E85D26] hover:bg-[#d44f1e] disabled:opacity-40 text-white font-bold rounded-xl transition-colors whitespace-nowrap text-sm"
         >
           <Search className="h-4 w-4 shrink-0" />
-          Rechercher
+          {t.search.searchBtn}
         </button>
       </form>
     </div>
