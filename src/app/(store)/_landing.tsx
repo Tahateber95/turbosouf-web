@@ -129,24 +129,6 @@ export async function LandingPage({ locale }: { locale: Locale }) {
                 {hc.heroDescription}
               </p>
 
-              <div className="flex flex-wrap gap-3 mb-6 animate-fade-up-delay">
-                <Link
-                  href="/produits"
-                  className="inline-flex items-center h-11 px-6 font-bold rounded-lg text-sm text-white transition-all hover:shadow-xl hover:shadow-[#E85D26]/40 active:scale-[0.98]"
-                  style={{ background: "linear-gradient(180deg,#FF7A45 0%,#E85D26 100%)" }}
-                >
-                  {t.hero.cta.viewTurbos}
-                  <ArrowRight className="h-4 w-4 ml-2" />
-                </Link>
-                <Link
-                  href="/contact"
-                  className="inline-flex items-center h-11 px-6 bg-white/10 backdrop-blur-sm text-white font-semibold rounded-lg text-sm transition-all border border-white/25 hover:bg-white/20 hover:border-white/40"
-                >
-                  <Phone className="h-4 w-4 mr-2 text-[#FF7A45]" />
-                  {t.hero.cta.contact}
-                </Link>
-              </div>
-
               {/* Trust signals */}
               <div className="flex flex-wrap gap-x-5 gap-y-2.5 mb-1 animate-fade-up-delay-2">
                 {[
@@ -164,19 +146,60 @@ export async function LandingPage({ locale }: { locale: Locale }) {
 
               {/* Vehicle search — glass panel */}
               <VehicleFinderHeroSearch locale={locale} />
+
+              {/* CTA buttons — mobile only (desktop shows them in right column) */}
+              <div className="flex flex-wrap gap-3 mt-5 lg:hidden">
+                <Link
+                  href="/produits"
+                  className="inline-flex items-center h-11 px-6 font-bold rounded-lg text-sm text-white transition-all hover:shadow-xl hover:shadow-[#E85D26]/40 active:scale-[0.98]"
+                  style={{ background: "linear-gradient(180deg,#FF7A45 0%,#E85D26 100%)" }}
+                >
+                  {t.hero.cta.viewTurbos}
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Link>
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center h-11 px-6 bg-white/10 backdrop-blur-sm text-white font-semibold rounded-lg text-sm transition-all border border-white/25 hover:bg-white/20 hover:border-white/40"
+                >
+                  <Phone className="h-4 w-4 mr-2 text-[#FF7A45]" />
+                  {t.hero.cta.contact}
+                </Link>
+              </div>
             </div>
 
-            {/* ── Right: stats grid (desktop) ── */}
-            {hc.stats.length > 0 && (
-              <div className="hidden lg:grid grid-cols-2 gap-4 animate-fade-up-delay pt-2">
-                {hc.stats.map((stat) => (
-                  <div key={stat.label} className="rounded-xl p-5 bg-white/10 backdrop-blur-sm border border-white/15">
-                    <p className="text-2xl sm:text-3xl font-black text-[#FF7A45]">{stat.value}</p>
-                    <p className="text-xs text-white/70 mt-1">{stat.label}</p>
-                  </div>
-                ))}
+            {/* ── Right: stats + CTA buttons (desktop) ── */}
+            <div className="hidden lg:flex flex-col gap-4 animate-fade-up-delay pt-2">
+              {/* Stats grid */}
+              {hc.stats.length > 0 && (
+                <div className="grid grid-cols-2 gap-4">
+                  {hc.stats.map((stat) => (
+                    <div key={stat.label} className="rounded-xl p-5 bg-white/10 backdrop-blur-sm border border-white/15">
+                      <p className="text-2xl sm:text-3xl font-black text-[#FF7A45]">{stat.value}</p>
+                      <p className="text-xs text-white/70 mt-1">{stat.label}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* CTA buttons */}
+              <div className="flex flex-col gap-3 mt-2">
+                <Link
+                  href="/produits"
+                  className="inline-flex items-center justify-center h-12 px-6 font-bold rounded-xl text-sm text-white transition-all hover:shadow-xl hover:shadow-[#E85D26]/40 active:scale-[0.98]"
+                  style={{ background: "linear-gradient(180deg,#FF7A45 0%,#E85D26 100%)" }}
+                >
+                  {t.hero.cta.viewTurbos}
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Link>
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center justify-center h-12 px-6 bg-white/10 backdrop-blur-sm text-white font-semibold rounded-xl text-sm transition-all border border-white/25 hover:bg-white/20 hover:border-white/40"
+                >
+                  <Phone className="h-4 w-4 mr-2 text-[#FF7A45]" />
+                  {t.hero.cta.contact}
+                </Link>
               </div>
-            )}
+            </div>
 
           </div>
         </div>
