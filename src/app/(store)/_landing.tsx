@@ -4,7 +4,6 @@ import { VehicleFinderHeroSearch } from "@/components/store/vehicle-finder-card"
 import { TrustBar } from "@/components/store/trust-bar";
 import { MakesGrid } from "@/components/store/makes-grid";
 import { TikTokFeed } from "@/components/store/tiktok-feed";
-import { HeroSlider } from "@/components/store/hero-slider";
 import { SERVER_API_URL, type VehicleMake, type BlogPostListItem } from "@/lib/api";
 import { type Locale, getT } from "@/i18n/translations";
 
@@ -103,8 +102,16 @@ export async function LandingPage({ locale }: { locale: Locale }) {
 
       {/* ── HERO — Full-bleed image slider ────────────────────────────────── */}
       <section className="relative min-h-[92vh] flex items-start">
-        <HeroSlider />
-        <div className="absolute inset-0 bg-blueprint opacity-30 pointer-events-none" />
+        {/* Static dark hero background */}
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('https://i.postimg.cc/vTc7xBqQ/pexels-cottonbro-7565160.jpg')" }}
+        />
+        {/* Dark overlay for readability */}
+        <div className="absolute inset-0" style={{
+          background: "linear-gradient(to right, rgba(5,8,15,0.82) 0%, rgba(5,8,15,0.55) 55%, rgba(5,8,15,0.30) 100%), linear-gradient(to top, rgba(5,8,15,0.50) 0%, transparent 60%)"
+        }} />
+        <div className="absolute inset-0 bg-blueprint opacity-20 pointer-events-none" />
 
         <div className="relative z-10 mx-auto max-w-7xl px-4 pt-20 pb-10 lg:pt-24 lg:pb-12 w-full">
           <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-8 lg:gap-12 items-start">
