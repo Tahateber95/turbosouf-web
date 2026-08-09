@@ -177,33 +177,29 @@ export async function LandingPage({ locale }: { locale: Locale }) {
 
       {/* ── STATS — Orange banner below hero ─────────────────────────────── */}
       {hc.stats.length > 0 && (
-        <section className="relative overflow-hidden" style={{ background: "linear-gradient(135deg, #C84010 0%, #9A2E06 50%, #6B1A02 100%)" }}>
-          {/* Decorative ring */}
-          <div className="absolute -top-16 right-20 w-64 h-64 rounded-full border border-white/10 pointer-events-none" />
-          <div className="absolute -bottom-12 left-10 w-48 h-48 rounded-full border border-white/10 pointer-events-none" />
-
-          <div className="relative z-10 mx-auto max-w-7xl px-4 py-12">
+        <section className="relative bg-white border-t border-gray-100">
+          <div className="mx-auto max-w-7xl px-4 py-12">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
               {hc.stats.map((stat) => (
-                <div key={stat.label} className="rounded-xl p-5 bg-white/15 border border-white/20 backdrop-blur-sm">
-                  <p className="text-2xl sm:text-3xl font-black text-white">{stat.value}</p>
-                  <p className="text-xs text-white/80 mt-1 leading-snug">{stat.label}</p>
+                <div key={stat.label} className="rounded-2xl p-6 bg-[#FFF7F3] border border-[#E85D26]/10">
+                  <p className="text-2xl sm:text-3xl font-black text-[#E85D26]">{stat.value}</p>
+                  <p className="text-sm text-gray-500 mt-1 leading-snug">{stat.label}</p>
                 </div>
               ))}
             </div>
             <div className="flex flex-wrap gap-3 justify-center">
               <Link
                 href="/produits"
-                className="inline-flex items-center h-11 px-7 font-bold rounded-xl text-sm bg-white text-[#E85D26] hover:bg-orange-50 transition-colors shadow-md"
+                className="inline-flex items-center h-11 px-7 font-bold rounded-xl text-sm bg-[#E85D26] text-white hover:bg-[#d44f1e] transition-colors shadow-md shadow-[#E85D26]/20"
               >
                 {t.hero.cta.viewTurbos}
                 <ArrowRight className="h-4 w-4 ml-2" />
               </Link>
               <Link
                 href="/contact"
-                className="inline-flex items-center h-11 px-7 font-semibold rounded-xl text-sm border-2 border-white/40 text-white hover:bg-white/10 transition-colors"
+                className="inline-flex items-center h-11 px-7 font-semibold rounded-xl text-sm border border-gray-200 text-gray-700 hover:border-[#E85D26] hover:text-[#E85D26] transition-colors"
               >
-                <Phone className="h-4 w-4 mr-2" />
+                <Phone className="h-4 w-4 mr-2 text-[#E85D26]" />
                 {t.hero.cta.contact}
               </Link>
             </div>
