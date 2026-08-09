@@ -179,29 +179,13 @@ export async function LandingPage({ locale }: { locale: Locale }) {
       {hc.stats.length > 0 && (
         <section className="relative bg-white border-t border-gray-100">
           <div className="mx-auto max-w-7xl px-4 py-12">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               {hc.stats.map((stat) => (
                 <div key={stat.label} className="rounded-2xl p-6 bg-[#FFF7F3] border border-[#E85D26]/10">
                   <p className="text-2xl sm:text-3xl font-black text-[#E85D26]">{stat.value}</p>
                   <p className="text-sm text-gray-500 mt-1 leading-snug">{stat.label}</p>
                 </div>
               ))}
-            </div>
-            <div className="flex flex-wrap gap-3 justify-center">
-              <Link
-                href="/produits"
-                className="inline-flex items-center h-11 px-7 font-bold rounded-xl text-sm bg-[#E85D26] text-white hover:bg-[#d44f1e] transition-colors shadow-md shadow-[#E85D26]/20"
-              >
-                {t.hero.cta.viewTurbos}
-                <ArrowRight className="h-4 w-4 ml-2" />
-              </Link>
-              <Link
-                href="/contact"
-                className="inline-flex items-center h-11 px-7 font-semibold rounded-xl text-sm border border-gray-200 text-gray-700 hover:border-[#E85D26] hover:text-[#E85D26] transition-colors"
-              >
-                <Phone className="h-4 w-4 mr-2 text-[#E85D26]" />
-                {t.hero.cta.contact}
-              </Link>
             </div>
           </div>
         </section>
