@@ -3,8 +3,8 @@ import { Truck, CreditCard, ShieldCheck, RotateCcw } from "lucide-react";
 const TRUST_ITEMS = [
   { icon: Truck, title: "Livraison 24-48h", desc: "Expédition rapide en France" },
   { icon: CreditCard, title: "Paiement 3x/4x", desc: "Sans frais avec Alma" },
-  { icon: ShieldCheck, title: "Garantie 2 ans", desc: "Sur toutes nos pièces" },
-  { icon: RotateCcw, title: "Retour 14 jours", desc: "Satisfait ou remboursé" },
+  { icon: ShieldCheck, title: "Garantie 2 ans", desc: "Sur tous nos turbos" },
+  { icon: RotateCcw, title: "Rétractation 14 jours", desc: "Sous certaines conditions" },
 ];
 
 export function TrustBar() {

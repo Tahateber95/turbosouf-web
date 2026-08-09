@@ -1,10 +1,7 @@
 import Link from "next/link";
 import { Plus, ChevronLeft, ChevronRight } from "lucide-react";
-import { StatusBadge } from "@/components/dashboard/status-badge";
 import { SERVER_API_URL, type ProductListItem, type Category } from "@/lib/api";
-import { DashboardProductsFilters, DeleteProductButton } from "@/components/dashboard/products-list-actions";
-
-function formatPrice(n: number) { return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(n); }
+import { DashboardProductsFilters, ProductsTable } from "@/components/dashboard/products-list-actions";
 
 interface Props {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -22,7 +19,6 @@ export default async function ProductsPage({ searchParams }: Props) {
   const apiParams = new URLSearchParams();
   apiParams.set("PageSize", String(PAGE_SIZE));
   apiParams.set("Page", String(currentPage));
-  apiParams.set("IncludeInactive", "true");
   if (params.search) apiParams.set("Search", String(params.search));
   if (params.category) apiParams.set("CategorySlug", String(params.category));
   if (params.stock === "low") apiParams.set("LowStock", "true");
@@ -77,67 +73,7 @@ export default async function ProductsPage({ searchParams }: Props) {
       />
 
       {/* Table */}
-      <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-left text-xs text-gray-500 uppercase tracking-wider bg-gray-50/50">
-                <th className="px-5 py-3 font-medium">Produit</th>
-                <th className="px-5 py-3 font-medium">Réf. turbo</th>
-                <th className="px-5 py-3 font-medium">SKU</th>
-                <th className="px-5 py-3 font-medium">Marque</th>
-                <th className="px-5 py-3 font-medium text-right">Prix HT</th>
-                <th className="px-5 py-3 font-medium text-right">Stock</th>
-                <th className="px-5 py-3 font-medium">État</th>
-                <th className="px-5 py-3 font-medium"></th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
-              {products.map((p) => (
-                <tr key={p.id} className="hover:bg-gray-50/50 transition-colors">
-                  <td className="px-5 py-3">
-                    <div className="font-medium text-gray-900">{p.name}</div>
-                    {p.vehicleSummary && <div className="text-[11px] text-gray-400 mt-0.5">{p.vehicleSummary}</div>}
-                  </td>
-                  <td className="px-5 py-3 font-mono text-xs font-semibold text-[var(--ts-primary-500)]">{p.oemReference ?? "—"}</td>
-                  <td className="px-5 py-3 font-mono text-xs text-gray-500">{p.sku}</td>
-                  <td className="px-5 py-3 text-gray-600">{p.brandName ?? "—"}</td>
-                  <td className="px-5 py-3 text-right font-semibold">{formatPrice(p.priceHT)}</td>
-                  <td className="px-5 py-3 text-right">
-                    <span className={`font-semibold ${p.stockQuantity <= 5 ? "text-red-600" : "text-gray-900"}`}>
-                      {p.stockQuantity}
-                    </span>
-                  </td>
-                  <td className="px-5 py-3">
-                    {p.isFeatured && (
-                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-50 text-amber-700 border border-amber-200">
-                        Mis en avant
-                      </span>
-                    )}
-                    <StatusBadge status={p.condition === "Refurbished" ? "Reconditionne" : p.condition === "New" ? "Neuf" : "Echange Std"} />
-                  </td>
-                  <td className="px-5 py-3">
-                    <div className="flex items-center gap-3 justify-end">
-                      <Link
-                        href={`/dashboard/produits/${p.slug}`}
-                        className="text-xs font-medium text-[var(--ts-primary-500)] hover:underline"
-                      >
-                        Modifier
-                      </Link>
-                      <DeleteProductButton productId={p.id} productName={p.name} />
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              {products.length === 0 && (
-                <tr>
-                  <td colSpan={8} className="px-5 py-8 text-center text-gray-500">Aucun produit trouvé.</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <ProductsTable initialProducts={products} />
 
       {totalPages > 1 && (
         <div className="flex items-center justify-center gap-2 mt-6">

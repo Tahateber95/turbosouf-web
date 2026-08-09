@@ -188,9 +188,9 @@ export default async function HomePage() {
             <div className="flex flex-wrap gap-x-6 gap-y-3 animate-fade-up-delay-2">
               {[
                 { icon: CheckCircle2, text: "Garantie 2 ans" },
-                { icon: Clock, text: "Livraison 24-48h" },
-                { icon: Shield, text: "Paiement securise" },
-                { icon: Award, text: "Atelier certifie" },
+                { icon: Clock, text: "Livraison rapide" },
+                { icon: Shield, text: "Paiement sécurisé" },
+                { icon: Award, text: "Atelier sur place" },
               ].map((item) => (
                 <div key={item.text} className="flex items-center gap-2 text-sm text-white/80">
                   <item.icon className="h-4 w-4 text-[#FF7A45] shrink-0" />

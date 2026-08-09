@@ -71,50 +71,57 @@ function MakeCombobox({
       <button
         type="button"
         onClick={openDropdown}
-        className="w-full h-12 px-3 rounded-xl bg-white text-sm text-left flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-[var(--ts-accent-500)]"
+        className="w-full h-12 px-4 rounded-xl bg-white text-sm text-left flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-[var(--ts-accent-500)] gap-2"
       >
-        <span className={selected ? "text-gray-800" : "text-gray-400"}>
+        <span className={`truncate ${selected ? "text-gray-800 font-medium" : "text-gray-400"}`}>
           {loading ? "Chargement..." : selected ? selected.name : "Marque"}
         </span>
         <span className="flex items-center gap-1 text-gray-400 shrink-0">
           {selected && (
-            <span onClick={clear} className="hover:text-gray-700 p-0.5">
+            <span onClick={clear} className="hover:text-gray-600 p-0.5 rounded">
               <X className="h-3.5 w-3.5" />
             </span>
           )}
-          <ChevronDown className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`} />
+          <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
         </span>
       </button>
 
       {/* Dropdown */}
       {open && (
-        <div className="absolute z-50 mt-1 w-full bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden py-1">
+        <div className="absolute z-50 mt-2 left-0 min-w-[260px] w-full bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden">
           {/* Search input */}
-          <div className="p-2 border-b border-gray-100">
-            <div className="flex items-center gap-2 px-2 py-1.5 bg-gray-50 rounded-lg">
-              <Search className="h-3.5 w-3.5 text-gray-400 shrink-0" />
+          <div className="p-3 border-b border-gray-100">
+            <div className="flex items-center gap-2.5 px-3 py-2 bg-gray-50 rounded-xl border border-gray-200 focus-within:border-[var(--ts-accent-400)] focus-within:bg-white transition-colors">
+              <Search className="h-4 w-4 text-gray-400 shrink-0" />
               <input
                 ref={inputRef}
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Rechercher une marque..."
-                className="flex-1 bg-transparent text-sm text-gray-700 placeholder-gray-400 outline-none"
+                className="flex-1 bg-transparent text-sm text-gray-700 placeholder-gray-400 outline-none min-w-0"
               />
+              {query && (
+                <button type="button" onClick={() => setQuery("")} className="text-gray-400 hover:text-gray-600">
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              )}
             </div>
           </div>
 
           {/* List */}
-          <ul className="max-h-56 overflow-y-auto">
+          <ul className="max-h-60 overflow-y-auto py-1.5">
             {filtered.length === 0 ? (
-              <li className="px-4 py-3 text-sm text-gray-400 text-center">Aucun résultat</li>
+              <li className="px-4 py-4 text-sm text-gray-400 text-center">Aucune marque trouvée</li>
             ) : (
               filtered.map((m) => (
                 <li
                   key={m.id}
                   onPointerDown={() => select(m)}
-                  className={`px-5 py-2.5 text-sm cursor-pointer hover:bg-orange-50 hover:text-[var(--ts-accent-600)] transition-colors ${
-                    m.id === value ? "bg-orange-50 text-[var(--ts-accent-600)] font-medium" : "text-gray-700"
+                  className={`mx-1.5 px-3 py-2 text-sm rounded-lg cursor-pointer transition-colors ${
+                    m.id === value
+                      ? "bg-orange-50 text-[var(--ts-accent-600)] font-semibold"
+                      : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
                   }`}
                 >
                   {m.name}

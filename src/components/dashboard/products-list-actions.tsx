@@ -2,10 +2,16 @@
 
 import { useState } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import Link from "next/link";
 import { Search, Trash2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { adminDeleteProduct } from "@/lib/admin-api";
-import type { Category } from "@/lib/api";
+import { StatusBadge } from "@/components/dashboard/status-badge";
+import type { Category, ProductListItem } from "@/lib/api";
+
+function formatPrice(n: number) {
+  return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(n);
+}
 
 interface FiltersProps {
   categories: Category[];
@@ -71,6 +77,121 @@ export function DashboardProductsFilters({ categories, activeSearch, activeCateg
   );
 }
 
+interface ProductsTableProps {
+  initialProducts: ProductListItem[];
+}
+
+export function ProductsTable({ initialProducts }: ProductsTableProps) {
+  const [products, setProducts] = useState<ProductListItem[]>(initialProducts);
+
+  const handleDelete = async (productId: string, productName: string) => {
+    if (!confirm(`Supprimer "${productName}" ? Cette action est irréversible.`)) return;
+    // Capture current state for rollback before optimistic removal
+    const snapshot = products;
+    setProducts(prev => prev.filter(p => p.id !== productId));
+    try {
+      await adminDeleteProduct(productId);
+      toast.success("Produit supprimé");
+      // Do NOT call router.refresh() — it causes the server to re-send the deleted
+      // product (IncludeInactive=true) and can remount this component, undoing the
+      // optimistic removal. The local state is already correct.
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Erreur");
+      setProducts(snapshot); // restore exact state before this deletion attempt
+    }
+  };
+
+  if (products.length === 0) {
+    return (
+      <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+        <div className="px-5 py-8 text-center text-gray-500">Aucun produit trouvé.</div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="text-left text-xs text-gray-500 uppercase tracking-wider bg-gray-50/50">
+              <th className="px-5 py-3 font-medium">Produit</th>
+              <th className="px-5 py-3 font-medium">Réf. turbo</th>
+              <th className="px-5 py-3 font-medium">SKU</th>
+              <th className="px-5 py-3 font-medium">Marque</th>
+              <th className="px-5 py-3 font-medium text-right">Prix HT</th>
+              <th className="px-5 py-3 font-medium text-right">Stock</th>
+              <th className="px-5 py-3 font-medium">État</th>
+              <th className="px-5 py-3 font-medium"></th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-50">
+            {products.map((p) => (
+              <ProductRow key={p.id} product={p} onDelete={handleDelete} />
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+function ProductRow({
+  product: p,
+  onDelete,
+}: {
+  product: ProductListItem;
+  onDelete: (id: string, name: string) => Promise<void>;
+}) {
+  const [deleting, setDeleting] = useState(false);
+
+  const handleClick = async () => {
+    setDeleting(true);
+    await onDelete(p.id, p.name);
+    setDeleting(false);
+  };
+
+  return (
+    <tr className="hover:bg-gray-50/50 transition-colors">
+      <td className="px-5 py-3">
+        <div className="font-medium text-gray-900">{p.name}</div>
+        {p.vehicleSummary && <div className="text-[11px] text-gray-400 mt-0.5">{p.vehicleSummary}</div>}
+      </td>
+      <td className="px-5 py-3 font-mono text-xs font-semibold text-[var(--ts-primary-500)]">{p.oemReference ?? "—"}</td>
+      <td className="px-5 py-3 font-mono text-xs text-gray-500">{p.sku}</td>
+      <td className="px-5 py-3 text-gray-600">{p.brandName ?? "—"}</td>
+      <td className="px-5 py-3 text-right font-semibold">{formatPrice(p.priceHT)}</td>
+      <td className="px-5 py-3 text-right">
+        <span className={`font-semibold ${p.stockQuantity <= 5 ? "text-red-600" : "text-gray-900"}`}>
+          {p.stockQuantity}
+        </span>
+      </td>
+      <td className="px-5 py-3">
+        {p.isFeatured && (
+          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+            Mis en avant
+          </span>
+        )}
+        <StatusBadge status={p.condition === "Refurbished" ? "Reconditionne" : p.condition === "New" ? "Neuf" : "Echange Std"} />
+      </td>
+      <td className="px-5 py-3">
+        <div className="flex items-center gap-3 justify-end">
+          <Link
+            href={`/dashboard/produits/${p.slug}`}
+            className="text-xs font-medium text-[var(--ts-primary-500)] hover:underline"
+          >
+            Modifier
+          </Link>
+          <button onClick={handleClick} disabled={deleting} className="text-red-500 hover:text-red-700 disabled:opacity-50">
+            {deleting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
+          </button>
+        </div>
+      </td>
+    </tr>
+  );
+}
+
+// Keep for backward compat (unused but exported)
 interface DeleteProps {
   productId: string;
   productName: string;

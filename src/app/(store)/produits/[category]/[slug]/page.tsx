@@ -111,7 +111,7 @@ export default async function ProductDetailPage({
               {[
                 { icon: Truck, text: "Livraison 24-48h" },
                 { icon: ShieldCheck, text: "Garantie 2 ans" },
-                { icon: Package, text: "Retour 14 jours" },
+                { icon: Package, text: "Rétractation 14 jours" },
               ].map((item) => (
                 <div key={item.text} className="flex flex-col items-center text-center p-3 rounded-lg bg-gray-50">
                   <item.icon className="h-5 w-5 text-[var(--ts-primary-500)] mb-1" />
