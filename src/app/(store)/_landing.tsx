@@ -100,39 +100,49 @@ export async function LandingPage({ locale }: { locale: Locale }) {
         </div>
       ))}
 
-      {/* ── HERO — Full-bleed image slider ────────────────────────────────── */}
-      <section className="relative min-h-[92vh] flex items-start">
-        {/* Static dark hero background */}
+      {/* ── HERO — White + orange diagonal split ─────────────────────────── */}
+      <section className="relative min-h-[92vh] flex items-start bg-white overflow-hidden">
+
+        {/* ── Desktop: bold orange diagonal on the right ── */}
         <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: "url('https://i.postimg.cc/vTc7xBqQ/pexels-cottonbro-7565160.jpg')" }}
+          className="absolute inset-0 hidden lg:block pointer-events-none"
+          style={{ background: "linear-gradient(112deg, transparent 0%, transparent 56%, #E85D26 56%, #E05020 100%)" }}
         />
-        {/* Dark overlay for readability */}
-        <div className="absolute inset-0" style={{
-          background: "linear-gradient(to right, rgba(5,8,15,0.82) 0%, rgba(5,8,15,0.55) 55%, rgba(5,8,15,0.30) 100%), linear-gradient(to top, rgba(5,8,15,0.50) 0%, transparent 60%)"
-        }} />
-        <div className="absolute inset-0 bg-blueprint opacity-20 pointer-events-none" />
+
+        {/* ── Decorative: subtle orange glow on white side ── */}
+        <div className="absolute -top-24 -left-24 w-[500px] h-[500px] rounded-full pointer-events-none"
+          style={{ background: "radial-gradient(circle, rgba(232,93,38,0.07) 0%, transparent 70%)" }} />
+
+        {/* ── Decorative: faint concentric arc on white side ── */}
+        <div className="absolute top-16 left-[38%] w-96 h-96 rounded-full border border-orange-100 pointer-events-none hidden lg:block" />
+        <div className="absolute top-28 left-[42%] w-64 h-64 rounded-full border border-orange-50 pointer-events-none hidden lg:block" />
+
+        {/* ── Mobile: light orange gradient ── */}
+        <div
+          className="absolute inset-0 lg:hidden pointer-events-none"
+          style={{ background: "linear-gradient(160deg, #fff 60%, #FFF0E8 100%)" }}
+        />
 
         <div className="relative z-10 mx-auto max-w-7xl px-4 pt-20 pb-10 lg:pt-24 lg:pb-12 w-full">
-          <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-8 lg:gap-12 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-8 lg:gap-16 items-start">
 
-            {/* ── Left: text + search ── */}
+            {/* ── Left: text + search (white background) ── */}
             <div>
               {/* Eyebrow */}
               <div className="flex items-center gap-2 mb-5 animate-fade-up">
                 <span className="inline-block w-8 h-0.5 bg-[#E85D26] rounded-full" />
-                <span className="text-[13px] font-bold tracking-[0.18em] uppercase text-white">
+                <span className="text-[13px] font-bold tracking-[0.18em] uppercase text-[#E85D26]">
                   {hc.heroTagline}
                 </span>
               </div>
 
-              <h1 className="text-4xl sm:text-5xl lg:text-[3.4rem] font-black text-white tracking-tight leading-[1.07] mb-5 animate-fade-up">
+              <h1 className="text-4xl sm:text-5xl lg:text-[3.4rem] font-black text-[#0A0A0A] tracking-tight leading-[1.07] mb-5 animate-fade-up">
                 {hc.heroTitle}
                 <br />
-                <span className="text-[#FF7A45]">{hc.heroTitleHighlight}</span>
+                <span className="text-[#E85D26]">{hc.heroTitleHighlight}</span>
               </h1>
 
-              <p className="text-base font-medium text-white/80 mb-7 max-w-xl leading-relaxed animate-fade-up-delay">
+              <p className="text-base text-gray-500 mb-7 max-w-xl leading-relaxed animate-fade-up-delay">
                 {hc.heroDescription}
               </p>
 
@@ -144,17 +154,17 @@ export async function LandingPage({ locale }: { locale: Locale }) {
                   { icon: Shield, text: t.hero.trust.payment },
                   { icon: Award, text: t.hero.trust.workshop },
                 ].map((item) => (
-                  <div key={item.text} className="flex items-center gap-1.5 text-sm text-white/75">
-                    <item.icon className="h-3.5 w-3.5 text-[#FF7A45] shrink-0" />
+                  <div key={item.text} className="flex items-center gap-1.5 text-sm text-gray-500">
+                    <item.icon className="h-3.5 w-3.5 text-[#E85D26] shrink-0" />
                     <span>{item.text}</span>
                   </div>
                 ))}
               </div>
 
-              {/* Vehicle search — glass panel */}
+              {/* Vehicle search */}
               <VehicleFinderHeroSearch locale={locale} />
 
-              {/* CTA buttons — mobile only (desktop shows them in right column) */}
+              {/* CTA buttons — mobile only */}
               <div className="flex flex-wrap gap-3 mt-5 lg:hidden">
                 <Link
                   href="/produits"
@@ -166,43 +176,42 @@ export async function LandingPage({ locale }: { locale: Locale }) {
                 </Link>
                 <Link
                   href="/contact"
-                  className="inline-flex items-center h-11 px-6 bg-white/10 backdrop-blur-sm text-white font-semibold rounded-lg text-sm transition-all border border-white/25 hover:bg-white/20 hover:border-white/40"
+                  className="inline-flex items-center h-11 px-6 border border-gray-200 text-gray-700 font-semibold rounded-lg text-sm transition-all hover:border-[#E85D26] hover:text-[#E85D26]"
                 >
-                  <Phone className="h-4 w-4 mr-2 text-[#FF7A45]" />
+                  <Phone className="h-4 w-4 mr-2 text-[#E85D26]" />
                   {t.hero.cta.contact}
                 </Link>
               </div>
             </div>
 
-            {/* ── Right: stats + CTA buttons (desktop) ── */}
+            {/* ── Right: stats + CTA buttons (orange side, desktop only) ── */}
             <div className="hidden lg:flex flex-col gap-4 animate-fade-up-delay pt-2">
               {/* Stats grid */}
               {hc.stats.length > 0 && (
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-3">
                   {hc.stats.map((stat) => (
-                    <div key={stat.label} className="rounded-xl p-5 bg-white/10 backdrop-blur-sm border border-white/15">
-                      <p className="text-2xl sm:text-3xl font-black text-[#FF7A45]">{stat.value}</p>
-                      <p className="text-xs text-white/70 mt-1">{stat.label}</p>
+                    <div key={stat.label} className="rounded-xl p-5 bg-white/15 border border-white/25 backdrop-blur-sm">
+                      <p className="text-2xl sm:text-3xl font-black text-white">{stat.value}</p>
+                      <p className="text-xs text-white/75 mt-1">{stat.label}</p>
                     </div>
                   ))}
                 </div>
               )}
 
-              {/* CTA buttons */}
-              <div className="flex gap-2 mt-2">
+              {/* CTA buttons — white on orange background */}
+              <div className="flex gap-2 mt-1">
                 <Link
                   href="/produits"
-                  className="inline-flex items-center justify-center h-9 px-4 font-bold rounded-lg text-xs text-white transition-all hover:shadow-lg hover:shadow-[#E85D26]/40 active:scale-[0.98]"
-                  style={{ background: "linear-gradient(180deg,#FF7A45 0%,#E85D26 100%)" }}
+                  className="inline-flex items-center justify-center h-9 px-4 font-bold rounded-lg text-xs bg-white text-[#E85D26] hover:bg-orange-50 transition-colors shadow-sm"
                 >
                   {t.hero.cta.viewTurbos}
                   <ArrowRight className="h-3.5 w-3.5 ml-1.5" />
                 </Link>
                 <Link
                   href="/contact"
-                  className="inline-flex items-center justify-center h-9 px-4 bg-white/10 backdrop-blur-sm text-white font-semibold rounded-lg text-xs transition-all border border-white/25 hover:bg-white/20 hover:border-white/40"
+                  className="inline-flex items-center justify-center h-9 px-4 font-semibold rounded-lg text-xs border border-white/40 text-white hover:bg-white/15 transition-colors"
                 >
-                  <Phone className="h-3.5 w-3.5 mr-1.5 text-[#FF7A45]" />
+                  <Phone className="h-3.5 w-3.5 mr-1.5" />
                   {t.hero.cta.contact}
                 </Link>
               </div>
