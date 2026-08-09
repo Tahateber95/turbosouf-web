@@ -12,7 +12,7 @@ interface Model { id: string; name: string; slug: string; }
 interface Engine { id: string; name: string; engineCode: string | null; fuelType: string; powerCV: number | null; }
 
 // ── Searchable combobox for Make ────────────────────────────────────────────
-function MakeCombobox({
+export function MakeCombobox({
   makes,
   loading,
   value,
@@ -71,7 +71,7 @@ function MakeCombobox({
       <button
         type="button"
         onClick={openDropdown}
-        className="w-full h-12 px-4 rounded-xl bg-white text-sm text-left flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-[var(--ts-accent-500)] gap-2"
+        className="w-full h-11 px-4 rounded-xl bg-white border border-gray-200 text-sm text-left flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-[#E85D26]/30 focus:border-[#E85D26] gap-2 transition-colors"
       >
         <span className={`truncate ${selected ? "text-gray-800 font-medium" : "text-gray-400"}`}>
           {loading ? "Chargement..." : selected ? selected.name : "Marque"}

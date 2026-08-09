@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Wrench, Shield, Award, Star, ChevronRight, Users, CheckCircle2, Clock, Phone, Anchor, Car, Factory, Cog, ArrowRight } from "lucide-react";
-import { VehicleFinder } from "@/components/store/vehicle-finder";
+import { VehicleFinderCard } from "@/components/store/vehicle-finder-card";
 import { TrustBar } from "@/components/store/trust-bar";
 import { MakesGrid } from "@/components/store/makes-grid";
 import { TikTokFeed } from "@/components/store/tiktok-feed";
@@ -138,7 +138,7 @@ export default async function HomePage() {
       ))}
 
       {/* ── HERO — Full-bleed image slider ────────────────────────────────── */}
-      <section className="relative overflow-hidden min-h-[600px] lg:min-h-[680px] flex items-center">
+      <section className="relative overflow-hidden min-h-[600px] lg:min-h-[700px] flex items-center">
         {/* Background slider (client component) */}
         <HeroSlider />
 
@@ -146,70 +146,79 @@ export default async function HomePage() {
         <div className="absolute inset-0 bg-blueprint opacity-30 pointer-events-none" />
 
         <div className="relative z-10 mx-auto max-w-7xl px-4 pt-16 pb-20 lg:pt-24 lg:pb-28 w-full">
-          <div className="max-w-2xl">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-10 lg:gap-16 items-center">
 
-            {/* Eyebrow */}
-            <div className="flex items-center gap-2 mb-6 animate-fade-up">
-              <span className="inline-block w-8 h-0.5 bg-[#E85D26] rounded-full" />
-              <span className="text-[13px] font-bold tracking-[0.18em] uppercase text-white">
-                {hc.heroTagline}
-              </span>
-            </div>
+            {/* ── Left: text ── */}
+            <div>
+              {/* Eyebrow */}
+              <div className="flex items-center gap-2 mb-6 animate-fade-up">
+                <span className="inline-block w-8 h-0.5 bg-[#E85D26] rounded-full" />
+                <span className="text-[13px] font-bold tracking-[0.18em] uppercase text-white">
+                  {hc.heroTagline}
+                </span>
+              </div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-[3.6rem] font-black text-white tracking-tight leading-[1.07] mb-6 animate-fade-up">
-              {hc.heroTitle}
-              <br />
-              <span className="text-[#FF7A45]">{hc.heroTitleHighlight}</span>
-            </h1>
+              <h1 className="text-4xl sm:text-5xl lg:text-[3.6rem] font-black text-white tracking-tight leading-[1.07] mb-6 animate-fade-up">
+                {hc.heroTitle}
+                <br />
+                <span className="text-[#FF7A45]">{hc.heroTitleHighlight}</span>
+              </h1>
 
-            <p className="text-xl font-semibold text-white/90 mb-9 max-w-lg leading-relaxed animate-fade-up-delay">
-              {hc.heroDescription}
-            </p>
+              <p className="text-xl font-semibold text-white/90 mb-9 max-w-lg leading-relaxed animate-fade-up-delay">
+                {hc.heroDescription}
+              </p>
 
-            <div className="flex flex-wrap gap-3 mb-10 animate-fade-up-delay">
-              <Link
-                href="/produits"
-                className="inline-flex items-center h-13 px-7 font-bold rounded-lg text-base text-white transition-all hover:shadow-xl hover:shadow-[#E85D26]/40 active:scale-[0.98]"
-                style={{ background: "linear-gradient(180deg,#FF7A45 0%,#E85D26 100%)" }}
-              >
-                Voir nos turbos
-                <ArrowRight className="h-4 w-4 ml-2" />
-              </Link>
-              <Link
-                href="/contact"
-                className="inline-flex items-center h-13 px-7 bg-white/10 backdrop-blur-sm text-white font-semibold rounded-lg text-base transition-all border border-white/25 hover:bg-white/20 hover:border-white/40"
-              >
-                <Phone className="h-4 w-4 mr-2 text-[#FF7A45]" />
-                Nous contacter
-              </Link>
-            </div>
+              <div className="flex flex-wrap gap-3 mb-10 animate-fade-up-delay">
+                <Link
+                  href="/produits"
+                  className="inline-flex items-center h-13 px-7 font-bold rounded-lg text-base text-white transition-all hover:shadow-xl hover:shadow-[#E85D26]/40 active:scale-[0.98]"
+                  style={{ background: "linear-gradient(180deg,#FF7A45 0%,#E85D26 100%)" }}
+                >
+                  Voir nos turbos
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Link>
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center h-13 px-7 bg-white/10 backdrop-blur-sm text-white font-semibold rounded-lg text-base transition-all border border-white/25 hover:bg-white/20 hover:border-white/40"
+                >
+                  <Phone className="h-4 w-4 mr-2 text-[#FF7A45]" />
+                  Nous contacter
+                </Link>
+              </div>
 
-            {/* Trust signals */}
-            <div className="flex flex-wrap gap-x-6 gap-y-3 animate-fade-up-delay-2">
-              {[
-                { icon: CheckCircle2, text: "Garantie 2 ans" },
-                { icon: Clock, text: "Livraison rapide" },
-                { icon: Shield, text: "Paiement sécurisé" },
-                { icon: Award, text: "Atelier sur place" },
-              ].map((item) => (
-                <div key={item.text} className="flex items-center gap-2 text-sm text-white/80">
-                  <item.icon className="h-4 w-4 text-[#FF7A45] shrink-0" />
-                  <span>{item.text}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* Stats */}
-            {hc.stats.length > 0 && (
-              <div className="mt-14 grid grid-cols-2 sm:grid-cols-4 gap-4 animate-fade-up-delay-2">
-                {hc.stats.map((stat) => (
-                  <div key={stat.label} className="rounded-xl p-5 bg-white/10 backdrop-blur-sm border border-white/15">
-                    <p className="text-2xl sm:text-3xl font-black text-[#FF7A45]">{stat.value}</p>
-                    <p className="text-xs text-white/70 mt-1">{stat.label}</p>
+              {/* Trust signals */}
+              <div className="flex flex-wrap gap-x-6 gap-y-3 animate-fade-up-delay-2">
+                {[
+                  { icon: CheckCircle2, text: "Garantie 2 ans" },
+                  { icon: Clock, text: "Livraison rapide" },
+                  { icon: Shield, text: "Paiement sécurisé" },
+                  { icon: Award, text: "Atelier sur place" },
+                ].map((item) => (
+                  <div key={item.text} className="flex items-center gap-2 text-sm text-white/80">
+                    <item.icon className="h-4 w-4 text-[#FF7A45] shrink-0" />
+                    <span>{item.text}</span>
                   </div>
                 ))}
               </div>
-            )}
+
+              {/* Stats */}
+              {hc.stats.length > 0 && (
+                <div className="mt-14 grid grid-cols-2 sm:grid-cols-4 gap-4 animate-fade-up-delay-2">
+                  {hc.stats.map((stat) => (
+                    <div key={stat.label} className="rounded-xl p-5 bg-white/10 backdrop-blur-sm border border-white/15">
+                      <p className="text-2xl sm:text-3xl font-black text-[#FF7A45]">{stat.value}</p>
+                      <p className="text-xs text-white/70 mt-1">{stat.label}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* ── Right: vehicle search card ── */}
+            <div className="animate-fade-up-delay">
+              <VehicleFinderCard />
+            </div>
+
           </div>
         </div>
       </section>
@@ -260,9 +269,6 @@ export default async function HomePage() {
           </div>
         </div>
       </section>}
-
-      {/* ── VEHICLE FINDER — dark stays ───────────────────────────────────── */}
-      <VehicleFinder />
 
       {/* ── MAKES GRID — Warm muted bg ────────────────────────────────────── */}
       <section className="py-16" style={{ backgroundColor: "var(--ts-canvas)" }}>
