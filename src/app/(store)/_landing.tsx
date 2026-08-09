@@ -101,7 +101,7 @@ export async function LandingPage({ locale }: { locale: Locale }) {
       ))}
 
       {/* ── HERO — Blended white-to-orange gradient ───────────────────── */}
-      <section className="relative min-h-[88vh] flex items-center overflow-hidden"
+      <section className="relative flex items-center overflow-hidden"
         style={{ background: "linear-gradient(135deg, #ffffff 0%, #fff7f2 30%, #fde4d0 60%, #F06030 85%, #C84010 100%)" }}
       >
         {/* Decorative rings */}
@@ -109,7 +109,7 @@ export async function LandingPage({ locale }: { locale: Locale }) {
         <div className="absolute top-24 right-24 w-52 h-52 rounded-full border border-white/15 pointer-events-none" />
         <div className="absolute -bottom-16 -left-16 w-64 h-64 rounded-full border border-[#E85D26]/10 pointer-events-none" />
 
-        <div className="relative z-10 mx-auto max-w-7xl px-4 py-16 lg:py-20 w-full">
+        <div className="relative z-10 mx-auto max-w-7xl px-4 py-10 lg:py-14 w-full">
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-10 lg:gap-16 items-center">
 
             {/* ── Left: tagline + title + trust + CTA ── */}

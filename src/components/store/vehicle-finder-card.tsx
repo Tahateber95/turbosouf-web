@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Search } from "lucide-react";
+import { Search, Car } from "lucide-react";
 import { CLIENT_API_URL } from "@/lib/api";
 import { MakeCombobox } from "./vehicle-finder";
 import { usePathname } from "next/navigation";
@@ -75,23 +75,28 @@ export function VehicleFinderHeroSearch({ locale: localeProp }: { locale?: Local
   };
 
   const selectCls =
-    "w-full h-10 px-3 rounded-lg bg-white border border-gray-200 text-gray-700 text-sm " +
+    "w-full h-12 px-4 rounded-xl bg-white border border-gray-200 text-gray-700 text-sm " +
     "focus:outline-none focus:ring-2 focus:ring-[#E85D26]/25 focus:border-[#E85D26] " +
     "disabled:opacity-40 disabled:bg-gray-50 transition-colors appearance-none";
 
   return (
-    <div className="rounded-2xl border border-white/20 bg-white/95 shadow-xl backdrop-blur-sm p-5">
-      <div className="flex items-center gap-2 mb-4">
-        <Search className="h-4 w-4 text-[#E85D26]" />
-        <p className="text-[11px] font-bold uppercase tracking-widest text-gray-500">
-          {t.search.title}
-        </p>
+    <div className="rounded-2xl border-t-4 border-t-[#E85D26] border border-white/30 bg-white shadow-2xl p-7">
+      {/* Card title */}
+      <div className="flex items-center gap-3 mb-6">
+        <div className="w-10 h-10 rounded-xl bg-[#E85D26]/10 flex items-center justify-center shrink-0">
+          <Car className="h-5 w-5 text-[#E85D26]" />
+        </div>
+        <div>
+          <p className="text-lg font-black text-gray-900 leading-tight">{t.search.title}</p>
+          <p className="text-xs text-gray-400 mt-0.5">Trouvez les pièces compatibles</p>
+        </div>
       </div>
-      <form onSubmit={handleSearch} className="flex flex-col gap-3">
+
+      <form onSubmit={handleSearch} className="flex flex-col gap-5">
 
         {/* Make */}
         <div>
-          <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5">{t.search.make}</label>
+          <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">{t.search.make}</label>
           <MakeCombobox
             makes={makes}
             loading={loadingMakes}
@@ -103,7 +108,7 @@ export function VehicleFinderHeroSearch({ locale: localeProp }: { locale?: Local
 
         {/* Model */}
         <div>
-          <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5">{t.search.model}</label>
+          <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">{t.search.model}</label>
           <select
             value={selectedModel}
             onChange={e => setSelectedModel(e.target.value)}
@@ -117,7 +122,7 @@ export function VehicleFinderHeroSearch({ locale: localeProp }: { locale?: Local
 
         {/* Engine */}
         <div>
-          <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5">{t.search.engine}</label>
+          <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">{t.search.engine}</label>
           <select
             value={selectedEngine}
             onChange={e => setSelectedEngine(e.target.value)}
@@ -137,14 +142,14 @@ export function VehicleFinderHeroSearch({ locale: localeProp }: { locale?: Local
         <button
           type="submit"
           disabled={!selectedMake}
-          className="w-full h-11 flex items-center justify-center gap-2 bg-[#E85D26] hover:bg-[#d44f1e] disabled:opacity-40 text-white font-bold rounded-lg transition-colors text-sm shadow-md shadow-[#E85D26]/30 mt-1"
+          className="w-full h-13 py-3.5 flex items-center justify-center gap-2 bg-[#E85D26] hover:bg-[#d44f1e] disabled:opacity-40 text-white font-bold rounded-xl transition-all text-base shadow-lg shadow-[#E85D26]/30 hover:shadow-[#E85D26]/50"
         >
-          <Search className="h-4 w-4 shrink-0" />
+          <Search className="h-5 w-5 shrink-0" />
           {t.search.searchBtn}
         </button>
       </form>
 
-      <div className="mt-3 pt-3 border-t border-gray-100 text-center">
+      <div className="mt-4 pt-4 border-t border-gray-100 text-center">
         <a href="/produits" className="text-xs text-gray-400 hover:text-[#E85D26] transition-colors">
           {t.search.viewAll} →
         </a>

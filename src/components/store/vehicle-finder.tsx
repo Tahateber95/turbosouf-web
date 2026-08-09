@@ -85,7 +85,7 @@ export function MakeCombobox({
       <button
         type="button"
         onClick={openDropdown}
-        className="w-full h-10 px-3 rounded-lg bg-white border border-gray-200 text-sm text-left flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-[#E85D26]/25 focus:border-[#E85D26] gap-2 transition-colors"
+        className="w-full h-12 px-4 rounded-xl bg-white border border-gray-200 text-sm text-left flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-[#E85D26]/25 focus:border-[#E85D26] gap-2 transition-colors"
       >
         <span className={`truncate ${selected ? "text-gray-900 font-medium" : "text-gray-400"}`}>
           {loading ? t.search.loading : selected ? selected.name : t.search.make}
