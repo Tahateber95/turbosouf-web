@@ -138,81 +138,88 @@ export default async function HomePage() {
       ))}
 
       {/* ── HERO — Full-bleed image slider ────────────────────────────────── */}
-      <section className="relative overflow-hidden min-h-[600px] lg:min-h-[700px] flex items-center">
-        {/* Background slider (client component) */}
+      {/* No overflow-hidden on the section — HeroSlider handles its own clipping.
+          This lets the MakeCombobox dropdown render freely without being cut off. */}
+      <section className="relative min-h-[92vh] flex items-center">
+        {/* Background slider (client component — already has absolute + overflow-hidden) */}
         <HeroSlider />
 
         {/* Blueprint crosshatch texture on top of images */}
         <div className="absolute inset-0 bg-blueprint opacity-30 pointer-events-none" />
 
-        <div className="relative z-10 mx-auto max-w-5xl px-4 pt-16 pb-20 lg:pt-24 lg:pb-28 w-full">
+        <div className="relative z-10 mx-auto max-w-7xl px-4 pt-12 pb-10 lg:pt-16 lg:pb-14 w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-8 lg:gap-12 items-start">
 
-          {/* Eyebrow */}
-          <div className="flex items-center gap-2 mb-6 animate-fade-up">
-            <span className="inline-block w-8 h-0.5 bg-[#E85D26] rounded-full" />
-            <span className="text-[13px] font-bold tracking-[0.18em] uppercase text-white">
-              {hc.heroTagline}
-            </span>
-          </div>
-
-          <h1 className="text-4xl sm:text-5xl lg:text-[3.6rem] font-black text-white tracking-tight leading-[1.07] mb-6 animate-fade-up max-w-3xl">
-            {hc.heroTitle}
-            <br />
-            <span className="text-[#FF7A45]">{hc.heroTitleHighlight}</span>
-          </h1>
-
-          <p className="text-xl font-semibold text-white/90 mb-9 max-w-2xl leading-relaxed animate-fade-up-delay">
-            {hc.heroDescription}
-          </p>
-
-          <div className="flex flex-wrap gap-3 mb-8 animate-fade-up-delay">
-            <Link
-              href="/produits"
-              className="inline-flex items-center h-13 px-7 font-bold rounded-lg text-base text-white transition-all hover:shadow-xl hover:shadow-[#E85D26]/40 active:scale-[0.98]"
-              style={{ background: "linear-gradient(180deg,#FF7A45 0%,#E85D26 100%)" }}
-            >
-              Voir nos turbos
-              <ArrowRight className="h-4 w-4 ml-2" />
-            </Link>
-            <Link
-              href="/contact"
-              className="inline-flex items-center h-13 px-7 bg-white/10 backdrop-blur-sm text-white font-semibold rounded-lg text-base transition-all border border-white/25 hover:bg-white/20 hover:border-white/40"
-            >
-              <Phone className="h-4 w-4 mr-2 text-[#FF7A45]" />
-              Nous contacter
-            </Link>
-          </div>
-
-          {/* Trust signals */}
-          <div className="flex flex-wrap gap-x-6 gap-y-3 mb-2 animate-fade-up-delay-2">
-            {[
-              { icon: CheckCircle2, text: "Garantie 2 ans" },
-              { icon: Clock, text: "Livraison rapide" },
-              { icon: Shield, text: "Paiement sécurisé" },
-              { icon: Award, text: "Atelier sur place" },
-            ].map((item) => (
-              <div key={item.text} className="flex items-center gap-2 text-sm text-white/80">
-                <item.icon className="h-4 w-4 text-[#FF7A45] shrink-0" />
-                <span>{item.text}</span>
+            {/* ── Left: text + search ── */}
+            <div>
+              {/* Eyebrow */}
+              <div className="flex items-center gap-2 mb-5 animate-fade-up">
+                <span className="inline-block w-8 h-0.5 bg-[#E85D26] rounded-full" />
+                <span className="text-[13px] font-bold tracking-[0.18em] uppercase text-white">
+                  {hc.heroTagline}
+                </span>
               </div>
-            ))}
-          </div>
 
-          {/* Vehicle search — glass panel flush with the hero */}
-          <VehicleFinderHeroSearch />
+              <h1 className="text-4xl sm:text-5xl lg:text-[3.4rem] font-black text-white tracking-tight leading-[1.07] mb-5 animate-fade-up">
+                {hc.heroTitle}
+                <br />
+                <span className="text-[#FF7A45]">{hc.heroTitleHighlight}</span>
+              </h1>
 
-          {/* Stats */}
-          {hc.stats.length > 0 && (
-            <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-4 animate-fade-up-delay-2">
-              {hc.stats.map((stat) => (
-                <div key={stat.label} className="rounded-xl p-5 bg-white/10 backdrop-blur-sm border border-white/15">
-                  <p className="text-2xl sm:text-3xl font-black text-[#FF7A45]">{stat.value}</p>
-                  <p className="text-xs text-white/70 mt-1">{stat.label}</p>
-                </div>
-              ))}
+              <p className="text-base font-medium text-white/80 mb-7 max-w-xl leading-relaxed animate-fade-up-delay">
+                {hc.heroDescription}
+              </p>
+
+              <div className="flex flex-wrap gap-3 mb-6 animate-fade-up-delay">
+                <Link
+                  href="/produits"
+                  className="inline-flex items-center h-11 px-6 font-bold rounded-lg text-sm text-white transition-all hover:shadow-xl hover:shadow-[#E85D26]/40 active:scale-[0.98]"
+                  style={{ background: "linear-gradient(180deg,#FF7A45 0%,#E85D26 100%)" }}
+                >
+                  Voir nos turbos
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Link>
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center h-11 px-6 bg-white/10 backdrop-blur-sm text-white font-semibold rounded-lg text-sm transition-all border border-white/25 hover:bg-white/20 hover:border-white/40"
+                >
+                  <Phone className="h-4 w-4 mr-2 text-[#FF7A45]" />
+                  Nous contacter
+                </Link>
+              </div>
+
+              {/* Trust signals */}
+              <div className="flex flex-wrap gap-x-5 gap-y-2.5 mb-1 animate-fade-up-delay-2">
+                {[
+                  { icon: CheckCircle2, text: "Garantie 2 ans" },
+                  { icon: Clock, text: "Livraison rapide" },
+                  { icon: Shield, text: "Paiement sécurisé" },
+                  { icon: Award, text: "Atelier sur place" },
+                ].map((item) => (
+                  <div key={item.text} className="flex items-center gap-1.5 text-sm text-white/75">
+                    <item.icon className="h-3.5 w-3.5 text-[#FF7A45] shrink-0" />
+                    <span>{item.text}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Vehicle search — glass panel */}
+              <VehicleFinderHeroSearch />
             </div>
-          )}
 
+            {/* ── Right: stats grid (desktop) ── */}
+            {hc.stats.length > 0 && (
+              <div className="hidden lg:grid grid-cols-2 gap-4 animate-fade-up-delay pt-2">
+                {hc.stats.map((stat) => (
+                  <div key={stat.label} className="rounded-xl p-5 bg-white/10 backdrop-blur-sm border border-white/15">
+                    <p className="text-2xl sm:text-3xl font-black text-[#FF7A45]">{stat.value}</p>
+                    <p className="text-xs text-white/70 mt-1">{stat.label}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+
+          </div>
         </div>
       </section>
 
