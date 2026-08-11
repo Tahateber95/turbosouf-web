@@ -283,6 +283,68 @@ export const adminUpdateBlogPost = (id: string, data: UpdateBlogPostRequest) =>
 export const adminDeleteBlogPost = (id: string) =>
   adminFetch<void>(`/blog/${id}`, { method: "DELETE" });
 
+// Chronopost shipments
+export interface ShipmentInfo {
+  id: string;
+  orderId: string;
+  skybillNumber: string | null;
+  reservationNumber: string | null;
+  productCode: string;
+  serviceCode: string;
+  labelMode: string;
+  weightKg: number;
+  status: "Created" | "Printed" | "Collected" | "Delivered" | "Cancelled" | "Failed";
+  lastEventCode: string | null;
+  lastEventAt: string | null;
+  errorCode: number | null;
+  errorMessage: string | null;
+  createdAt: string;
+  trackingUrl: string | null;
+  printJobCount: number;
+}
+
+export const adminGetShipment = (orderNumber: string) =>
+  adminFetch<ShipmentInfo>(`/shipments/${orderNumber}`);
+
+export const adminCreateShipment = (orderNumber: string, weightKg: number) =>
+  adminFetch<ShipmentInfo>(`/shipments`, {
+    method: "POST",
+    body: JSON.stringify({ orderNumber, weightKg }),
+  });
+
+export const adminCancelShipment = (orderNumber: string) =>
+  adminFetch<{ message: string }>(`/shipments/${orderNumber}/cancel`, { method: "POST" });
+
+export async function downloadShipmentLabel(orderNumber: string, format = "PDF"): Promise<void> {
+  const doFetch = (token: string) =>
+    fetch(`${API}/api/v1/shipments/${orderNumber}/label?format=${format}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+  let res = await doFetch(getToken());
+
+  if (res.status === 401) {
+    const newToken = await tryRefreshToken();
+    if (!newToken) { redirectToLogin(); throw new Error("Session expirée."); }
+    res = await doFetch(newToken);
+  }
+
+  if (!res.ok) {
+    const json = await res.json().catch(() => ({}));
+    throw new Error(json.error?.message || `Erreur ${res.status}`);
+  }
+
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `etiquette-${orderNumber}.pdf`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
 export async function downloadInvoicePdf(id: string, invoiceNumber: string): Promise<void> {
   const doFetch = (token: string) =>
     fetch(`${API}/api/v1/invoices/${id}/pdf`, {
