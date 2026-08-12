@@ -7,6 +7,23 @@ function formatPrice(amount: number): string {
   return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(amount);
 }
 
+function conditionStyle(condition: string): string {
+  switch (condition) {
+    case "ExchangeStandard":
+      return "bg-blue-50 text-blue-700 border-blue-200";
+    case "Refurbished":
+      return "bg-[#E85D26]/10 text-[#E85D26] border-[#E85D26]/25";
+    case "NewAdaptable":
+      return "bg-emerald-50 text-emerald-700 border-emerald-200";
+    case "NewOriginal":
+      return "bg-violet-50 text-violet-700 border-violet-200";
+    case "CartoucheChra":
+      return "bg-amber-50 text-amber-700 border-amber-200";
+    default:
+      return "bg-gray-100 text-gray-600 border-gray-200";
+  }
+}
+
 function getCategorySlug(name: string | null | undefined): string {
   if (!name) return "all";
   return name
@@ -55,21 +72,16 @@ export function ProductCard({ product }: { product: ProductListItem }) {
         )}
 
         {/* Top badges */}
-        <div className="absolute top-2 left-2 flex flex-col gap-1">
+        <div className="absolute top-2.5 left-2.5 flex flex-col gap-1.5">
           {hasDiscount && (
-            <Badge className="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 shadow-sm">
+            <Badge className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 shadow-sm">
               -{discountPercent}%
             </Badge>
           )}
-          {product.condition === "Refurbished" && (
-            <Badge variant="secondary" className="text-[10px] px-1.5 py-0.5 shadow-sm">
-              Reconditionne
-            </Badge>
-          )}
-          {product.condition === "ExchangeStandard" && (
-            <Badge variant="outline" className="text-[10px] px-1.5 py-0.5 bg-white shadow-sm">
-              Echange Std
-            </Badge>
+          {product.conditionLabel && (
+            <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold shadow-sm border ${conditionStyle(product.condition)}`}>
+              {product.conditionLabel}
+            </span>
           )}
         </div>
 
