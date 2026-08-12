@@ -329,6 +329,7 @@ export interface OrderListItem {
   totalTTC: number;
   itemCount: number;
   createdAt: string;
+  hasExchangeStandardItems?: boolean;
 }
 
 export interface OrderDetail {
@@ -375,6 +376,17 @@ export interface OrderDetail {
   }[];
   createdAt: string;
   updatedAt: string;
+  trackingNumber?: string | null;
+  hasExchangeStandardItems: boolean;
+  depositRefundedAt: string | null;
+  depositRefundStripeId: string | null;
+  returnShipment: {
+    returnSkybillNumber: string | null;
+    returnStatus: string;
+    returnLabelGeneratedAt: string | null;
+    returnReceivedAt: string | null;
+    hasReturnLabel: boolean;
+  } | null;
 }
 
 // --- Invoice types ---

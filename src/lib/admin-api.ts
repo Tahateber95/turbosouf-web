@@ -234,6 +234,27 @@ export const adminUpdateOrderStatus = (id: string, status: string) =>
 export const adminRefundOrder = (id: string) =>
   adminFetch<void>(`/orders/${id}/refund`, { method: "POST" });
 
+export const adminConfirmReturn = (id: string) =>
+  adminFetch<{ depositRefundedAt: string; stripeRefundId: string | null }>(`/orders/${id}/confirm-return`, { method: "POST" });
+
+export const adminRegenerateReturnLabel = (id: string) =>
+  adminFetch<{ returnSkybill: string }>(`/orders/${id}/regenerate-return-label`, { method: "POST" });
+
+export const adminDownloadReturnLabel = async (id: string, orderNumber: string): Promise<void> => {
+  const token = getToken();
+  const res = await fetch(`${API}/api/v1/orders/${id}/return-label`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new Error("Étiquette non disponible");
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `retour-${orderNumber}.pdf`;
+  a.click();
+  URL.revokeObjectURL(url);
+};
+
 // Invoices
 export const adminGetInvoices = (page = 1, pageSize = 25, search = "", type = "", status = "") => {
   const params = new URLSearchParams({ Page: String(page), PageSize: String(pageSize) });

@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, Loader2, Search } from "lucide-react";
+import { ChevronLeft, ChevronRight, Loader2, Search, RotateCcw } from "lucide-react";
 import { StatusBadge } from "@/components/dashboard/status-badge";
 import { adminGetOrders } from "@/lib/admin-api";
 import type { OrderListItem } from "@/lib/api";
@@ -110,9 +110,17 @@ export default function OrdersPage() {
                   {orders.map((o) => (
                     <tr key={o.id} className="hover:bg-gray-50/50 transition-colors">
                       <td className="px-5 py-3">
-                        <Link href={`/dashboard/commandes/${o.id}`} className="font-mono text-xs font-semibold text-[var(--ts-primary-500)] hover:underline">
-                          {o.orderNumber}
-                        </Link>
+                        <div className="flex items-center gap-2">
+                          <Link href={`/dashboard/commandes/${o.id}`} className="font-mono text-xs font-semibold text-[var(--ts-primary-500)] hover:underline">
+                            {o.orderNumber}
+                          </Link>
+                          {o.hasExchangeStandardItems && (
+                            <span title="Reprise en attente" className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-blue-50 text-blue-600 border border-blue-200">
+                              <RotateCcw className="h-2.5 w-2.5" />
+                              Reprise
+                            </span>
+                          )}
+                        </div>
                       </td>
                       <td className="px-5 py-3">
                         <p className="font-medium text-gray-900">{o.customerName}</p>

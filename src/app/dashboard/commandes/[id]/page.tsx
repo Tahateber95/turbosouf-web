@@ -9,6 +9,7 @@ import { type OrderDetail } from "@/lib/api";
 import { adminGetOrder, adminRefundOrder } from "@/lib/admin-api";
 import { OrderStatusUpdater } from "@/components/dashboard/order-status-updater";
 import { ShipmentPanel } from "@/components/dashboard/shipment-panel";
+import { ReturnPanel } from "@/components/dashboard/return-panel";
 
 function formatPrice(n: number) { return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(n); }
 function formatDate(iso: string) { return new Date(iso).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" }); }
@@ -25,12 +26,15 @@ export default function OrderDetailPage({ params }: Props) {
   const [refunding, setRefunding] = useState(false);
   const [refundError, setRefundError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const loadOrder = () => {
+    setLoading(true);
     adminGetOrder(id)
       .then(setOrder)
       .catch((err) => setError(err instanceof Error ? err.message : "Erreur de chargement"))
       .finally(() => setLoading(false));
-  }, [id]);
+  };
+
+  useEffect(() => { loadOrder(); }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleRefund = async () => {
     if (!order) return;
@@ -168,6 +172,10 @@ export default function OrderDetailPage({ params }: Props) {
           <OrderStatusUpdater orderId={order.id} currentStatus={order.status} />
 
           <ShipmentPanel orderNumber={order.orderNumber} orderStatus={order.status} />
+
+          {order.hasExchangeStandardItems && (
+            <ReturnPanel order={order} onReturnConfirmed={loadOrder} />
+          )}
 
           {order.paymentStatus === "Paid" && order.status !== "Refunded" && (
             <div className="bg-white rounded-xl border border-gray-100 p-5">
