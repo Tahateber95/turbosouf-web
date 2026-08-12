@@ -1,6 +1,6 @@
 "use client";
 
-import { RotateCcw } from "lucide-react";
+import { RotateCcw, Info } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { PdpAddToCart } from "@/components/store/pdp-add-to-cart";
 import type { ProductDetail, ProductAddOn } from "@/lib/api";
@@ -80,6 +80,17 @@ export function ProductPricingPanel({ product, addOns }: Props) {
       <p className="text-sm text-gray-500">
         ou <span className="font-semibold text-[#E85D26]">3× {installment} €</span> sans frais avec Alma
       </p>
+
+      {/* Return instructions — Échange Standard only */}
+      {product.condition === "ExchangeStandard" && product.returnInstructions && (
+        <div className="flex items-start gap-3 p-4 rounded-xl bg-blue-50 border border-blue-100">
+          <Info className="h-4 w-4 text-blue-500 shrink-0 mt-0.5" />
+          <div>
+            <p className="text-xs font-semibold text-blue-700 mb-1">Instructions de retour</p>
+            <p className="text-sm text-blue-700 whitespace-pre-line">{product.returnInstructions}</p>
+          </div>
+        </div>
+      )}
 
       {/* Add to cart */}
       <PdpAddToCart

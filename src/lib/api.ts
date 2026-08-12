@@ -100,6 +100,7 @@ export interface ProductDetail extends ProductListItem {
   compatibleVehicles: VehicleCompatibility[];
   addOns: ProductAddOn[];
   variants: ProductVariant[];
+  returnInstructions: string | null;
 }
 
 export interface ProductImage {

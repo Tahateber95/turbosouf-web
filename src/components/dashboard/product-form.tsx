@@ -33,6 +33,7 @@ const productSchema = z.object({
   isFeatured: z.boolean().default(false),
   metaTitle: z.string().nullable().optional(),
   metaDescription: z.string().nullable().optional(),
+  returnInstructions: z.string().nullable().optional(),
   images: z.array(z.object({
     url: z.string().min(1, "URL requise"),
     altText: z.string().nullable().optional(),
@@ -127,6 +128,7 @@ export function ProductForm({ mode, product, categories, brands, makes }: Props)
       isFeatured: product.isFeatured,
       metaTitle: product.metaTitle,
       metaDescription: product.metaDescription,
+      returnInstructions: product.returnInstructions,
       images: product.images || [],
       attributes: product.attributes || [],
       addOns: (product.addOns || []).map(a => ({
@@ -157,6 +159,7 @@ export function ProductForm({ mode, product, categories, brands, makes }: Props)
       isFeatured: false,
       metaTitle: product.metaTitle,
       metaDescription: product.metaDescription,
+      returnInstructions: product.returnInstructions,
       images: product.images || [],
       attributes: product.attributes || [],
       addOns: (product.addOns || []).map(a => ({
@@ -246,6 +249,7 @@ export function ProductForm({ mode, product, categories, brands, makes }: Props)
         b2bPriceHT: data.b2bPriceHT || null,
         metaTitle: data.metaTitle || null,
         metaDescription: data.metaDescription || null,
+        returnInstructions: data.returnInstructions || null,
         compatibleVehicleEngineIds: compatibleEngineIds,
         addOns: data.addOns.map((a, i) => ({ ...a, sortOrder: i })),
         variants: [],
@@ -386,6 +390,21 @@ export function ProductForm({ mode, product, categories, brands, makes }: Props)
             <label className="block text-sm font-medium text-gray-700 mb-1">Prix B2B HT (€)</label>
             <input type="number" step="0.01" {...register("b2bPriceHT")}
               className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
+          </div>
+
+          {/* Return instructions — shown for all products, displayed on PDP only for Échange Standard */}
+          <div className="sm:col-span-2">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Instructions de retour
+              <span className="ml-2 text-[10px] font-normal text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">Échange Standard</span>
+            </label>
+            <textarea
+              {...register("returnInstructions")}
+              rows={4}
+              placeholder="Ex : Pour finaliser votre échange standard, veuillez renvoyer votre ancien turbo dans les 30 jours suivant réception. Un bon de retour Chronopost vous sera envoyé par email..."
+              className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)] resize-none"
+            />
+            <p className="text-[10px] text-gray-400 mt-1">Ces instructions sont affichées sur la fiche produit uniquement pour les turbos en Échange Standard.</p>
           </div>
         </div>
       </section>
