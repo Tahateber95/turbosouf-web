@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import Link from "next/link";
-import { Search, Trash2, Loader2 } from "lucide-react";
+import { Search, Trash2, Loader2, Copy } from "lucide-react";
 import { toast } from "sonner";
 import { adminDeleteProduct, adminGetProductsList } from "@/lib/admin-api";
 import { StatusBadge } from "@/components/dashboard/status-badge";
@@ -190,7 +190,7 @@ function ProductRow({
             Mis en avant
           </span>
         )}
-        <StatusBadge status={p.condition === "Refurbished" ? "Reconditionne" : p.condition === "New" ? "Neuf" : "Echange Std"} />
+        <StatusBadge status={p.conditionLabel || p.condition} />
       </td>
       <td className="px-5 py-3">
         <div className="flex items-center gap-3 justify-end">
@@ -199,6 +199,13 @@ function ProductRow({
             className="text-xs font-medium text-[var(--ts-primary-500)] hover:underline"
           >
             Modifier
+          </Link>
+          <Link
+            href={`/dashboard/produits/nouveau?from=${p.slug}`}
+            title="Dupliquer ce produit"
+            className="text-gray-400 hover:text-[var(--ts-primary-500)] transition-colors"
+          >
+            <Copy className="h-3.5 w-3.5" />
           </Link>
           <button onClick={handleClick} disabled={deleting} className="text-red-500 hover:text-red-700 disabled:opacity-50">
             {deleting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}

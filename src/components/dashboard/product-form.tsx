@@ -57,7 +57,7 @@ const productSchema = z.object({
 type ProductFormData = z.infer<typeof productSchema>;
 
 interface Props {
-  mode: "create" | "edit";
+  mode: "create" | "edit" | "duplicate";
   product?: ProductDetail;
   categories: Category[];
   brands: Brand[];
@@ -72,16 +72,20 @@ export function ProductForm({ mode, product, categories, brands, makes }: Props)
   const pendingUploadIdx = useRef<number | null>(null);
 
   // Vehicle compatibility state
+  // For edit and duplicate: inherit compatible vehicles from the product
+  const inheritVehicles = mode === "edit" || mode === "duplicate";
   const [compatibleEngineIds, setCompatibleEngineIds] = useState<string[]>(
-    product?.compatibleVehicles?.map(v => v.vehicleEngineId) || []
+    inheritVehicles ? (product?.compatibleVehicles?.map(v => v.vehicleEngineId) || []) : []
   );
   const [compatibleLabels, setCompatibleLabels] = useState<Record<string, string>>(
-    Object.fromEntries(
-      (product?.compatibleVehicles || []).map(v => [
-        v.vehicleEngineId,
-        `${v.makeName} ${v.modelName} - ${v.engineName}${v.powerCV ? ` (${v.powerCV}cv)` : ""}`
-      ])
-    )
+    inheritVehicles
+      ? Object.fromEntries(
+          (product?.compatibleVehicles || []).map(v => [
+            v.vehicleEngineId,
+            `${v.makeName} ${v.modelName} - ${v.engineName}${v.powerCV ? ` (${v.powerCV}cv)` : ""}`
+          ])
+        )
+      : {}
   );
 
   // Vehicle selector state
@@ -104,7 +108,7 @@ export function ProductForm({ mode, product, categories, brands, makes }: Props)
   const { register, handleSubmit, control, setValue, watch, formState: { errors } } = useForm<ProductFormData>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(productSchema) as any,
-    defaultValues: product ? {
+    defaultValues: product && mode === "edit" ? {
       name: product.name,
       sku: product.sku,
       shortDescription: product.shortDescription,
@@ -121,6 +125,36 @@ export function ProductForm({ mode, product, categories, brands, makes }: Props)
       oemReference: product.oemReference,
       isActive: product.isActive,
       isFeatured: product.isFeatured,
+      metaTitle: product.metaTitle,
+      metaDescription: product.metaDescription,
+      images: product.images || [],
+      attributes: product.attributes || [],
+      addOns: (product.addOns || []).map(a => ({
+        name: a.name,
+        description: a.description,
+        priceHT: a.priceHT,
+        tvaRate: a.tvaRate,
+        isActive: a.isActive,
+        sortOrder: a.sortOrder,
+      })),
+    } : product && mode === "duplicate" ? {
+      // Pre-fill from source, but clear SKU and reset stock/active
+      name: product.name,
+      sku: "",
+      shortDescription: product.shortDescription,
+      description: product.description,
+      condition: product.condition,
+      priceHT: product.priceHT,
+      tvaRate: product.tvaRate,
+      depositAmount: product.depositAmount,
+      stockQuantity: 0,
+      salePriceHT: product.salePriceHT,
+      b2bPriceHT: product.b2bPriceHT,
+      categoryId: product.categoryId,
+      brandId: product.brandId,
+      oemReference: product.oemReference,
+      isActive: false,
+      isFeatured: false,
       metaTitle: product.metaTitle,
       metaDescription: product.metaDescription,
       images: product.images || [],
@@ -217,13 +251,13 @@ export function ProductForm({ mode, product, categories, brands, makes }: Props)
         variants: [],
       };
 
-      if (mode === "create") {
-        await adminCreateProduct(payload);
-        toast.success("Produit créé avec succès");
-        window.location.href = "/dashboard/produits";
-      } else {
+      if (mode === "edit") {
         await adminUpdateProduct(product!.id, payload);
         toast.success("Produit mis à jour");
+        window.location.href = "/dashboard/produits";
+      } else {
+        await adminCreateProduct(payload);
+        toast.success(mode === "duplicate" ? "Produit dupliqué avec succès" : "Produit créé avec succès");
         window.location.href = "/dashboard/produits";
       }
     } catch (err) {
@@ -248,6 +282,17 @@ export function ProductForm({ mode, product, categories, brands, makes }: Props)
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+      {/* Duplicate notice */}
+      {mode === "duplicate" && (
+        <div className="flex items-start gap-3 p-4 rounded-xl bg-blue-50 border border-blue-100">
+          <span className="text-blue-500 text-lg leading-none">ⓘ</span>
+          <div className="text-sm text-blue-700">
+            <p className="font-semibold mb-0.5">Mode duplication</p>
+            <p>Tous les champs sont pré-remplis depuis le produit source. Modifiez l&apos;état, le SKU et le stock avant de sauvegarder. Le produit sera créé inactif — activez-le une fois prêt.</p>
+          </div>
+        </div>
+      )}
+
       {/* Basic Info */}
       <section className="bg-white rounded-xl border border-gray-100 p-6">
         <h2 className="text-lg font-bold text-gray-900 mb-4">Informations générales</h2>
@@ -684,7 +729,7 @@ export function ProductForm({ mode, product, categories, brands, makes }: Props)
         </div>
         <button type="submit" disabled={saving} className="h-10 px-6 flex items-center gap-2 bg-[var(--ts-primary-500)] hover:bg-[var(--ts-primary-600)] text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50">
           {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-          {mode === "create" ? "Créer le produit" : "Enregistrer"}
+          {mode === "edit" ? "Enregistrer" : mode === "duplicate" ? "Créer la copie" : "Créer le produit"}
         </button>
       </div>
     </form>
