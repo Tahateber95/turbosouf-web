@@ -31,8 +31,8 @@ export function ProductPricingPanel({ product, addOns }: Props) {
   const allOptions: ConditionOption[] = [
     {
       condition: product.condition,
-      conditionLabel: product.condition,   // fallback if no label on primary
-      conditionSortOrder: 999,
+      conditionLabel: product.conditionLabel || product.condition,
+      conditionSortOrder: product.conditionSortOrder ?? 999,
       priceHT: product.priceHT,
       tvaRate: product.tvaRate,
       priceTTC: product.priceTTC,

@@ -42,6 +42,8 @@ export interface ProductListItem {
   categoryName: string | null;
   brandName: string | null;
   condition: string;
+  conditionLabel: string;
+  conditionSortOrder: number;
   stockQuantity: number;
   isFeatured: boolean;
   primaryImageUrl: string | null;
