@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { ProductCard } from "@/components/store/product-card";
-import { SERVER_API_URL, type ProductListItem, type Category, type Brand } from "@/lib/api";
+import { SERVER_API_URL, type ProductListItem, type Category, type Brand, type ProductConditionItem } from "@/lib/api";
 import { StoreFilters } from "@/components/store/store-filters";
 
 const API = SERVER_API_URL;
@@ -27,16 +27,18 @@ export default async function ProductsPage({ searchParams }: Props) {
   if (params.sort) apiParams.set("Sort", String(params.sort));
   if (params.page) apiParams.set("Page", String(params.page));
 
-  const [productsRes, categoriesRes, brandsRes] = await Promise.all([
+  const [productsRes, categoriesRes, brandsRes, conditionsRes] = await Promise.all([
     fetch(`${API}/api/v1/products?${apiParams}`, { cache: "no-store" }).then(r => r.json()).catch(() => ({ data: { items: [], totalCount: 0 } })),
     fetch(`${API}/api/v1/categories`, { cache: "no-store" }).then(r => r.json()).catch(() => ({ data: [] })),
     fetch(`${API}/api/v1/brands`, { cache: "no-store" }).then(r => r.json()).catch(() => ({ data: [] })),
+    fetch(`${API}/api/v1/product-conditions`, { cache: "no-store" }).then(r => r.json()).catch(() => ({ data: [] })),
   ]);
 
   const products: ProductListItem[] = productsRes.data?.items || [];
   const totalCount: number = productsRes.data?.totalCount || 0;
   const categories: Category[] = (categoriesRes.data || []).filter((c: Category) => c.isActive);
   const brands: Brand[] = (brandsRes.data || []).filter((b: Brand) => b.isActive);
+  const conditions: ProductConditionItem[] = conditionsRes.data || [];
 
   const PAGE_SIZE = 24;
   const currentPage = params.page ? parseInt(String(params.page)) : 1;
@@ -86,6 +88,7 @@ export default async function ProductsPage({ searchParams }: Props) {
           <StoreFilters
             categories={categories}
             brands={brands}
+            conditions={conditions}
             activeCategory={params.category ? String(params.category) : undefined}
             activeBrand={params.brand ? String(params.brand) : undefined}
             activeCondition={params.condition ? String(params.condition) : undefined}

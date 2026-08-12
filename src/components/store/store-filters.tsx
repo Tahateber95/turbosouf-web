@@ -3,11 +3,12 @@
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useCallback } from "react";
 import { SlidersHorizontal, X } from "lucide-react";
-import type { Category, Brand } from "@/lib/api";
+import type { Category, Brand, ProductConditionItem } from "@/lib/api";
 
 interface Props {
   categories: Category[];
   brands: Brand[];
+  conditions: ProductConditionItem[];
   activeCategory?: string;
   activeBrand?: string;
   activeCondition?: string;
@@ -15,7 +16,7 @@ interface Props {
   activeSort?: string;
 }
 
-export function StoreFilters({ categories, brands, activeCategory, activeBrand, activeCondition, activeInStock, activeSort }: Props) {
+export function StoreFilters({ categories, brands, conditions, activeCategory, activeBrand, activeCondition, activeInStock, activeSort }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -122,22 +123,16 @@ export function StoreFilters({ categories, brands, activeCategory, activeBrand, 
         <div className="mb-5">
           <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">État</p>
           <div className="space-y-1.5">
-            {[
-              { l: "Reconditionné", v: "Refurbished" },
-              { l: "Neuf", v: "New" },
-              { l: "Échange standard", v: "ExchangeStandard" },
-              { l: "Neuf adaptable", v: "NewAdaptable" },
-              { l: "Neuf d'origine", v: "NewOriginal" },
-            ].map((cond) => (
-              <label key={cond.v} className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer hover:text-[var(--ts-primary-500)]">
+            {conditions.map((cond) => (
+              <label key={cond.code} className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer hover:text-[var(--ts-primary-500)]">
                 <input
                   type="radio"
                   name="condition"
-                  checked={activeCondition === cond.v}
-                  onChange={() => updateFilter("condition", activeCondition === cond.v ? null : cond.v)}
+                  checked={activeCondition === cond.code}
+                  onChange={() => updateFilter("condition", activeCondition === cond.code ? null : cond.code)}
                   className="text-[var(--ts-primary-500)] focus:ring-[var(--ts-primary-500)]"
                 />
-                {cond.l}
+                {cond.label}
               </label>
             ))}
           </div>

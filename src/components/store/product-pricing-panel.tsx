@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { RotateCcw } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { PdpAddToCart } from "@/components/store/pdp-add-to-cart";
@@ -10,16 +9,10 @@ function formatPrice(amount: number): string {
   return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(amount);
 }
 
-const CONDITION_LABELS: Record<string, string> = {
-  Refurbished: "Reconditionné",
-  New: "Neuf",
-  ExchangeStandard: "Échange Standard",
-  NewAdaptable: "Neuf Adaptable",
-  NewOriginal: "Neuf d'Origine",
-};
-
 interface ConditionOption {
   condition: string;
+  conditionLabel: string;
+  conditionSortOrder: number;
   priceHT: number;
   tvaRate: number;
   priceTTC: number;
@@ -34,10 +27,12 @@ interface Props {
 }
 
 export function ProductPricingPanel({ product, addOns }: Props) {
-  // Build list of all options: primary first, then variants
+  // Build sorted list: primary + variants, ordered by conditionSortOrder
   const allOptions: ConditionOption[] = [
     {
       condition: product.condition,
+      conditionLabel: product.condition,   // fallback if no label on primary
+      conditionSortOrder: 999,
       priceHT: product.priceHT,
       tvaRate: product.tvaRate,
       priceTTC: product.priceTTC,
@@ -47,6 +42,8 @@ export function ProductPricingPanel({ product, addOns }: Props) {
     },
     ...(product.variants || []).map((v: ProductVariant) => ({
       condition: v.condition,
+      conditionLabel: v.conditionLabel || v.condition,
+      conditionSortOrder: v.conditionSortOrder,
       priceHT: v.priceHT,
       tvaRate: v.tvaRate,
       priceTTC: v.priceTTC,
@@ -54,83 +51,87 @@ export function ProductPricingPanel({ product, addOns }: Props) {
       depositAmount: v.depositAmount,
       stockQuantity: v.stockQuantity,
     })),
-  ];
-
-  const [selectedCondition, setSelectedCondition] = useState(product.condition);
-  const active = allOptions.find(o => o.condition === selectedCondition) ?? allOptions[0];
-  const installmentPrice = (active.priceTTC / 3).toFixed(2);
+  ].sort((a, b) => a.conditionSortOrder - b.conditionSortOrder);
 
   return (
-    <>
-      {/* Condition + stock badges */}
-      <div className="flex items-center gap-2 mb-2">
-        {active.stockQuantity > 0 ? (
-          <Badge className="bg-emerald-100 text-emerald-700 text-xs">En stock</Badge>
-        ) : (
-          <Badge variant="destructive" className="text-xs">Rupture</Badge>
-        )}
-      </div>
+    <div className="grid grid-cols-2 gap-4">
+      {allOptions.map((opt) => {
+        const inStock = opt.stockQuantity > 0;
+        const installment = (opt.priceTTC / 3).toFixed(2);
 
-      {/* Condition switcher */}
-      {allOptions.length > 1 && (
-        <div className="mb-5">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">État</p>
-          <div className="flex flex-wrap gap-2">
-            {allOptions.map((opt) => (
-              <button
-                key={opt.condition}
-                type="button"
-                onClick={() => setSelectedCondition(opt.condition)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
-                  selectedCondition === opt.condition
-                    ? "bg-[var(--ts-primary-500)] border-[var(--ts-primary-500)] text-white"
-                    : "border-gray-200 text-gray-600 hover:border-[var(--ts-primary-500)] hover:text-[var(--ts-primary-500)]"
-                }`}
-              >
-                {CONDITION_LABELS[opt.condition] ?? opt.condition}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
+        return (
+          <div
+            key={opt.condition}
+            className={`flex flex-col rounded-2xl border-2 bg-white p-5 transition-colors ${
+              inStock
+                ? "border-gray-100 hover:border-[#E85D26]"
+                : "border-gray-100 opacity-60"
+            }`}
+          >
+            {/* Stock badge */}
+            <div className="mb-3">
+              {inStock ? (
+                <Badge className="bg-emerald-100 text-emerald-700 text-xs border-0">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 inline-block" />
+                  En stock
+                </Badge>
+              ) : (
+                <Badge className="bg-gray-100 text-gray-500 text-xs border-0">
+                  <span className="w-1.5 h-1.5 rounded-full bg-gray-400 mr-1.5 inline-block" />
+                  Rupture
+                </Badge>
+              )}
+            </div>
 
-      {/* Price block */}
-      <div className="bg-white rounded-xl border border-gray-100 p-5 mb-6">
-        <div className="flex items-end gap-3 mb-2">
-          <span className="text-3xl font-black text-[var(--ts-primary-900)]">
-            {formatPrice(active.priceTTC)}
-          </span>
-          <span className="text-sm text-gray-400 mb-1">TTC</span>
-        </div>
-        <p className="text-xs text-gray-500 mb-3">
-          {formatPrice(active.priceHT)} HT | TVA {active.tvaRate}%
-        </p>
-
-        {active.depositAmount && active.depositAmount > 0 && (
-          <div className="flex items-center gap-2 p-2.5 rounded-lg bg-amber-50 border border-amber-100 mb-3">
-            <RotateCcw className="h-4 w-4 text-amber-600 shrink-0" />
-            <p className="text-xs text-amber-700">
-              <span className="font-semibold">+{formatPrice(active.depositAmount)} de consigne</span> — remboursée au retour de votre ancienne pièce
+            {/* Condition title — most prominent element */}
+            <p className="text-sm font-black text-gray-900 uppercase tracking-wide mb-4 leading-tight">
+              {opt.conditionLabel}
             </p>
+
+            {/* Price */}
+            <div className="mb-1">
+              <span className="text-2xl font-black text-gray-900">
+                {formatPrice(opt.priceTTC)}
+              </span>
+              <span className="text-xs text-gray-400 ml-1">TTC</span>
+            </div>
+            <p className="text-xs text-gray-400 mb-3">
+              {formatPrice(opt.priceHT)} HT · TVA {opt.tvaRate}%
+            </p>
+
+            {/* Consigne */}
+            {opt.depositAmount && opt.depositAmount > 0 && (
+              <div className="flex items-start gap-1.5 p-2 rounded-lg bg-amber-50 border border-amber-100 mb-3">
+                <RotateCcw className="h-3.5 w-3.5 text-amber-600 shrink-0 mt-0.5" />
+                <p className="text-[11px] text-amber-700 leading-tight">
+                  <span className="font-semibold">+{formatPrice(opt.depositAmount)}</span> consigne remboursée
+                </p>
+              </div>
+            )}
+
+            {/* Alma installment */}
+            <p className="text-[11px] text-gray-400 mb-4">
+              ou <span className="font-semibold text-[#E85D26]">3× {installment} €</span> sans frais
+            </p>
+
+            {/* Push CTA to bottom */}
+            <div className="mt-auto">
+              <PdpAddToCart
+                productId={product.id}
+                name={product.name}
+                sku={product.sku}
+                primaryImageUrl={product.primaryImageUrl}
+                priceHT={opt.priceHT}
+                priceTTC={opt.priceTTC}
+                depositAmount={opt.depositAmount}
+                stockQuantity={opt.stockQuantity}
+                addOns={addOns}
+                conditionLabel={opt.conditionLabel}
+              />
+            </div>
           </div>
-        )}
-
-        <p className="text-xs text-gray-500 mb-4">
-          ou <span className="font-semibold text-[var(--ts-primary-500)]">3x {installmentPrice} EUR</span> sans frais avec Alma
-        </p>
-
-        <PdpAddToCart
-          productId={product.id}
-          name={product.name}
-          sku={product.sku}
-          primaryImageUrl={product.primaryImageUrl}
-          priceHT={active.priceHT}
-          priceTTC={active.priceTTC}
-          depositAmount={active.depositAmount}
-          stockQuantity={active.stockQuantity}
-          addOns={addOns}
-        />
-      </div>
-    </>
+        );
+      })}
+    </div>
   );
 }

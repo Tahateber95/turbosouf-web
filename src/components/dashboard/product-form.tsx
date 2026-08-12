@@ -8,7 +8,7 @@ import { Save, Plus, Trash2, Loader2, Upload, ImageIcon, Star } from "lucide-rea
 import { toast } from "sonner";
 import { adminCreateProduct, adminUpdateProduct, adminDeleteProduct, adminUploadProductImage } from "@/lib/admin-api";
 import { CLIENT_API_URL } from "@/lib/api";
-import type { ProductDetail, Category, Brand, VehicleMake, VehicleModel, VehicleEngine } from "@/lib/api";
+import type { ProductDetail, Category, Brand, VehicleMake, VehicleModel, VehicleEngine, ProductConditionItem } from "@/lib/api";
 
 const API = CLIENT_API_URL;
 
@@ -93,6 +93,14 @@ export function ProductForm({ mode, product, categories, brands, makes }: Props)
   const [models, setModels] = useState<VehicleModel[]>([]);
   const [engines, setEngines] = useState<VehicleEngine[]>([]);
   const [loadingModels, setLoadingModels] = useState(false);
+  const [availableConditions, setAvailableConditions] = useState<ProductConditionItem[]>([]);
+
+  useEffect(() => {
+    fetch(`${API}/api/v1/product-conditions`)
+      .then(r => r.json())
+      .then(j => setAvailableConditions(j.data || []))
+      .catch(() => {});
+  }, []);
   const [loadingEngines, setLoadingEngines] = useState(false);
 
   const { register, handleSubmit, control, setValue, watch, formState: { errors } } = useForm<ProductFormData>({
@@ -307,14 +315,7 @@ export function ProductForm({ mode, product, categories, brands, makes }: Props)
         <div className="space-y-2">
           {conditionFields.map((field, idx) => {
             const usedConditions = conditionFields.map((_, i) => i !== idx ? watch(`conditions.${i}.condition`) : "").filter(Boolean);
-            const allConditions = [
-              { v: "Refurbished", l: "Reconditionné" },
-              { v: "New", l: "Neuf" },
-              { v: "ExchangeStandard", l: "Échange standard" },
-              { v: "NewAdaptable", l: "Neuf adaptable" },
-              { v: "NewOriginal", l: "Neuf d'origine" },
-            ];
-            const available = allConditions.filter(c => !usedConditions.includes(c.v));
+            const available = availableConditions.filter(c => !usedConditions.includes(c.code));
             const isPrimary = idx === 0;
             return (
               <div key={field.id} className={`grid grid-cols-1 sm:grid-cols-[1.6fr_1fr_0.6fr_1fr_0.7fr_2rem] gap-3 p-3 rounded-lg border items-center ${isPrimary ? "bg-[var(--ts-primary-500)]/5 border-[var(--ts-primary-500)]/20" : "bg-gray-50 border-gray-100"}`}>
@@ -325,7 +326,7 @@ export function ProductForm({ mode, product, categories, brands, makes }: Props)
                     className="w-full h-9 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]"
                   >
                     <option value="">Sélectionner...</option>
-                    {available.map(c => <option key={c.v} value={c.v}>{c.l}</option>)}
+                    {available.map(c => <option key={c.code} value={c.code}>{c.label}</option>)}
                   </select>
                 </div>
                 <input type="number" step="0.01" min="0" placeholder="0.00" {...register(`conditions.${idx}.priceHT`)}

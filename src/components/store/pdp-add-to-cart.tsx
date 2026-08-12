@@ -19,6 +19,7 @@ interface PdpAddToCartProps {
   depositAmount: number | null;
   stockQuantity: number;
   addOns?: ProductAddOn[];
+  conditionLabel?: string;
 }
 
 export function PdpAddToCart({

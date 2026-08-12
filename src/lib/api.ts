@@ -64,12 +64,23 @@ export interface ProductAddOn {
 export interface ProductVariant {
   id: string;
   condition: string;
+  conditionLabel: string;
+  conditionSortOrder: number;
   priceHT: number;
   tvaRate: number;
   priceTTC: number;
   salePriceHT: number | null;
   depositAmount: number | null;
   stockQuantity: number;
+}
+
+export interface ProductConditionItem {
+  id: string;
+  code: string;
+  label: string;
+  description: string | null;
+  sortOrder: number;
+  isActive: boolean;
 }
 
 export interface ProductDetail extends ProductListItem {
