@@ -10,22 +10,20 @@ import { adminCreateProduct, adminUpdateProduct, adminDeleteProduct, adminUpload
 import { CLIENT_API_URL } from "@/lib/api";
 import type { ProductDetail, Category, Brand, VehicleMake, VehicleModel, VehicleEngine, ProductConditionItem } from "@/lib/api";
 
-const API = CLIENT_API_URL;
 
-const conditionRow = z.object({
-  condition: z.string().min(1, "État requis"),
-  priceHT: z.coerce.number().min(0, "Prix HT requis"),
-  tvaRate: z.coerce.number().min(0).max(100).default(20),
-  depositAmount: z.coerce.number().nullable().optional(),
-  stockQuantity: z.coerce.number().int().min(0).default(0),
-});
+
+const API = CLIENT_API_URL;
 
 const productSchema = z.object({
   name: z.string().min(1, "Nom requis"),
   sku: z.string().min(1, "SKU requis"),
   shortDescription: z.string().min(1, "Description courte requise"),
   description: z.string().min(1, "Description requise"),
-  conditions: z.array(conditionRow).min(1, "Au moins un état requis"),
+  condition: z.string().min(1, "État requis"),
+  priceHT: z.coerce.number().min(0, "Prix HT requis"),
+  tvaRate: z.coerce.number().min(0).max(100).default(20),
+  depositAmount: z.coerce.number().nullable().optional(),
+  stockQuantity: z.coerce.number().int().min(0).default(0),
   salePriceHT: z.coerce.number().nullable().optional(),
   b2bPriceHT: z.coerce.number().nullable().optional(),
   categoryId: z.string().min(1, "Catégorie requise"),
@@ -111,10 +109,11 @@ export function ProductForm({ mode, product, categories, brands, makes }: Props)
       sku: product.sku,
       shortDescription: product.shortDescription,
       description: product.description,
-      conditions: [
-        { condition: product.condition, priceHT: product.priceHT, tvaRate: product.tvaRate, depositAmount: product.depositAmount, stockQuantity: product.stockQuantity },
-        ...(product.variants || []).map(v => ({ condition: v.condition, priceHT: v.priceHT, tvaRate: v.tvaRate, depositAmount: v.depositAmount, stockQuantity: v.stockQuantity })),
-      ],
+      condition: product.condition,
+      priceHT: product.priceHT,
+      tvaRate: product.tvaRate,
+      depositAmount: product.depositAmount,
+      stockQuantity: product.stockQuantity,
       salePriceHT: product.salePriceHT,
       b2bPriceHT: product.b2bPriceHT,
       categoryId: product.categoryId,
@@ -135,7 +134,11 @@ export function ProductForm({ mode, product, categories, brands, makes }: Props)
         sortOrder: a.sortOrder,
       })),
     } : {
-      conditions: [{ condition: "Refurbished", priceHT: 0, tvaRate: 20, depositAmount: null, stockQuantity: 0 }],
+      condition: "Refurbished",
+      priceHT: 0,
+      tvaRate: 20,
+      depositAmount: null,
+      stockQuantity: 0,
       isActive: true,
       isFeatured: false,
       images: [],
@@ -144,7 +147,6 @@ export function ProductForm({ mode, product, categories, brands, makes }: Props)
     },
   });
 
-  const { fields: conditionFields, append: addCondition, remove: removeCondition } = useFieldArray({ control, name: "conditions" });
   const { fields: imageFields, append: addImage, remove: removeImage } = useFieldArray({ control, name: "images" });
   const { fields: attrFields, append: addAttr, remove: removeAttr } = useFieldArray({ control, name: "attributes" });
   const { fields: addOnFields, append: addAddOn, remove: removeAddOn } = useFieldArray({ control, name: "addOns" });
@@ -201,14 +203,9 @@ export function ProductForm({ mode, product, categories, brands, makes }: Props)
   const onSubmit = async (data: ProductFormData) => {
     setSaving(true);
     try {
-      const [primary, ...rest] = data.conditions;
       const payload = {
         ...data,
-        condition: primary.condition,
-        priceHT: primary.priceHT,
-        tvaRate: primary.tvaRate,
-        depositAmount: primary.depositAmount || null,
-        stockQuantity: primary.stockQuantity,
+        depositAmount: data.depositAmount || null,
         salePriceHT: data.salePriceHT || null,
         brandId: data.brandId || null,
         oemReference: data.oemReference || null,
@@ -217,7 +214,7 @@ export function ProductForm({ mode, product, categories, brands, makes }: Props)
         metaDescription: data.metaDescription || null,
         compatibleVehicleEngineIds: compatibleEngineIds,
         addOns: data.addOns.map((a, i) => ({ ...a, sortOrder: i })),
-        variants: rest.map(v => ({ ...v, depositAmount: v.depositAmount || null })),
+        variants: [],
       };
 
       if (mode === "create") {
@@ -286,82 +283,64 @@ export function ProductForm({ mode, product, categories, brands, makes }: Props)
 
       {/* Conditions & Prix */}
       <section className="bg-white rounded-xl border border-gray-100 p-6">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h2 className="text-lg font-bold text-gray-900">Conditions & Prix</h2>
-            <p className="text-xs text-gray-400 mt-0.5">Chaque ligne = un état du turbo avec son propre prix et stock. La première ligne est le défaut affiché.</p>
+        <h2 className="text-lg font-bold text-gray-900 mb-4">Conditions & Prix</h2>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Condition */}
+          <div className="sm:col-span-2">
+            <label className="block text-sm font-medium text-gray-700 mb-1">État du produit *</label>
+            <select
+              {...register("condition")}
+              className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]"
+            >
+              <option value="">Sélectionner un état...</option>
+              {availableConditions.map(c => (
+                <option key={c.code} value={c.code}>{c.label}</option>
+              ))}
+            </select>
+            {errors.condition && <p className="text-xs text-red-500 mt-1">{errors.condition.message}</p>}
           </div>
-          <button
-            type="button"
-            onClick={() => {
-              const used = conditionFields.map((_, i) => watch(`conditions.${i}.condition`));
-              const next = ["Refurbished","New","ExchangeStandard","NewAdaptable","NewOriginal"].find(c => !used.includes(c)) || "";
-              addCondition({ condition: next, priceHT: 0, tvaRate: 20, depositAmount: null, stockQuantity: 0 });
-            }}
-            className="text-sm text-[var(--ts-primary-500)] hover:underline flex items-center gap-1"
-          >
-            <Plus className="h-4 w-4" />
-            Ajouter un état
-          </button>
-        </div>
 
-        {/* Column headers */}
-        <div className="hidden sm:grid grid-cols-[1.6fr_1fr_0.6fr_1fr_0.7fr_2rem] gap-3 px-1 mb-1">
-          {["État","Prix HT (€)","TVA (%)","Consigne (€)","Stock",""].map(h => (
-            <span key={h} className="text-[10px] font-semibold text-gray-400 uppercase">{h}</span>
-          ))}
-        </div>
+          {/* Price HT */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Prix HT (€) *</label>
+            <input type="number" step="0.01" min="0" placeholder="0.00" {...register("priceHT")}
+              className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
+            {errors.priceHT && <p className="text-xs text-red-500 mt-1">{errors.priceHT.message}</p>}
+          </div>
 
-        <div className="space-y-2">
-          {conditionFields.map((field, idx) => {
-            const usedConditions = conditionFields.map((_, i) => i !== idx ? watch(`conditions.${i}.condition`) : "").filter(Boolean);
-            const available = availableConditions.filter(c => !usedConditions.includes(c.code));
-            const isPrimary = idx === 0;
-            return (
-              <div key={field.id} className={`grid grid-cols-1 sm:grid-cols-[1.6fr_1fr_0.6fr_1fr_0.7fr_2rem] gap-3 p-3 rounded-lg border items-center ${isPrimary ? "bg-[var(--ts-primary-500)]/5 border-[var(--ts-primary-500)]/20" : "bg-gray-50 border-gray-100"}`}>
-                <div className="relative">
-                  {isPrimary && <span className="absolute -top-5 left-0 text-[9px] font-bold text-[var(--ts-primary-500)] uppercase tracking-wide sm:hidden">Défaut</span>}
-                  <select
-                    {...register(`conditions.${idx}.condition`)}
-                    className="w-full h-9 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]"
-                  >
-                    <option value="">Sélectionner...</option>
-                    {available.map(c => <option key={c.code} value={c.code}>{c.label}</option>)}
-                  </select>
-                </div>
-                <input type="number" step="0.01" min="0" placeholder="0.00" {...register(`conditions.${idx}.priceHT`)}
-                  className="h-9 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
-                <input type="number" step="0.1" placeholder="20" {...register(`conditions.${idx}.tvaRate`)}
-                  className="h-9 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
-                <input type="number" step="0.01" placeholder="—" {...register(`conditions.${idx}.depositAmount`)}
-                  className="h-9 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
-                <input type="number" min="0" placeholder="0" {...register(`conditions.${idx}.stockQuantity`)}
-                  className="h-9 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
-                <div className="flex justify-end">
-                  {!isPrimary ? (
-                    <button type="button" onClick={() => removeCondition(idx)} className="h-9 w-8 flex items-center justify-center rounded-lg text-red-400 hover:text-red-600 transition-colors">
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  ) : (
-                    <div className="h-9 w-8 flex items-center justify-center">
-                      <span title="Condition principale" className="text-[var(--ts-primary-500)]">★</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
+          {/* TVA */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">TVA (%)</label>
+            <input type="number" step="0.1" placeholder="20" {...register("tvaRate")}
+              className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
+          </div>
 
-        {/* Global pricing fields */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-5 pt-5 border-t border-gray-100">
+          {/* Consigne */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Consigne (€)</label>
+            <input type="number" step="0.01" placeholder="—" {...register("depositAmount")}
+              className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
+            <p className="text-[10px] text-gray-400 mt-1">Montant remboursé à la reprise (Échange Standard)</p>
+          </div>
+
+          {/* Stock */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Stock</label>
+            <input type="number" min="0" placeholder="0" {...register("stockQuantity")}
+              className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
+          </div>
+
+          {/* Promo & B2B */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Prix promo HT (€)</label>
-            <input type="number" step="0.01" {...register("salePriceHT")} className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
+            <input type="number" step="0.01" {...register("salePriceHT")}
+              className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Prix B2B HT (€)</label>
-            <input type="number" step="0.01" {...register("b2bPriceHT")} className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
+            <input type="number" step="0.01" {...register("b2bPriceHT")}
+              className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]" />
           </div>
         </div>
       </section>
