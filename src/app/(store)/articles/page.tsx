@@ -38,7 +38,7 @@ export default async function ArticlesPage() {
                 {/* Image */}
                 <div className="relative h-48 bg-gradient-to-br from-[#E85D26]/10 to-[#1A3A5C]/10 overflow-hidden">
                   {post.featuredImageUrl ? (
-                    <img src={post.featuredImageUrl} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <img src={post.featuredImageUrl} alt={post.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
                       <span className="text-4xl font-black text-[#E85D26]/20">TS</span>

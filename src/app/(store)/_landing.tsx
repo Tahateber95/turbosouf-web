@@ -328,9 +328,9 @@ export async function LandingPage({ locale }: { locale: Locale }) {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
               {latestPosts.map((post: BlogPostListItem) => (
                 <Link key={post.id} href={`/articles/${post.slug}`} className="group bg-gray-50 rounded-2xl overflow-hidden border border-gray-100 hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col">
-                  <div className="h-40 bg-gradient-to-br from-[#E85D26]/10 to-[#1A3A5C]/10 overflow-hidden">
+                  <div className="relative h-40 bg-gradient-to-br from-[#E85D26]/10 to-[#1A3A5C]/10 overflow-hidden">
                     {post.featuredImageUrl
-                      ? <img src={post.featuredImageUrl} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      ? <img src={post.featuredImageUrl} alt={post.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                       : <div className="w-full h-full flex items-center justify-center"><span className="text-3xl font-black text-[#E85D26]/20">TS</span></div>
                     }
                   </div>
