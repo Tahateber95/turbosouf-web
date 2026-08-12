@@ -85,6 +85,15 @@ export function ProductCard({ product }: { product: ProductListItem }) {
           )}
         </div>
 
+        {/* Brand badge — top right */}
+        {product.brandName && (
+          <div className="absolute top-2.5 right-2.5">
+            <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-black/70 text-white backdrop-blur-sm shadow-sm">
+              {product.brandName}
+            </span>
+          </div>
+        )}
+
         {/* Out of stock overlay */}
         {product.stockQuantity <= 0 && (
           <div className="absolute inset-0 bg-white/80 backdrop-blur-[2px] flex items-center justify-center">
