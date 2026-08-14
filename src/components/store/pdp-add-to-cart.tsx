@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { CheckCircle2, X, ChevronRight } from "lucide-react";
+import { CheckCircle2, X, ChevronRight, Phone } from "lucide-react";
+import Link from "next/link";
 import { AddToCartButton } from "@/components/store/add-to-cart-button";
 import type { ProductAddOn } from "@/lib/api";
 import type { CartAddOn } from "@/lib/hooks/use-cart";
@@ -183,11 +184,14 @@ export function PdpAddToCart({
   condition,
 }: PdpAddToCartProps) {
   const [selectedAddOnIds, setSelectedAddOnIds] = useState<Set<string>>(new Set());
+  const [consigneEnabled, setConsigneEnabled] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const activeAddOns = addOns.filter((a) => a.isActive);
   const hasDeposit = !!depositAmount && depositAmount > 0;
   const isExchangeStandard = condition === "ExchangeStandard";
+  const outOfStock = stockQuantity <= 0;
+  const showContactCta = outOfStock && condition !== "Refurbished";
 
   const toggleAddOn = (id: string) => {
     setSelectedAddOnIds((prev) => {
@@ -242,22 +246,33 @@ export function PdpAddToCart({
         </div>
       )}
 
-      {/* Consigne row — styled like add-ons, always "selected" display */}
+      {/* Consigne row — toggleable, styled like add-ons */}
       {hasDeposit && isExchangeStandard && (
-        <div className="rounded-xl border-2 border-blue-500 bg-white overflow-hidden">
-          {/* Main row */}
-          <div className="flex items-center gap-3 px-4 py-3">
-            {/* Toggle visual — always on */}
-            <span className="relative inline-flex h-5 w-9 shrink-0 rounded-full bg-blue-500 border-2 border-blue-500">
-              <span className="inline-block h-4 w-4 rounded-full bg-white shadow translate-x-4" />
+        <div
+          className={`rounded-xl border-2 bg-white overflow-hidden transition-colors ${
+            consigneEnabled ? "border-blue-500" : "border-gray-200"
+          }`}
+        >
+          {/* Main row — clickable to toggle */}
+          <button
+            type="button"
+            onClick={() => setConsigneEnabled((v) => !v)}
+            className="w-full flex items-center gap-3 px-4 py-3 text-left"
+          >
+            <span className={`relative inline-flex h-5 w-9 shrink-0 rounded-full border-2 transition-colors ${
+              consigneEnabled ? "bg-blue-500 border-blue-500" : "bg-gray-200 border-gray-200"
+            }`}>
+              <span className={`inline-block h-4 w-4 rounded-full bg-white shadow transition-transform ${
+                consigneEnabled ? "translate-x-4" : "translate-x-0"
+              }`} />
             </span>
             <span className="flex-1 text-sm font-bold text-gray-900">Consigne</span>
             <span className="text-sm font-bold text-gray-900 shrink-0">
               {formatPrice(depositAmount!)}
             </span>
-          </div>
+          </button>
 
-          {/* Info bar */}
+          {/* Info bar — always visible */}
           <div className="flex items-center gap-2 px-4 py-2.5 bg-emerald-50 border-t border-emerald-100">
             <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
             <p className="flex-1 text-xs font-semibold text-emerald-700 uppercase tracking-wide">
@@ -274,21 +289,32 @@ export function PdpAddToCart({
         </div>
       )}
 
-      <AddToCartButton
-        product={{
-          productId,
-          name,
-          sku,
-          imageUrl: primaryImageUrl,
-          priceHT,
-          priceTTC,
-          depositAmount,
-          stockQuantity,
-          selectedAddOns,
-        }}
-        showQuantity
-        className="w-full"
-      />
+      {/* Out-of-stock: contact CTA instead of add-to-cart */}
+      {showContactCta ? (
+        <Link
+          href="/contact"
+          className="w-full flex items-center justify-center gap-2 h-12 rounded-xl bg-[var(--ts-primary-500)] hover:bg-[var(--ts-primary-600)] text-white text-sm font-semibold transition-colors"
+        >
+          <Phone className="h-4 w-4" />
+          Contacter pour une solution rapide
+        </Link>
+      ) : (
+        <AddToCartButton
+          product={{
+            productId,
+            name,
+            sku,
+            imageUrl: primaryImageUrl,
+            priceHT,
+            priceTTC,
+            depositAmount: consigneEnabled ? depositAmount : null,
+            stockQuantity,
+            selectedAddOns,
+          }}
+          showQuantity
+          className="w-full"
+        />
+      )}
 
       <ConsigneDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
     </div>
