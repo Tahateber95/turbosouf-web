@@ -330,6 +330,7 @@ export interface OrderListItem {
   itemCount: number;
   createdAt: string;
   hasExchangeStandardItems?: boolean;
+  hasRefurbishedItems?: boolean;
 }
 
 export interface OrderDetail {
@@ -378,6 +379,7 @@ export interface OrderDetail {
   updatedAt: string;
   trackingNumber?: string | null;
   hasExchangeStandardItems: boolean;
+  hasRefurbishedItems: boolean;
   depositRefundedAt: string | null;
   depositRefundStripeId: string | null;
   returnShipment: {
@@ -386,6 +388,13 @@ export interface OrderDetail {
     returnLabelGeneratedAt: string | null;
     returnReceivedAt: string | null;
     hasReturnLabel: boolean;
+  } | null;
+  inboundShipment: {
+    skybillNumber: string | null;
+    status: string;
+    labelGeneratedAt: string | null;
+    receivedAt: string | null;
+    hasLabel: boolean;
   } | null;
 }
 

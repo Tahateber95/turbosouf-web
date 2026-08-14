@@ -114,10 +114,10 @@ export default function OrdersPage() {
                           <Link href={`/dashboard/commandes/${o.id}`} className="font-mono text-xs font-semibold text-[var(--ts-primary-500)] hover:underline">
                             {o.orderNumber}
                           </Link>
-                          {o.hasExchangeStandardItems && (
-                            <span title="Reprise en attente" className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-blue-50 text-blue-600 border border-blue-200">
+                          {(o.hasExchangeStandardItems || o.hasRefurbishedItems) && (
+                            <span title="Retour / envoi client requis" className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-blue-50 text-blue-600 border border-blue-200">
                               <RotateCcw className="h-2.5 w-2.5" />
-                              Reprise
+                              {o.hasRefurbishedItems && !o.hasExchangeStandardItems ? "Rénovation" : "Reprise"}
                             </span>
                           )}
                         </div>

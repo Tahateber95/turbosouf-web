@@ -240,6 +240,9 @@ export const adminConfirmReturn = (id: string) =>
 export const adminRegenerateReturnLabel = (id: string) =>
   adminFetch<{ returnSkybill: string }>(`/orders/${id}/regenerate-return-label`, { method: "POST" });
 
+export const adminRegenerateInboundLabel = (id: string) =>
+  adminFetch<{ inboundSkybill: string }>(`/orders/${id}/regenerate-inbound-label`, { method: "POST" });
+
 export const adminDownloadReturnLabel = async (id: string, orderNumber: string): Promise<void> => {
   const token = getToken();
   const res = await fetch(`${API}/api/v1/orders/${id}/return-label`, {
@@ -251,6 +254,21 @@ export const adminDownloadReturnLabel = async (id: string, orderNumber: string):
   const a = document.createElement("a");
   a.href = url;
   a.download = `retour-${orderNumber}.pdf`;
+  a.click();
+  URL.revokeObjectURL(url);
+};
+
+export const adminDownloadInboundLabel = async (id: string, orderNumber: string): Promise<void> => {
+  const token = getToken();
+  const res = await fetch(`${API}/api/v1/orders/${id}/inbound-label`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new Error("Étiquette non disponible");
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `envoi-${orderNumber}.pdf`;
   a.click();
   URL.revokeObjectURL(url);
 };

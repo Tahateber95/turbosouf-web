@@ -173,7 +173,7 @@ export default function OrderDetailPage({ params }: Props) {
 
           <ShipmentPanel orderNumber={order.orderNumber} orderStatus={order.status} />
 
-          {order.hasExchangeStandardItems && (
+          {(order.hasExchangeStandardItems || order.hasRefurbishedItems) && (
             <ReturnPanel order={order} onReturnConfirmed={loadOrder} />
           )}
 
