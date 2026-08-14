@@ -32,7 +32,7 @@ function getCategorySlug(categoryName: string | null | undefined): string {
 function conditionLabel(condition?: string) {
   switch (condition) {
     case "Refurbished":
-      return { label: "Reconditionne", cls: "bg-[var(--ts-primary-500)] text-white" };
+      return { label: "Je rénove", cls: "bg-[var(--ts-primary-500)] text-white" };
     case "New":
       return { label: "Neuf", cls: "bg-emerald-500 text-white" };
     case "ExchangeStandard":

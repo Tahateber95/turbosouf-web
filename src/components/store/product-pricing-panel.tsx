@@ -1,6 +1,7 @@
 "use client";
 
-import { RotateCcw, Info } from "lucide-react";
+import Link from "next/link";
+import { RotateCcw, Info, Phone } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { PdpAddToCart } from "@/components/store/pdp-add-to-cart";
 import type { ProductDetail, ProductAddOn } from "@/lib/api";
@@ -14,10 +15,15 @@ interface Props {
   addOns: ProductAddOn[];
 }
 
+const RENOVATION_CONDITION = "Refurbished";
+
 export function ProductPricingPanel({ product, addOns }: Props) {
   const inStock = product.stockQuantity > 0;
   const installment = (product.priceTTC / 3).toFixed(2);
   const hasDiscount = product.salePriceHT && product.salePriceHT < product.priceHT;
+  const isRenovation = product.condition === RENOVATION_CONDITION;
+  const outOfStock = !inStock;
+  const showContactCta = outOfStock && !isRenovation;
 
   return (
     <div className="space-y-4">
@@ -30,20 +36,33 @@ export function ProductPricingPanel({ product, addOns }: Props) {
         </div>
       )}
 
-      {/* Stock status */}
-      <div>
-        {inStock ? (
-          <Badge className="bg-emerald-100 text-emerald-700 text-xs border-0">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 inline-block" />
-            En stock — {product.stockQuantity} disponible{product.stockQuantity > 1 ? "s" : ""}
-          </Badge>
-        ) : (
-          <Badge className="bg-gray-100 text-gray-500 text-xs border-0">
-            <span className="w-1.5 h-1.5 rounded-full bg-gray-400 mr-1.5 inline-block" />
-            Rupture de stock
-          </Badge>
-        )}
-      </div>
+      {/* Stock status — hidden for "Je rénove mon turbo" */}
+      {!isRenovation && (
+        <div>
+          {inStock ? (
+            <Badge className="bg-emerald-100 text-emerald-700 text-xs border-0">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 inline-block" />
+              En stock — {product.stockQuantity} disponible{product.stockQuantity > 1 ? "s" : ""}
+            </Badge>
+          ) : (
+            <div className="space-y-2">
+              <Badge className="bg-gray-100 text-gray-500 text-xs border-0">
+                <span className="w-1.5 h-1.5 rounded-full bg-gray-400 mr-1.5 inline-block" />
+                Rupture de stock
+              </Badge>
+              {showContactCta && (
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--ts-primary-600)] hover:text-[var(--ts-primary-700)] transition-colors"
+                >
+                  <Phone className="h-3 w-3" />
+                  Contacter pour une solution rapide
+                </Link>
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Price */}
       <div>
