@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { RotateCcw, Info, Phone } from "lucide-react";
+import { Info, Phone } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { PdpAddToCart } from "@/components/store/pdp-add-to-cart";
 import type { ProductDetail, ProductAddOn } from "@/lib/api";
@@ -85,16 +85,6 @@ export function ProductPricingPanel({ product, addOns }: Props) {
         </p>
       </div>
 
-      {/* Consigne */}
-      {product.depositAmount && product.depositAmount > 0 && (
-        <div className="flex items-start gap-2 p-3 rounded-xl bg-amber-50 border border-amber-100">
-          <RotateCcw className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
-          <p className="text-sm text-amber-700">
-            <span className="font-semibold">+{formatPrice(product.depositAmount)}</span> de consigne remboursée à la reprise de votre ancienne pièce
-          </p>
-        </div>
-      )}
-
       {/* Alma installment */}
       <p className="text-sm text-gray-500">
         ou <span className="font-semibold text-[#E85D26]">3× {installment} €</span> sans frais avec Alma
@@ -123,6 +113,7 @@ export function ProductPricingPanel({ product, addOns }: Props) {
         stockQuantity={product.stockQuantity}
         addOns={addOns}
         conditionLabel={product.conditionLabel}
+        condition={product.condition}
       />
     </div>
   );
