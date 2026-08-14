@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Phone } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { ProductIllustration } from "@/components/store/product-illustration";
 import type { ProductListItem } from "@/lib/api";
@@ -94,15 +95,6 @@ export function ProductCard({ product }: { product: ProductListItem }) {
           </div>
         )}
 
-        {/* Out of stock overlay */}
-        {product.stockQuantity <= 0 && (
-          <div className="absolute inset-0 bg-white/80 backdrop-blur-[2px] flex items-center justify-center">
-            <span className="text-sm font-semibold text-gray-500 bg-white/80 px-3 py-1 rounded-full">
-              Rupture de stock
-            </span>
-          </div>
-        )}
-
         {/* Stock indicator */}
         {product.stockQuantity > 0 && product.stockQuantity <= 5 && (
           <div className="absolute bottom-2 right-2">
@@ -178,6 +170,14 @@ export function ProductCard({ product }: { product: ProductListItem }) {
             </span>
           )}
         </div>
+
+        {/* Out-of-stock contact CTA (all conditions except Refurbished) */}
+        {product.stockQuantity <= 0 && product.condition !== "Refurbished" && (
+          <div className="mt-2 flex items-center gap-1 text-[11px] font-semibold text-[var(--ts-primary-500)]">
+            <Phone className="h-3 w-3 shrink-0" />
+            Contacter pour une solution rapide
+          </div>
+        )}
       </div>
     </Link>
   );
