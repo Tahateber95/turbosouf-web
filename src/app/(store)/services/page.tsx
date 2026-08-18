@@ -1,31 +1,47 @@
 import Link from "next/link";
-import { Wrench, Search, Cog, ChevronRight, Clock, ShieldCheck, Phone } from "lucide-react";
+import { Wrench, Zap, Trophy, Settings, BarChart2, ChevronRight, ShieldCheck, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const SERVICES = [
   {
     icon: Wrench,
-    name: "Reconditionnement Turbo",
-    description: "Reconditionnement complet de votre turbocompresseur dans notre atelier. Démontage, inspection, remplacement des pièces d'usure, équilibrage dynamique et test sur banc d'essai.",
-    price: "À partir de 350€",
-    duration: "3-5 jours",
+    name: "Turbo en échange standard",
+    description: "Échangez votre turbo défaillant contre un turbo reconditionné testé sur banc d'essai. Solution économique avec garantie 2 ans pièces et main d'œuvre.",
+    price: "À partir de 180€",
+    warranty: "Garantie 2 ans",
     color: "from-blue-500 to-blue-700",
   },
   {
-    icon: Search,
-    name: "Diagnostic Turbo",
-    description: "Diagnostic complet de votre turbocompresseur avec rapport détaillé. Identification des causes de panne et recommandations de réparation.",
-    price: "50€",
-    duration: "1 jour",
+    icon: Zap,
+    name: "Réparation turbo 24h",
+    description: "Votre turbo réparé en 24h chrono dans notre atelier. Démontage, diagnostic, remplacement des pièces usées, équilibrage dynamique et test complet.",
+    price: "À partir de 180€",
+    warranty: "Garantie 2 ans",
     color: "from-emerald-500 to-emerald-700",
   },
   {
-    icon: Cog,
-    name: "Réparation Mécanique",
-    description: "Service de réparation mécanique générale. Remplacement de pièces, remise en état, mise au point moteur.",
-    price: "Sur devis",
-    duration: "Variable",
+    icon: Trophy,
+    name: "Turbo de compétition & hybride",
+    description: "Préparation et réparation de turbos haute performance pour la compétition ou les applications hybrides. Pièces haut de gamme, réglages spécifiques.",
+    price: "À partir de 400€",
+    warranty: "Sans garantie",
+    color: "from-orange-500 to-red-600",
+  },
+  {
+    icon: Settings,
+    name: "Réglage actuateur / wastegate",
+    description: "Réglage précis de l'actuateur ou de la wastegate pour restaurer les performances de votre turbo. Intervention rapide avec test de pression.",
+    price: "50 à 80€",
+    warranty: "Sans garantie",
     color: "from-purple-500 to-purple-700",
+  },
+  {
+    icon: BarChart2,
+    name: "Équilibrage CHRA",
+    description: "Équilibrage dynamique du CHRA (cartouche centrale) sur banc spécialisé pour éliminer les vibrations et prolonger la durée de vie du turbo.",
+    price: "À partir de 80€",
+    warranty: "Sans garantie",
+    color: "from-slate-500 to-slate-700",
   },
 ];
 
@@ -51,27 +67,23 @@ export default function ServicesPage() {
 
       {/* Services grid */}
       <div className="mx-auto max-w-7xl px-4 py-10">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
           {SERVICES.map((service) => (
             <div key={service.name} className="bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-lg transition-shadow">
               <div className={`bg-gradient-to-br ${service.color} p-6 text-white`}>
                 <service.icon className="h-10 w-10 mb-3" />
-                <h3 className="text-xl font-bold">{service.name}</h3>
+                <h3 className="text-lg font-bold leading-snug">{service.name}</h3>
               </div>
               <div className="p-5">
                 <p className="text-sm text-gray-500 leading-relaxed mb-4">{service.description}</p>
-                <div className="flex items-center gap-4 text-xs text-gray-600 mb-4">
+                <div className="flex items-center gap-3 text-xs text-gray-600 mb-4">
                   <span className="flex items-center gap-1">
-                    <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
-                    Garantie 2 ans
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Clock className="h-3.5 w-3.5 text-[var(--ts-primary-500)]" />
-                    {service.duration}
+                    <ShieldCheck className={`h-3.5 w-3.5 ${service.warranty === "Garantie 2 ans" ? "text-emerald-500" : "text-gray-400"}`} />
+                    {service.warranty}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-lg font-bold text-[var(--ts-primary-900)]">{service.price}</span>
+                  <span className="text-base font-bold text-[var(--ts-primary-900)]">{service.price}</span>
                   <Button variant="outline" size="sm" className="text-xs">
                     Demander un devis
                     <ChevronRight className="h-3 w-3 ml-1" />
