@@ -29,7 +29,7 @@ const productSchema = z.object({
   categoryId: z.string().min(1, "Catégorie requise"),
   brandId: z.string().nullable().optional(),
   oemReference: z.string().nullable().optional(),
-  isActive: z.boolean().default(true),
+  isActive: z.boolean().default(false),
   isFeatured: z.boolean().default(false),
   metaTitle: z.string().nullable().optional(),
   metaDescription: z.string().nullable().optional(),
@@ -258,7 +258,7 @@ export function ProductForm({ mode, product, categories, brands, makes }: Props)
       if (mode === "edit") {
         await adminUpdateProduct(product!.id, payload);
         toast.success("Produit mis à jour");
-        window.location.href = "/dashboard/produits";
+        // Stay on the edit page — no redirect
       } else {
         await adminCreateProduct(payload);
         toast.success(mode === "duplicate" ? "Produit dupliqué avec succès" : "Produit créé avec succès");
@@ -429,11 +429,30 @@ export function ProductForm({ mode, product, categories, brands, makes }: Props)
             </select>
           </div>
           <div className="flex items-end gap-6">
-            <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-              <input type="checkbox" {...register("isActive")} className="rounded border-gray-300 text-[var(--ts-primary-500)]" />
-              Actif
-            </label>
-            <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+            {/* Publish / Draft toggle */}
+            <div>
+              <p className="text-sm font-medium text-gray-700 mb-2">Visibilité</p>
+              <div className="flex rounded-lg border border-gray-200 overflow-hidden text-sm">
+                <button
+                  type="button"
+                  onClick={() => setValue("isActive", false, { shouldDirty: true })}
+                  className={`px-4 py-2 font-medium transition-colors ${!watch("isActive") ? "bg-gray-100 text-gray-700" : "bg-white text-gray-400 hover:text-gray-600"}`}
+                >
+                  Brouillon
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setValue("isActive", true, { shouldDirty: true })}
+                  className={`px-4 py-2 font-medium transition-colors ${watch("isActive") ? "bg-[var(--ts-primary-500)] text-white" : "bg-white text-gray-400 hover:text-gray-600"}`}
+                >
+                  Publié
+                </button>
+              </div>
+              <p className="text-[10px] text-gray-400 mt-1">
+                {watch("isActive") ? "Visible dans le catalogue public." : "Non visible dans le catalogue public."}
+              </p>
+            </div>
+            <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer mb-2">
               <input type="checkbox" {...register("isFeatured")} className="rounded border-gray-300 text-[var(--ts-primary-500)]" />
               Mis en avant
             </label>

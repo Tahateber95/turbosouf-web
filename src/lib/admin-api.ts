@@ -88,7 +88,7 @@ async function adminFetch<T>(endpoint: string, options: RequestInit = {}): Promi
     const newToken = await tryRefreshToken();
     if (!newToken) {
       redirectToLogin();
-      throw new Error("Session expirée. Veuillez vous reconnecter.");
+      await new Promise(() => {}); // never resolves — browser navigates away
     }
     const retry = await fetch(`${API}/api/v1${endpoint}`, {
       headers: {
@@ -100,7 +100,10 @@ async function adminFetch<T>(endpoint: string, options: RequestInit = {}): Promi
     });
     const retryJson = await retry.json().catch(() => ({}));
     if (!retry.ok) {
-      if (retry.status === 401) redirectToLogin();
+      if (retry.status === 401) {
+        redirectToLogin();
+        await new Promise(() => {});
+      }
       throw new Error(retryJson.error?.message || `Erreur ${retry.status}`);
     }
     return retryJson.data as T;

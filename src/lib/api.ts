@@ -45,6 +45,7 @@ export interface ProductListItem {
   conditionLabel: string;
   conditionSortOrder: number;
   stockQuantity: number;
+  isActive: boolean;
   isFeatured: boolean;
   primaryImageUrl: string | null;
   oemReference: string | null;
