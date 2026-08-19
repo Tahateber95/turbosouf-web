@@ -60,7 +60,7 @@ export default function ServicesPage() {
             Services Atelier
           </h1>
           <p className="text-gray-300 max-w-xl">
-            Notre atelier spécialisé prend en charge le reconditionnement et la réparation de vos pièces automobiles avec des équipements professionnels.
+            Notre atelier spécialisé prend en charge le reconditionnement et réparation de vos turbocompresseurs, toutes marques, tous modèles à l&apos;aide de nos équipements professionnels.
           </p>
         </div>
       </div>
