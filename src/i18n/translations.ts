@@ -4,7 +4,7 @@ const translations = {
   fr: {
     nav: {
       turbos: "Nos Turbos",
-      reconditioning: "Reconditionnement",
+      reconditioning: "Nos services",
       articles: "Nos Articles",
       contact: "Contact",
       faq: "FAQ",
@@ -144,7 +144,7 @@ const translations = {
   en: {
     nav: {
       turbos: "Our Turbos",
-      reconditioning: "Reconditioning",
+      reconditioning: "Our services",
       articles: "Articles",
       contact: "Contact",
       faq: "FAQ",
@@ -284,7 +284,7 @@ const translations = {
   es: {
     nav: {
       turbos: "Nuestros Turbos",
-      reconditioning: "Reacondicionamiento",
+      reconditioning: "Nuestros servicios",
       articles: "Artículos",
       contact: "Contacto",
       faq: "FAQ",
