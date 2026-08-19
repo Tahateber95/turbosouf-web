@@ -168,6 +168,9 @@ export const adminUpdateProduct = (id: string, data: UpdateProductRequest) =>
 export const adminDeleteProduct = (id: string) =>
   adminFetch<void>(`/products/${id}`, { method: "DELETE" });
 
+export const adminSetProductVisibility = (id: string, isActive: boolean) =>
+  adminFetch<void>(`/products/${id}/visibility`, { method: "PATCH", body: JSON.stringify({ isActive }) });
+
 // Vehicle Makes
 export const adminCreateMake = (data: CreateMakeRequest) =>
   adminFetch<VehicleMake>("/vehicles/makes", { method: "POST", body: JSON.stringify(data) });

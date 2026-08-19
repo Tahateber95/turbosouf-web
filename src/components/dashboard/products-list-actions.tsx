@@ -5,7 +5,7 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import Link from "next/link";
 import { Search, Trash2, Loader2, Copy, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
-import { adminDeleteProduct, adminGetProductsList } from "@/lib/admin-api";
+import { adminDeleteProduct, adminGetProductsList, adminSetProductVisibility } from "@/lib/admin-api";
 import { StatusBadge } from "@/components/dashboard/status-badge";
 import type { Category, ProductListItem } from "@/lib/api";
 
@@ -136,6 +136,18 @@ export function ProductsTable() {
     }
   };
 
+  const handleToggleVisibility = async (productId: string, currentIsActive: boolean) => {
+    const newIsActive = !currentIsActive;
+    setProducts(prev => prev.map(p => p.id === productId ? { ...p, isActive: newIsActive } : p));
+    try {
+      await adminSetProductVisibility(productId, newIsActive);
+      toast.success(newIsActive ? "Produit publié" : "Produit mis en brouillon");
+    } catch (err) {
+      setProducts(prev => prev.map(p => p.id === productId ? { ...p, isActive: currentIsActive } : p));
+      toast.error(err instanceof Error ? err.message : "Erreur");
+    }
+  };
+
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
 
   const buildPageUrl = (page: number) => {
@@ -172,7 +184,7 @@ export function ProductsTable() {
               </thead>
               <tbody className="divide-y divide-gray-50">
                 {products.map((p) => (
-                  <ProductRow key={p.id} product={p} onDelete={handleDelete} />
+                  <ProductRow key={p.id} product={p} onDelete={handleDelete} onToggleVisibility={handleToggleVisibility} />
                 ))}
               </tbody>
             </table>
@@ -242,20 +254,29 @@ export function ProductsTable() {
 function ProductRow({
   product: p,
   onDelete,
+  onToggleVisibility,
 }: {
   product: ProductListItem;
   onDelete: (id: string, name: string) => Promise<void>;
+  onToggleVisibility: (id: string, currentIsActive: boolean) => Promise<void>;
 }) {
   const [deleting, setDeleting] = useState(false);
+  const [toggling, setToggling] = useState(false);
 
-  const handleClick = async () => {
+  const handleDelete = async () => {
     setDeleting(true);
     await onDelete(p.id, p.name);
     setDeleting(false);
   };
 
+  const handleToggle = async () => {
+    setToggling(true);
+    await onToggleVisibility(p.id, p.isActive);
+    setToggling(false);
+  };
+
   return (
-    <tr className="hover:bg-gray-50/50 transition-colors">
+    <tr className={`hover:bg-gray-50/50 transition-colors ${!p.isActive ? "opacity-60" : ""}`}>
       <td className="px-5 py-3">
         <div className="font-medium text-gray-900">{p.name}</div>
         {p.vehicleSummary && <div className="text-[11px] text-gray-400 mt-0.5">{p.vehicleSummary}</div>}
@@ -286,6 +307,18 @@ function ProductRow({
       </td>
       <td className="px-5 py-3">
         <div className="flex items-center gap-3 justify-end">
+          <button
+            onClick={handleToggle}
+            disabled={toggling}
+            title={p.isActive ? "Mettre en brouillon" : "Publier"}
+            className={`text-xs font-medium px-2 py-1 rounded-md border transition-colors disabled:opacity-50 ${
+              p.isActive
+                ? "border-gray-200 text-gray-500 hover:border-gray-400 hover:text-gray-700"
+                : "border-green-200 text-green-600 hover:border-green-400 hover:bg-green-50"
+            }`}
+          >
+            {toggling ? <Loader2 className="h-3 w-3 animate-spin" /> : p.isActive ? "Brouillon" : "Publier"}
+          </button>
           <Link
             href={`/dashboard/produits/${p.slug}`}
             className="text-xs font-medium text-[var(--ts-primary-500)] hover:underline"
@@ -299,7 +332,7 @@ function ProductRow({
           >
             <Copy className="h-3.5 w-3.5" />
           </Link>
-          <button onClick={handleClick} disabled={deleting} className="text-red-500 hover:text-red-700 disabled:opacity-50">
+          <button onClick={handleDelete} disabled={deleting} className="text-red-500 hover:text-red-700 disabled:opacity-50">
             {deleting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
           </button>
         </div>
