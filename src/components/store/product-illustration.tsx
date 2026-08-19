@@ -61,24 +61,6 @@ export function ProductIllustration({
         loading="lazy"
       />
 
-      {/* Category label */}
-      {categoryName && (
-        <div className="absolute top-2 left-2 z-10">
-          <span className="inline-block px-1.5 py-0.5 rounded bg-[var(--ts-primary-500)] text-white text-[8px] font-bold tracking-wider uppercase">
-            {categoryName}
-          </span>
-        </div>
-      )}
-
-      {/* Condition badge */}
-      {badge && (
-        <div className="absolute top-2 right-2 z-10">
-          <span className={`inline-block px-1.5 py-0.5 rounded text-[8px] font-semibold ${badge.cls}`}>
-            {badge.label}
-          </span>
-        </div>
-      )}
-
       {/* Bottom info */}
       {(brandName || sku) && (
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-gray-100 to-transparent px-2.5 pb-2 pt-6 z-10">
