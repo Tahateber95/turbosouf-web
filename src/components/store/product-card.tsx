@@ -73,14 +73,14 @@ export function ProductCard({ product }: { product: ProductListItem }) {
         )}
 
         {/* Top badges */}
-        <div className="absolute top-2.5 left-2.5 flex flex-col gap-1.5">
+        <div className="absolute top-2.5 left-2.5 flex flex-col gap-1.5 max-w-[55%]">
           {hasDiscount && (
             <Badge className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 shadow-sm">
               -{discountPercent}%
             </Badge>
           )}
           {product.conditionLabel && (
-            <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold shadow-sm border ${conditionStyle(product.condition)}`}>
+            <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold shadow-sm border truncate ${conditionStyle(product.condition)}`}>
               {product.conditionLabel}
             </span>
           )}
@@ -88,8 +88,8 @@ export function ProductCard({ product }: { product: ProductListItem }) {
 
         {/* Brand badge — top right */}
         {product.brandName && (
-          <div className="absolute top-2.5 right-2.5">
-            <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-black/70 text-white backdrop-blur-sm shadow-sm">
+          <div className="absolute top-2.5 right-2.5 max-w-[40%]">
+            <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-black/70 text-white backdrop-blur-sm shadow-sm truncate">
               {product.brandName}
             </span>
           </div>
