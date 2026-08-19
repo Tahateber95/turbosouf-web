@@ -6,7 +6,7 @@ const SERVICES = [
   {
     icon: Wrench,
     name: "Turbo en échange standard",
-    description: "Échangez votre turbo défaillant contre un turbo reconditionné testé sur banc d'essai. Solution économique avec garantie 2 ans pièces et main d'œuvre.",
+    description: "Échangez votre turbo défaillant contre un turbo reconditionné testé sur banc d'essai. Solution économique avec garantie 2 ans.",
     price: "À partir de 180€",
     warranty: "Garantie 2 ans",
     color: "from-blue-500 to-blue-700",
