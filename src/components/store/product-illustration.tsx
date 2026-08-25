@@ -18,6 +18,7 @@ const CATEGORY_IMAGES: Record<string, string> = {
 };
 
 const DEFAULT_IMAGE = "/images/turbo-default.jpg";
+const RENOVATION_IMAGE = "https://i.postimg.cc/cJSGrqBq/REN-TURBO.png";
 
 function getCategorySlug(categoryName: string | null | undefined): string {
   if (!categoryName) return "";
@@ -49,7 +50,7 @@ export function ProductIllustration({
   condition,
 }: ProductIllustrationProps) {
   const slug = getCategorySlug(categoryName);
-  const imageSrc = CATEGORY_IMAGES[slug] || DEFAULT_IMAGE;
+  const imageSrc = condition === "Refurbished" ? RENOVATION_IMAGE : (CATEGORY_IMAGES[slug] || DEFAULT_IMAGE);
   const badge = conditionLabel(condition);
 
   return (
