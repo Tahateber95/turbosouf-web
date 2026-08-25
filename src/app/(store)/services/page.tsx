@@ -104,9 +104,9 @@ export default function ServicesPage() {
             <Link href="/contact" className="inline-flex items-center h-11 px-6 bg-[var(--ts-primary-500)] hover:bg-[var(--ts-primary-600)] text-white font-semibold rounded-lg transition-colors">
               Prendre rendez-vous
             </Link>
-            <a href="tel:+33123456789" className="inline-flex items-center h-11 px-6 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+            <a href="tel:+33749790555" className="inline-flex items-center h-11 px-6 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
               <Phone className="h-4 w-4 mr-2" />
-              +33 1 23 45 67 89
+              +33 7 49 79 05 55
             </a>
           </div>
         </div>

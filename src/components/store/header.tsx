@@ -71,7 +71,7 @@ export function Header() {
           <div className="flex items-center gap-5">
             <span className="flex items-center gap-1.5">
               <Phone className="h-3 w-3" />
-              +33 7 79 49 05 55
+              +33 7 49 79 05 55
             </span>
           </div>
           <div className="flex items-center gap-4 text-white/85">

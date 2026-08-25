@@ -19,7 +19,7 @@ async function getFooterConfig(): Promise<FooterConfig> {
   } catch {
     return {
       description: "Specialiste en turbocompresseurs neufs et reconditionnes pour automobile, marine et industriel. Garantie 2 ans, prix competitifs.",
-      phone: "+33 1 23 45 67 89",
+      phone: "+33 7 49 79 05 55",
       email: "turbosouf.idf@gmail.com",
       address: "Strasbourg, France",
     };
