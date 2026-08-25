@@ -27,7 +27,7 @@ export function ProductPricingPanel({ product, addOns }: Props) {
       {/* Condition badge */}
       {product.conditionLabel && (
         <div>
-          <Badge variant="outline" className="text-xs font-semibold text-[var(--ts-primary-600)] border-[var(--ts-primary-200)] bg-[var(--ts-primary-50)]">
+          <Badge className="text-xs font-semibold text-[var(--ts-primary-500)] border border-[var(--ts-primary-400)] bg-orange-50">
             {product.conditionLabel}
           </Badge>
         </div>

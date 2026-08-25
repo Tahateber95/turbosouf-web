@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Home, HelpCircle, Image, FileText, Layout } from "lucide-react";
+import { Home, HelpCircle, Image, FileText, Layout, Scale, Shield, BookOpen } from "lucide-react";
 
 const CMS_SECTIONS = [
   { icon: Home, label: "Page d'accueil", desc: "Texte du hero, statistiques, bandeau CTA", href: "/dashboard/contenu/homepage" },
@@ -7,6 +7,9 @@ const CMS_SECTIONS = [
   { icon: Image, label: "Bannieres", desc: "Bannieres promotionnelles en haut du site", href: "/dashboard/contenu/banners" },
   { icon: FileText, label: "Articles", desc: "Blog et actualites du site", href: "/dashboard/contenu/articles" },
   { icon: Layout, label: "Footer", desc: "Description, telephone, email et adresse du bas de page", href: "/dashboard/contenu/footer" },
+  { icon: BookOpen, label: "CGV", desc: "Conditions Générales de Vente", href: "/dashboard/contenu/cgv" },
+  { icon: Scale, label: "Mentions Légales", desc: "Mentions légales et informations légales", href: "/dashboard/contenu/mentions-legales" },
+  { icon: Shield, label: "Politique de Confidentialité", desc: "RGPD et protection des données personnelles", href: "/dashboard/contenu/confidentialite" },
 ];
 
 export default function ContentPage() {

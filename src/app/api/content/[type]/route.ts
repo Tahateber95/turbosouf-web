@@ -10,6 +10,9 @@ const CONFIG_MAP: Record<string, { revalidate: string[] }> = {
   faq: { revalidate: ["/faq", "/"] },
   banners: { revalidate: ["/"] },
   footer: { revalidate: ["/"] },
+  cgv: { revalidate: ["/cgv"] },
+  "mentions-legales": { revalidate: ["/mentions-legales"] },
+  confidentialite: { revalidate: ["/politique-confidentialite"] },
 };
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ type: string }> }) {
