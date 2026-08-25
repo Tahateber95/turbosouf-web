@@ -106,29 +106,6 @@ export async function Footer() {
             </ul>
           </div>
 
-          {/* Newsletter */}
-          <div>
-            <h3 className="text-xs font-bold text-white uppercase tracking-[0.14em] mb-5">
-              Newsletter
-            </h3>
-            <p className="text-sm text-white/45 mb-4">
-              Recevez nos offres et promotions en avant-premiere.
-            </p>
-            <form className="flex gap-2">
-              <input
-                type="email"
-                placeholder="Votre email"
-                className="flex-1 h-10 px-3 rounded-lg bg-white/8 border border-white/12 text-sm text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-[#E85D26]/50"
-              />
-              <button
-                type="submit"
-                className="h-10 px-4 rounded-lg text-white text-sm font-bold hover:opacity-90 transition-opacity"
-                style={{ background: "linear-gradient(180deg,#FF7A45 0%,#E85D26 100%)" }}
-              >
-                OK
-              </button>
-            </form>
-          </div>
         </div>
       </div>
 

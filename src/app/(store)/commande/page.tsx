@@ -286,7 +286,7 @@ export default function CheckoutPage() {
   const update = (field: string, value: string | boolean) =>
     setForm((prev) => ({ ...prev, [field]: value }));
 
-  const shipping = subtotalTTC >= 150 ? 0 : form.shippingType === "Express" ? 12.9 : form.shippingType === "RelayPoint" ? 4.9 : 6.9;
+  const shipping = subtotalTTC >= 150 ? 0 : form.shippingType === "RelayPoint" ? 4.9 : 6.9;
   const shippingTTC = shipping * 1.2;
   const grandTotal = subtotalTTC + totalDeposit + shippingTTC;
 
@@ -490,8 +490,7 @@ export default function CheckoutPage() {
                     <Label className="text-sm font-bold text-gray-900 mb-3 block">Mode de livraison</Label>
                     <div className="space-y-2">
                       {[
-                        { value: "Standard", label: "Standard (48h)", price: subtotalTTC >= 150 ? "Gratuit" : "8,28€ TTC", desc: "2-3 jours ouvrés" },
-                        { value: "Express", label: "Express (24h)", price: "15,48€ TTC", desc: "1 jour ouvré" },
+                        { value: "Standard", label: "Standard", price: subtotalTTC >= 150 ? "Gratuit" : "8,28€ TTC", desc: "Livraison sous 24-48h" },
                         { value: "RelayPoint", label: "Point Relais", price: subtotalTTC >= 100 ? "Gratuit" : "5,88€ TTC", desc: "3-5 jours ouvrés" },
                       ].map((method) => (
                         <label
