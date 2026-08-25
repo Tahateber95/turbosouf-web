@@ -39,6 +39,7 @@ export default async function ProductsPage({ searchParams }: Props) {
         activeSearch={params.search ? String(params.search) : ""}
         activeCategory={params.category ? String(params.category) : ""}
         activeStock={params.stock ? String(params.stock) : ""}
+        activeCondition={params.condition ? String(params.condition) : ""}
       />
 
       {/* Table — fetches from admin endpoint client-side (includes drafts) */}

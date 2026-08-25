@@ -13,14 +13,24 @@ function formatPrice(n: number) {
   return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(n);
 }
 
+const CONDITIONS = [
+  { value: "ExchangeStandard",        label: "Échange Standard" },
+  { value: "ExchangeStandardNoDeposit", label: "Échange Std sans consigne" },
+  { value: "Refurbished",             label: "Je rénove mon turbo" },
+  { value: "NewAdaptable",            label: "Neuf Adaptable" },
+  { value: "NewOriginal",             label: "Neuf Original" },
+  { value: "CartoucheChra",           label: "CHRA" },
+];
+
 interface FiltersProps {
   categories: Category[];
   activeSearch: string;
   activeCategory: string;
   activeStock: string;
+  activeCondition: string;
 }
 
-export function DashboardProductsFilters({ categories, activeSearch, activeCategory, activeStock }: FiltersProps) {
+export function DashboardProductsFilters({ categories, activeSearch, activeCategory, activeStock, activeCondition }: FiltersProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -43,8 +53,8 @@ export function DashboardProductsFilters({ categories, activeSearch, activeCateg
   };
 
   return (
-    <div className="flex items-center gap-3 mb-4">
-      <form onSubmit={handleSearchSubmit} className="relative flex-1 max-w-sm">
+    <div className="flex flex-wrap items-center gap-3 mb-4">
+      <form onSubmit={handleSearchSubmit} className="relative flex-1 min-w-48 max-w-sm">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
         <input
           type="text"
@@ -54,6 +64,16 @@ export function DashboardProductsFilters({ categories, activeSearch, activeCateg
           className="w-full h-9 pl-9 pr-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]"
         />
       </form>
+      <select
+        value={activeCondition}
+        onChange={(e) => updateFilter("condition", e.target.value)}
+        className="h-9 px-3 rounded-lg border border-gray-200 text-sm bg-white"
+      >
+        <option value="">Tout état</option>
+        {CONDITIONS.map((c) => (
+          <option key={c.value} value={c.value}>{c.label}</option>
+        ))}
+      </select>
       <select
         value={activeCategory}
         onChange={(e) => updateFilter("category", e.target.value)}
@@ -92,10 +112,13 @@ export function ProductsTable() {
     p.set("PageSize", String(PAGE_SIZE));
     p.set("Page", String(currentPage));
     p.set("IncludeInactive", "true");
+    p.set("Sort", "newest");
     const search = searchParams.get("search");
     if (search) p.set("Search", search);
     const category = searchParams.get("category");
     if (category) p.set("CategorySlug", category);
+    const condition = searchParams.get("condition");
+    if (condition) p.set("Condition", condition);
     const stock = searchParams.get("stock");
     if (stock === "low") p.set("LowStock", "true");
     if (stock === "out") p.set("OutOfStock", "true");

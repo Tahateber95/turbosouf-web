@@ -55,7 +55,7 @@ export default function CGVPage() {
 
         <Section title="Article 7 — Droit de rétractation">
           <p>Conformément aux articles L.221-18 et suivants du Code de la consommation, le Client dispose d'un délai de <strong>14 jours</strong> à compter de la réception du produit pour exercer son droit de rétractation, sans avoir à justifier de motifs.</p>
-          <p className="mt-2">Pour exercer ce droit, le Client doit notifier sa décision par e-mail à <strong>contact@turbo-souf.com</strong>. Le produit doit être retourné en parfait état, dans son emballage d'origine. Les frais de retour sont à la charge du Client.</p>
+          <p className="mt-2">Pour exercer ce droit, le Client doit notifier sa décision par e-mail à <strong>turbosouf.idf@gmail.com</strong>. Le produit doit être retourné en parfait état, dans son emballage d'origine. Les frais de retour sont à la charge du Client.</p>
           <p className="mt-2"><strong>Exception :</strong> Le droit de rétractation ne s'applique pas aux produits reconditionnés montés ou utilisés.</p>
         </Section>
 
@@ -80,8 +80,8 @@ export default function CGVPage() {
         <Section title="Article 12 — Contact">
           <p>Pour toute question relative aux présentes CGV :</p>
           <ul className="mt-2 space-y-1 list-disc list-inside text-gray-600">
-            <li>E-mail : <strong>contact@turbo-souf.com</strong></li>
-            <li>Adresse : 123 Rue de l'Industrie, 67000 Strasbourg, France</li>
+            <li>E-mail : <strong>turbosouf.idf@gmail.com</strong></li>
+            <li>Adresse : 1 rue Joseph et Etienne Montgolfier, 93110, Rosny-sous-Bois, FRANCE</li>
           </ul>
         </Section>
 

@@ -23,8 +23,8 @@ export default function PolitiqueConfidentialitePage() {
       <div className="mx-auto max-w-4xl px-4 py-10 space-y-6">
 
         <Section title="1. Responsable du traitement">
-          <p>Le responsable du traitement des données personnelles est <strong>TurboSouf</strong>, dont le siège social est situé au 123 Rue de l'Industrie, 67000 Strasbourg, France.</p>
-          <p className="mt-2">Contact : <strong>contact@turbo-souf.com</strong></p>
+          <p>Le responsable du traitement des données personnelles est <strong>TurboSouf</strong>, dont le siège social est situé au 1 rue Joseph et Etienne Montgolfier, 93110, Rosny-sous-Bois, FRANCE.</p>
+          <p className="mt-2">Contact : <strong>turbosouf.idf@gmail.com</strong></p>
         </Section>
 
         <Section title="2. Données collectées">
@@ -86,7 +86,7 @@ export default function PolitiqueConfidentialitePage() {
             <li><strong>Droit à la portabilité</strong> : recevoir vos données dans un format structuré</li>
             <li><strong>Droit d'opposition</strong> : vous opposer à certains traitements</li>
           </ul>
-          <p className="mt-2">Pour exercer ces droits, contactez-nous à <strong>contact@turbo-souf.com</strong>. Vous pouvez également introduire une réclamation auprès de la <a href="https://www.cnil.fr" target="_blank" rel="noopener noreferrer" className="text-[var(--ts-primary-500)] hover:underline">CNIL</a>.</p>
+          <p className="mt-2">Pour exercer ces droits, contactez-nous à <strong>turbosouf.idf@gmail.com</strong>. Vous pouvez également introduire une réclamation auprès de la <a href="https://www.cnil.fr" target="_blank" rel="noopener noreferrer" className="text-[var(--ts-primary-500)] hover:underline">CNIL</a>.</p>
         </Section>
 
         <Section title="8. Sécurité">

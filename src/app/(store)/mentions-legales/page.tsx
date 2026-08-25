@@ -25,8 +25,8 @@ export default function MentionsLegalesPage() {
         <Section title="Éditeur du site">
           <Row label="Société" value="TurboSouf" />
           <Row label="Forme juridique" value="SARL" />
-          <Row label="Siège social" value="123 Rue de l'Industrie, 67000 Strasbourg, France" />
-          <Row label="E-mail" value="contact@turbo-souf.com" />
+          <Row label="Siège social" value="1 rue Joseph et Etienne Montgolfier, 93110, Rosny-sous-Bois, FRANCE" />
+          <Row label="E-mail" value="turbosouf.idf@gmail.com" />
           <Row label="Directeur de la publication" value="TurboSouf" />
         </Section>
 
@@ -42,7 +42,7 @@ export default function MentionsLegalesPage() {
 
         <Section title="Données personnelles">
           <p>Les informations recueillies sur ce site sont traitées conformément au Règlement Général sur la Protection des Données (RGPD). Pour en savoir plus, consultez notre <Link href="/politique-confidentialite" className="text-[var(--ts-primary-500)] hover:underline">Politique de Confidentialité</Link>.</p>
-          <p className="mt-2">Vous disposez d'un droit d'accès, de rectification et de suppression de vos données en nous contactant à <strong>contact@turbo-souf.com</strong>.</p>
+          <p className="mt-2">Vous disposez d'un droit d'accès, de rectification et de suppression de vos données en nous contactant à <strong>turbosouf.idf@gmail.com</strong>.</p>
         </Section>
 
         <Section title="Cookies">

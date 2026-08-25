@@ -95,14 +95,6 @@ export function ProductCard({ product }: { product: ProductListItem }) {
           </div>
         )}
 
-        {/* Stock indicator */}
-        {product.stockQuantity > 0 && product.stockQuantity <= 5 && (
-          <div className="absolute bottom-2 right-2">
-            <span className="text-[9px] font-semibold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded shadow-sm">
-              Plus que {product.stockQuantity} en stock
-            </span>
-          </div>
-        )}
       </div>
 
       {/* Product info */}
