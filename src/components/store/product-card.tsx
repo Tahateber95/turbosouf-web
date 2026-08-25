@@ -13,7 +13,7 @@ function conditionStyle(condition: string): string {
     case "ExchangeStandard":
       return "bg-blue-50 text-blue-700 border-blue-200";
     case "Refurbished":
-      return "bg-[#E85D26]/10 text-[#E85D26] border-[#E85D26]/25";
+      return "bg-orange-50 text-[#E85D26] border-orange-200";
     case "NewAdaptable":
       return "bg-emerald-50 text-emerald-700 border-emerald-200";
     case "NewOriginal":
