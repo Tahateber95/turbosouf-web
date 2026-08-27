@@ -261,7 +261,7 @@ export function VehicleFinder() {
               <option value="">{loadingEngines ? "Chargement..." : "Motorisation"}</option>
               {engines.map((e) => (
                 <option key={e.id} value={e.id}>
-                  {e.name}{e.powerCV ? ` (${e.powerCV}cv)` : ""}
+                  {e.name}{e.powerCV ? ` (${e.powerCV} CV)` : ""}{e.engineCode ? ` — ${e.engineCode}` : ""}
                 </option>
               ))}
             </select>
