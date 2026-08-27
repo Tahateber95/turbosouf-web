@@ -30,7 +30,6 @@ export function StripeProvider({
           },
         },
         locale: "fr",
-        disableLink: true,
       }}
     >
       {children}
