@@ -19,17 +19,11 @@ function formatDate(iso: string) {
 const ROLE_LABELS: Record<string, string> = {
   Admin: "Admin",
   SuperAdmin: "Super Admin",
-  Technician: "Technicien",
-  CustomerB2C: "Client B2C",
-  CustomerB2B: "Client B2B",
 };
 
 const ROLE_COLORS: Record<string, string> = {
   Admin: "bg-red-100 text-red-700",
   SuperAdmin: "bg-purple-100 text-purple-700",
-  Technician: "bg-blue-100 text-blue-700",
-  CustomerB2C: "bg-gray-100 text-gray-600",
-  CustomerB2B: "bg-indigo-100 text-indigo-700",
 };
 
 /* ── Create User Modal ─────────────────────────────────────────────────────── */
@@ -43,7 +37,7 @@ function CreateUserModal({
   const [form, setForm] = useState<AdminCreateUserRequest>({
     fullName: "",
     email: "",
-    role: "CustomerB2C",
+    role: "Admin",
     password: "",
   });
   const [loading, setLoading] = useState(false);
@@ -115,9 +109,6 @@ function CreateUserModal({
               className="w-full h-9 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[var(--ts-primary-500)]"
             >
               <option value="Admin">Admin</option>
-              <option value="Technician">Technicien</option>
-              <option value="CustomerB2C">Client B2C</option>
-              <option value="CustomerB2B">Client B2B</option>
             </select>
           </div>
 
@@ -260,9 +251,7 @@ export default function UsersPage() {
         >
           <option value="">Tous les rôles</option>
           <option value="Admin">Admin</option>
-          <option value="Technician">Technicien</option>
-          <option value="CustomerB2C">Client B2C</option>
-          <option value="CustomerB2B">Client B2B</option>
+          <option value="SuperAdmin">Super Admin</option>
         </select>
       </div>
 
@@ -284,7 +273,6 @@ export default function UsersPage() {
                     <th className="px-5 py-3 font-medium">Utilisateur</th>
                     <th className="px-5 py-3 font-medium">Rôle</th>
                     <th className="px-5 py-3 font-medium">Statut</th>
-                    <th className="px-5 py-3 font-medium text-center">Commandes</th>
                     <th className="px-5 py-3 font-medium">Inscrit le</th>
                     <th className="px-5 py-3 font-medium text-right">Actions</th>
                   </tr>
@@ -313,7 +301,6 @@ export default function UsersPage() {
                           {u.isActive ? "Actif" : "Inactif"}
                         </span>
                       </td>
-                      <td className="px-5 py-3 text-center text-gray-600">{u.orderCount}</td>
                       <td className="px-5 py-3 text-gray-500">{formatDate(u.createdAt)}</td>
                       <td className="px-5 py-3">
                         <div className="flex items-center justify-end gap-2">
@@ -334,8 +321,8 @@ export default function UsersPage() {
                           </button>
                           <button
                             onClick={() => handleDelete(u)}
-                            disabled={actionLoading === u.id || u.orderCount > 0}
-                            title={u.orderCount > 0 ? "Impossible : l'utilisateur a des commandes" : "Supprimer le compte"}
+                            disabled={actionLoading === u.id}
+                            title="Supprimer le compte"
                             className="inline-flex items-center gap-1 h-7 px-2.5 rounded-md border border-red-100 text-xs text-red-500 hover:bg-red-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                           >
                             <Trash2 className="h-3 w-3" />
@@ -347,7 +334,7 @@ export default function UsersPage() {
                   ))}
                   {users.length === 0 && (
                     <tr>
-                      <td colSpan={6} className="px-5 py-8 text-center text-gray-500">Aucun utilisateur trouvé.</td>
+                      <td colSpan={5} className="px-5 py-8 text-center text-gray-500">Aucun utilisateur trouvé.</td>
                     </tr>
                   )}
                 </tbody>
