@@ -390,6 +390,47 @@ export async function downloadShipmentLabel(orderNumber: string, format = "PDF")
   URL.revokeObjectURL(url);
 }
 
+// Users (admin management)
+export interface AdminUserListItem {
+  id: string;
+  fullName: string;
+  email: string;
+  role: string;
+  createdAt: string;
+  isActive: boolean;
+  orderCount: number;
+}
+
+export interface AdminCreateUserRequest {
+  fullName: string;
+  email: string;
+  role: string;
+  password?: string | null;
+}
+
+export interface AdminCreateUserResponse {
+  id: string;
+  fullName: string;
+  email: string;
+  role: string;
+}
+
+export const adminGetUsers = (search = "", role = "", page = 1, pageSize = 25) => {
+  const params = new URLSearchParams({ page: String(page), pageSize: String(pageSize) });
+  if (search) params.set("search", search);
+  if (role) params.set("role", role);
+  return adminFetch<{ items: AdminUserListItem[]; totalCount: number }>(`/users?${params}`);
+};
+
+export const adminCreateUser = (data: AdminCreateUserRequest) =>
+  adminFetch<AdminCreateUserResponse>("/users", { method: "POST", body: JSON.stringify(data) });
+
+export const adminToggleUserActive = (id: string, isActive: boolean) =>
+  adminFetch<null>(`/users/${id}/active`, { method: "PATCH", body: JSON.stringify({ isActive }) });
+
+export const adminDeleteUser = (id: string) =>
+  adminFetch<null>(`/users/${id}`, { method: "DELETE" });
+
 export async function downloadInvoicePdf(id: string, invoiceNumber: string): Promise<void> {
   const doFetch = (token: string) =>
     fetch(`${API}/api/v1/invoices/${id}/pdf`, {

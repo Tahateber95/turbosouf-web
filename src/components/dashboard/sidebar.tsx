@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, Package, ShoppingCart, Users, FileText,
   Wrench, FileEdit, Settings, ChevronLeft, ChevronRight, ChevronDown, LogOut,
-  BarChart3, Car, Layers,
+  BarChart3, Car, Layers, UserCog,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -22,6 +22,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/dashboard/catalogue", icon: Layers, label: "Catalogue" },
   { href: "/dashboard/commandes", icon: ShoppingCart, label: "Commandes" },
   { href: "/dashboard/clients", icon: Users, label: "Clients" },
+  { href: "/dashboard/utilisateurs", icon: UserCog, label: "Utilisateurs" },
   { href: "/dashboard/factures", icon: FileText, label: "Factures" },
   { href: "/dashboard/services", icon: Wrench, label: "Services Atelier" },
   {

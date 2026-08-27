@@ -84,10 +84,10 @@ export default function ServicesPage() {
                 </div>
                 <div className="flex flex-col gap-3 mt-auto">
                   <span className="text-base font-bold text-[var(--ts-primary-900)] whitespace-nowrap">{service.price}</span>
-                  <Button variant="outline" size="sm" className="text-xs w-full justify-between">
+                  <Link href="/contact" className="inline-flex items-center justify-between w-full h-9 px-3 text-xs border border-gray-200 rounded-md hover:bg-gray-50 transition-colors font-medium text-gray-700">
                     Demander un devis
                     <ChevronRight className="h-3 w-3" />
-                  </Button>
+                  </Link>
                 </div>
               </div>
             </div>

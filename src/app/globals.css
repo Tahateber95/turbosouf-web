@@ -264,3 +264,9 @@
   animation: pulse-glow 6s ease-in-out infinite;
   animation-delay: 2s;
 }
+
+/* Hide Stripe "Powered by Stripe" floating badge */
+#stripe-badge-container,
+.stripe-badge-container {
+  display: none !important;
+}
