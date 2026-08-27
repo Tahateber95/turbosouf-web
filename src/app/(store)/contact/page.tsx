@@ -1,9 +1,6 @@
 import { Phone, Mail, MapPin, Clock, MessageCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import Link from "next/link";
+import ContactForm from "@/components/store/contact-form";
 
 interface SiteConfig {
   phone: string;
@@ -99,44 +96,7 @@ export default async function ContactPage() {
 
           {/* Contact form */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-xl border border-gray-100 p-6">
-              <h2 className="text-lg font-bold text-gray-900 mb-4">Envoyez-nous un message</h2>
-              <form className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="name" className="text-sm font-medium text-gray-700">Nom complet</Label>
-                    <Input id="name" placeholder="Jean Dupont" className="mt-1" />
-                  </div>
-                  <div>
-                    <Label htmlFor="email" className="text-sm font-medium text-gray-700">Email</Label>
-                    <Input id="email" type="email" placeholder="votre@email.com" className="mt-1" />
-                  </div>
-                </div>
-                <div>
-                  <Label htmlFor="phone" className="text-sm font-medium text-gray-700">Telephone (optionnel)</Label>
-                  <Input id="phone" type="tel" placeholder="+33 6 12 34 56 78" className="mt-1" />
-                </div>
-                <div>
-                  <Label htmlFor="subject" className="text-sm font-medium text-gray-700">Sujet</Label>
-                  <select id="subject" className="mt-1 w-full h-9 px-3 rounded-md border border-input bg-background text-sm">
-                    <option value="">Selectionnez un sujet</option>
-                    <option>Demande de devis</option>
-                    <option>Question sur un produit</option>
-                    <option>Suivi de commande</option>
-                    <option>Retour / Consigne</option>
-                    <option>Service atelier</option>
-                    <option>Autre</option>
-                  </select>
-                </div>
-                <div>
-                  <Label htmlFor="message" className="text-sm font-medium text-gray-700">Message</Label>
-                  <Textarea id="message" placeholder="Decrivez votre demande..." rows={5} className="mt-1" />
-                </div>
-                <Button className="h-11 px-6 bg-[var(--ts-primary-500)] hover:bg-[var(--ts-primary-600)] text-white font-semibold">
-                  Envoyer le message
-                </Button>
-              </form>
-            </div>
+            <ContactForm />
           </div>
         </div>
       </div>
