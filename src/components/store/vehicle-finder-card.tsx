@@ -132,7 +132,7 @@ export function VehicleFinderHeroSearch({ locale: localeProp }: { locale?: Local
             <option value="">{loadingEngines ? t.search.loading : t.search.select}</option>
             {engines.map(e => (
               <option key={e.id} value={e.id}>
-                {e.name}{e.powerCV ? ` (${e.powerCV} CV)` : ""}{e.engineCode ? ` — ${e.engineCode}` : ""}
+                {e.name}{e.powerCV ? ` (${e.powerCV} CV)` : ""}
               </option>
             ))}
           </select>
