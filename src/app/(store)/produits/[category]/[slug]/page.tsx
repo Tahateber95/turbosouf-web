@@ -163,11 +163,50 @@ export default async function ProductDetailPage({
         {/* Description */}
         {product.description && (
           <div className="mt-12 bg-white rounded-xl border border-gray-100 p-6 lg:p-8">
-            <h2 className="text-lg font-bold text-gray-900 mb-4">Description detaillee</h2>
-            <div
-              className="prose prose-sm prose-gray max-w-none"
-              dangerouslySetInnerHTML={{ __html: product.description }}
-            />
+            <h2 className="text-lg font-bold text-gray-900 mb-5">Description détaillée</h2>
+            {/<[a-z][\s\S]*>/i.test(product.description) ? (
+              // HTML content — render with prose
+              <div
+                className="prose prose-sm prose-gray max-w-none prose-p:leading-relaxed prose-p:text-gray-600"
+                dangerouslySetInnerHTML={{ __html: product.description }}
+              />
+            ) : (
+              // Plain text — split into paragraphs and detect feature lists
+              <div className="space-y-4 text-sm text-gray-600 leading-relaxed">
+                {product.description
+                  .split(/\n{2,}|\r\n{2,}/)
+                  .map((block) => block.trim())
+                  .filter(Boolean)
+                  .map((block, i) => {
+                    // Detect "Key : value item1 item2 ..." pattern — render as titled list
+                    const colonIdx = block.indexOf(" : ");
+                    if (colonIdx !== -1 && colonIdx < 60) {
+                      const title = block.slice(0, colonIdx);
+                      const rest = block.slice(colonIdx + 3).trim();
+                      // Split items: sentences ending with capital letter start (heuristic)
+                      const items = rest
+                        .split(/(?<=[a-zéèêëàâùûüôî\d])\s+(?=[A-ZÉÈÊËÀÂÙÛÜÔÎ])/)
+                        .map((s) => s.trim())
+                        .filter(Boolean);
+                      return (
+                        <div key={i}>
+                          <p className="font-semibold text-gray-800 mb-2">{title} :</p>
+                          <ul className="space-y-1.5 pl-4">
+                            {items.map((item, j) => (
+                              <li key={j} className="flex items-start gap-2">
+                                <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--ts-primary-500)] shrink-0" />
+                                <span>{item}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      );
+                    }
+                    // Plain paragraph
+                    return <p key={i}>{block}</p>;
+                  })}
+              </div>
+            )}
           </div>
         )}
       </div>
