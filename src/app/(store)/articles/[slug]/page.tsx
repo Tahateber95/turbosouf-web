@@ -65,21 +65,25 @@ export default async function ArticleDetailPage({ params }: { params: Promise<{ 
           <p className="text-lg text-[#6B6B6B] font-medium mb-8 leading-relaxed">{post.excerpt}</p>
 
           {/<[a-z][\s\S]*>/i.test(post.content) ? (
-            // Proper HTML from the rich-text editor
+            // HTML from the rich-text editor — explicit selectors (same as editor preview)
             <div
-              className="prose prose-gray max-w-none
-                prose-headings:font-black prose-headings:text-[#0A0A0A]
-                prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-3
-                prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-2
-                prose-p:leading-relaxed prose-p:text-[#3A3A3A]
-                prose-a:text-[#E85D26] prose-strong:text-[#0A0A0A]
-                prose-ul:list-disc prose-ol:list-decimal
-                prose-blockquote:border-l-4 prose-blockquote:border-[#E85D26] prose-blockquote:italic prose-blockquote:text-gray-600"
+              className="text-sm text-[#3A3A3A] leading-relaxed
+                [&_h2]:text-2xl [&_h2]:font-black [&_h2]:text-[#0A0A0A] [&_h2]:mt-8 [&_h2]:mb-3
+                [&_h3]:text-xl [&_h3]:font-bold [&_h3]:text-[#0A0A0A] [&_h3]:mt-6 [&_h3]:mb-2
+                [&_p]:mb-4 [&_p]:leading-relaxed
+                [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:mb-4
+                [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:mb-4
+                [&_li]:mb-1.5
+                [&_strong]:font-bold [&_strong]:text-[#0A0A0A]
+                [&_em]:italic
+                [&_a]:text-[#E85D26] [&_a]:underline
+                [&_blockquote]:border-l-4 [&_blockquote]:border-[#E85D26] [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-gray-600 [&_blockquote]:my-4
+                [&_hr]:border-gray-200 [&_hr]:my-6"
               dangerouslySetInnerHTML={{ __html: post.content }}
             />
           ) : (
             // Plain text seeded directly into DB — convert newlines to paragraphs
-            <div className="prose prose-gray max-w-none prose-p:leading-relaxed prose-p:text-[#3A3A3A]">
+            <div className="text-sm text-[#3A3A3A] leading-relaxed space-y-4">
               {post.content
                 .split(/\n{2,}/)
                 .map((block) => block.trim())
