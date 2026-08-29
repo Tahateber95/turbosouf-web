@@ -64,10 +64,31 @@ export default async function ArticleDetailPage({ params }: { params: Promise<{ 
 
           <p className="text-lg text-[#6B6B6B] font-medium mb-8 leading-relaxed">{post.excerpt}</p>
 
-          <div
-            className="prose prose-gray max-w-none prose-headings:font-black prose-headings:text-[#0A0A0A] prose-a:text-[#E85D26] prose-strong:text-[#0A0A0A]"
-            dangerouslySetInnerHTML={{ __html: post.content }}
-          />
+          {/<[a-z][\s\S]*>/i.test(post.content) ? (
+            // Proper HTML from the rich-text editor
+            <div
+              className="prose prose-gray max-w-none
+                prose-headings:font-black prose-headings:text-[#0A0A0A]
+                prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-3
+                prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-2
+                prose-p:leading-relaxed prose-p:text-[#3A3A3A]
+                prose-a:text-[#E85D26] prose-strong:text-[#0A0A0A]
+                prose-ul:list-disc prose-ol:list-decimal
+                prose-blockquote:border-l-4 prose-blockquote:border-[#E85D26] prose-blockquote:italic prose-blockquote:text-gray-600"
+              dangerouslySetInnerHTML={{ __html: post.content }}
+            />
+          ) : (
+            // Plain text seeded directly into DB — convert newlines to paragraphs
+            <div className="prose prose-gray max-w-none prose-p:leading-relaxed prose-p:text-[#3A3A3A]">
+              {post.content
+                .split(/\n{2,}/)
+                .map((block) => block.trim())
+                .filter(Boolean)
+                .map((block, i) => (
+                  <p key={i} style={{ whiteSpace: "pre-line" }}>{block}</p>
+                ))}
+            </div>
+          )}
         </article>
 
         <div className="mt-8">
