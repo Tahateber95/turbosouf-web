@@ -4,7 +4,7 @@ import { Store, Truck, CreditCard, Users, Database, Mail, Phone } from "lucide-r
 const SETTINGS_SECTIONS = [
   { icon: Phone, label: "Informations de contact", desc: "Telephone, email, adresse, horaires", href: "/dashboard/parametres/contact" },
   { icon: Store, label: "Informations boutique", desc: "Nom, SIRET, mentions legales", href: "#" },
-  { icon: Truck, label: "Livraison", desc: "Methodes de livraison et tarifs", href: "#" },
+  { icon: Truck, label: "Livraison", desc: "Methodes de livraison et tarifs", href: "/dashboard/parametres/livraison" },
   { icon: CreditCard, label: "Paiement", desc: "Configuration Stripe, PayPal, Alma", href: "#" },
   { icon: Database, label: "Sage", desc: "Connexion et parametres de synchronisation", href: "#" },
   { icon: Mail, label: "Emails", desc: "Templates d'emails transactionnels", href: "#" },

@@ -237,6 +237,31 @@ export const adminGetDashboardStats = () =>
 export type RevenueChartPoint = { date: string; revenue: number; orderCount: number };
 export type TopProductItem = { productId: string; name: string; quantitySold: number; revenue: number };
 
+export type ShippingMethod = {
+  id: string;
+  name: string;
+  type: "Standard" | "Express" | "RelayPoint";
+  priceHT: number;
+  priceTTC: number;
+  tvaRate: number;
+  estimatedDelivery: string | null;
+  freeShippingThreshold: number | null;
+  isActive: boolean;
+  sortOrder: number;
+};
+
+export const adminGetShippingMethods = () =>
+  adminFetch<ShippingMethod[]>("/shipping-methods");
+
+export const adminUpdateShippingMethod = (id: string, data: {
+  name: string;
+  priceHT: number;
+  tvaRate: number;
+  estimatedDelivery: string | null;
+  freeShippingThreshold: number | null;
+  isActive: boolean;
+}) => adminFetch<ShippingMethod>(`/shipping-methods/${id}`, { method: "PUT", body: JSON.stringify(data) });
+
 export const adminGetRevenue = (period: "7d" | "30d" | "12m") =>
   adminFetch<RevenueChartPoint[]>(`/analytics/revenue?period=${period}`);
 
