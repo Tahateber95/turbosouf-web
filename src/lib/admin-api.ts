@@ -234,6 +234,15 @@ export const adminGetDashboardStats = () =>
     totalCustomers: number;
   }>("/analytics/dashboard");
 
+export type RevenueChartPoint = { date: string; revenue: number; orderCount: number };
+export type TopProductItem = { productId: string; name: string; quantitySold: number; revenue: number };
+
+export const adminGetRevenue = (period: "7d" | "30d" | "12m") =>
+  adminFetch<RevenueChartPoint[]>(`/analytics/revenue?period=${period}`);
+
+export const adminGetTopProducts = (days = 30) =>
+  adminFetch<TopProductItem[]>(`/analytics/top-products?days=${days}`);
+
 export const adminUpdateOrderStatus = (id: string, status: string) =>
   adminFetch<void>(`/orders/${id}/status`, { method: "PATCH", body: JSON.stringify({ status }) });
 
