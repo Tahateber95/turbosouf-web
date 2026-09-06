@@ -105,8 +105,8 @@ export default function ReportsPage() {
                     width={70}
                   />
                   <Tooltip
-                    formatter={(value: number) =>
-                      new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(value)
+                    formatter={(value) =>
+                      new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(Number(value))
                     }
                     labelStyle={{ fontSize: 12 }}
                     contentStyle={{ fontSize: 12, borderRadius: 8, border: "1px solid #e5e7eb" }}
