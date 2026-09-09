@@ -67,6 +67,7 @@ export function useCart() {
               ? {
                   ...i,
                   quantity: Math.min(i.quantity + quantity, i.stockQuantity),
+                  depositAmount: item.depositAmount,
                   selectedAddOns: item.selectedAddOns,
                 }
               : i
