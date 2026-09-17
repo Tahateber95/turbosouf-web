@@ -534,3 +534,48 @@ export const createCheckoutSession = (data: CheckoutRequest, token: string) =>
     body: JSON.stringify(data),
     token,
   });
+
+// Relay points
+export interface RelayPoint {
+  id: string;
+  name: string;
+  address1: string;
+  address2?: string;
+  postalCode: string;
+  city: string;
+  country: string;
+  latitude: number;
+  longitude: number;
+  distanceMetres: number;
+  accessiblePRM: boolean;
+  openingHours: { day: string; hours: string }[];
+}
+
+export interface RelaySearchResponse {
+  points: RelayPoint[];
+  qualityCode: number;
+  lowQualityWarning?: string;
+}
+
+export const searchRelays = (zipCode: string, city: string) =>
+  api<RelaySearchResponse>(`/relais?zipCode=${encodeURIComponent(zipCode)}&city=${encodeURIComponent(city)}`);
+
+export const selectRelay = (orderNumber: string, relay: RelayPoint) =>
+  api<{ message: string }>("/relais/select", {
+    method: "POST",
+    body: JSON.stringify({
+      orderId: orderNumber,
+      relayId: relay.id,
+      name: relay.name,
+      address1: relay.address1,
+      address2: relay.address2 ?? null,
+      postalCode: relay.postalCode,
+      city: relay.city,
+      country: relay.country,
+      latitude: relay.latitude,
+      longitude: relay.longitude,
+      distanceMetres: relay.distanceMetres,
+      accessiblePRM: relay.accessiblePRM,
+      hoursJson: JSON.stringify(relay.openingHours),
+    }),
+  });

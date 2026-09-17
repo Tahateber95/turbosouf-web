@@ -10,7 +10,7 @@ import {
 } from "@stripe/react-stripe-js";
 import { useCartContext } from "@/lib/cart-context";
 import { useAuth } from "@/lib/auth-context";
-import { createCheckoutSession } from "@/lib/api";
+import { createCheckoutSession, searchRelays, selectRelay, RelayPoint } from "@/lib/api";
 import { StripeProvider } from "@/components/store/stripe-provider";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -262,6 +262,13 @@ export default function CheckoutPage() {
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [orderNumber, setOrderNumber] = useState<string | null>(null);
 
+  // Relay point state
+  const [relayResults, setRelayResults] = useState<RelayPoint[]>([]);
+  const [selectedRelay, setSelectedRelay] = useState<RelayPoint | null>(null);
+  const [relaySearchLoading, setRelaySearchLoading] = useState(false);
+  const [relaySearchError, setRelaySearchError] = useState<string | null>(null);
+  const [relaySearched, setRelaySearched] = useState(false);
+
   const [form, setForm] = useState<CheckoutForm>({
     email: user?.email || "",
     fullName: user?.fullName || "",
@@ -286,6 +293,28 @@ export default function CheckoutPage() {
   const update = (field: string, value: string | boolean) =>
     setForm((prev) => ({ ...prev, [field]: value }));
 
+  const handleRelaySearch = async () => {
+    if (!form.shippingPostalCode || !form.shippingCity) {
+      setRelaySearchError("Renseignez votre code postal et votre ville pour rechercher un point relais.");
+      return;
+    }
+    setRelaySearchLoading(true);
+    setRelaySearchError(null);
+    setRelayResults([]);
+    setSelectedRelay(null);
+    setRelaySearched(false);
+    try {
+      const res = await searchRelays(form.shippingPostalCode, form.shippingCity);
+      setRelayResults(res.points);
+      setRelaySearched(true);
+      if (res.points.length === 0) setRelaySearchError("Aucun point relais trouvé près de cette adresse.");
+    } catch {
+      setRelaySearchError("Erreur lors de la recherche. Vérifiez votre code postal et réessayez.");
+    } finally {
+      setRelaySearchLoading(false);
+    }
+  };
+
   const shipping = subtotalTTC >= 150 ? 0 : form.shippingType === "RelayPoint" ? 4.9 : 6.9;
   const shippingTTC = shipping * 1.2;
   const grandTotal = subtotalTTC + totalDeposit + shippingTTC;
@@ -301,6 +330,11 @@ export default function CheckoutPage() {
   const handleProceedToPayment = async () => {
     if (!token) {
       setError("Veuillez vous connecter pour continuer.");
+      return;
+    }
+
+    if (form.shippingType === "RelayPoint" && !selectedRelay) {
+      setError("Veuillez sélectionner un point relais avant de continuer.");
       return;
     }
 
@@ -338,6 +372,11 @@ export default function CheckoutPage() {
         },
         token
       );
+
+      // Link the selected relay to the order right after creation
+      if (form.shippingType === "RelayPoint" && selectedRelay) {
+        await selectRelay(result.orderNumber, selectedRelay);
+      }
 
       setClientSecret(result.clientSecret);
       setOrderNumber(result.orderNumber);
@@ -507,7 +546,13 @@ export default function CheckoutPage() {
                               name="shipping"
                               value={method.value}
                               checked={form.shippingType === method.value}
-                              onChange={(e) => update("shippingType", e.target.value)}
+                              onChange={(e) => {
+                                update("shippingType", e.target.value);
+                                setSelectedRelay(null);
+                                setRelayResults([]);
+                                setRelaySearched(false);
+                                setRelaySearchError(null);
+                              }}
                               className="text-[var(--ts-primary-500)]"
                             />
                             <div>
@@ -520,6 +565,67 @@ export default function CheckoutPage() {
                       ))}
                     </div>
                   </div>
+
+                  {/* Relay point picker */}
+                  {form.shippingType === "RelayPoint" && (
+                    <div className="border border-gray-200 rounded-lg p-4 space-y-3">
+                      <p className="text-sm font-semibold text-gray-900">Choisir votre point relais</p>
+                      <p className="text-xs text-gray-500">
+                        La recherche utilise le code postal et la ville renseignés ci-dessus.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={handleRelaySearch}
+                        disabled={relaySearchLoading}
+                        className="h-9 px-4 text-sm font-medium bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50"
+                      >
+                        {relaySearchLoading && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                        {relaySearchLoading ? "Recherche..." : "Rechercher les points relais"}
+                      </button>
+
+                      {relaySearchError && (
+                        <p className="text-xs text-red-600 flex items-center gap-1">
+                          <AlertCircle className="h-3.5 w-3.5 shrink-0" /> {relaySearchError}
+                        </p>
+                      )}
+
+                      {relaySearched && relayResults.length > 0 && (
+                        <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
+                          {relayResults.map((relay) => (
+                            <label
+                              key={relay.id}
+                              className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-all ${
+                                selectedRelay?.id === relay.id
+                                  ? "border-[var(--ts-primary-500)] bg-[var(--ts-primary-500)]/5"
+                                  : "border-gray-200 hover:border-gray-300"
+                              }`}
+                            >
+                              <input
+                                type="radio"
+                                name="relay"
+                                checked={selectedRelay?.id === relay.id}
+                                onChange={() => setSelectedRelay(relay)}
+                                className="mt-0.5 text-[var(--ts-primary-500)]"
+                              />
+                              <div className="min-w-0">
+                                <p className="text-sm font-medium text-gray-900">{relay.name}</p>
+                                <p className="text-xs text-gray-500">{relay.address1}{relay.address2 ? `, ${relay.address2}` : ""}</p>
+                                <p className="text-xs text-gray-500">{relay.postalCode} {relay.city}</p>
+                                <p className="text-xs text-gray-400 mt-0.5">{(relay.distanceMetres / 1000).toFixed(1)} km</p>
+                              </div>
+                            </label>
+                          ))}
+                        </div>
+                      )}
+
+                      {selectedRelay && (
+                        <div className="flex items-center gap-2 text-xs text-emerald-700 bg-emerald-50 rounded-lg px-3 py-2">
+                          <Check className="h-3.5 w-3.5 shrink-0" />
+                          Point relais sélectionné : <span className="font-semibold">{selectedRelay.name}</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
 
                   {/* Customer note */}
                   <div>
