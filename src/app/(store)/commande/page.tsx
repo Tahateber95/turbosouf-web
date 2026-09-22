@@ -333,6 +333,11 @@ export default function CheckoutPage() {
       return;
     }
 
+    if (!form.shippingFullName.trim() || !form.shippingStreet.trim() || !form.shippingPostalCode.trim() || !form.shippingCity.trim()) {
+      setError("Veuillez remplir tous les champs d'adresse obligatoires (nom, adresse, code postal, ville).");
+      return;
+    }
+
     if (form.shippingType === "RelayPoint" && !selectedRelay) {
       setError("Veuillez sélectionner un point relais avant de continuer.");
       return;
