@@ -255,7 +255,7 @@ interface CheckoutForm {
 /* ------------------------------------------------------------------ */
 export default function CheckoutPage() {
   const { items, itemCount, subtotalHT, subtotalTTC, totalDeposit, clearCart } = useCartContext();
-  const { user, token } = useAuth();
+  const { user, token, logout } = useAuth();
   const router = useRouter();
   const [step, setStep] = useState<Step>("info");
   const [loading, setLoading] = useState(false);
@@ -389,6 +389,7 @@ export default function CheckoutPage() {
       setStep("payment");
     } catch (err) {
       if (err instanceof Error && err.message === "SESSION_EXPIRED") {
+        logout();
         router.push("/connexion?redirect=/commande");
         return;
       }

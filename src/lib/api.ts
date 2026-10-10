@@ -7,30 +7,48 @@ type FetchOptions = RequestInit & {
   token?: string;
 };
 
+async function parseResponse<T>(res: Response): Promise<T> {
+  const text = await res.text();
+  const json = text ? JSON.parse(text) : null;
+  if (!res.ok) {
+    throw new Error(json?.error?.message || "An error occurred");
+  }
+  return json.data;
+}
+
 export async function api<T>(endpoint: string, options: FetchOptions = {}): Promise<T> {
   const { token, headers, ...rest } = options;
 
+  const buildHeaders = (t?: string) => ({
+    "Content-Type": "application/json",
+    ...(t ? { Authorization: `Bearer ${t}` } : {}),
+    ...headers,
+  });
+
   const res = await fetch(`${API_URL}/api/v1${endpoint}`, {
-    headers: {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...headers,
-    },
+    headers: buildHeaders(token),
     ...rest,
   });
 
   if (res.status === 401) {
+    // Lazily import to avoid circular dependency at module load time
+    const { getSilentRefresh } = await import("@/lib/auth-context");
+    const refresh = getSilentRefresh();
+    if (refresh) {
+      const newToken = await refresh();
+      if (newToken) {
+        const retryRes = await fetch(`${API_URL}/api/v1${endpoint}`, {
+          headers: buildHeaders(newToken),
+          ...rest,
+        });
+        if (retryRes.status === 401) throw new Error("SESSION_EXPIRED");
+        return parseResponse<T>(retryRes);
+      }
+    }
     throw new Error("SESSION_EXPIRED");
   }
 
-  const text = await res.text();
-  const json = text ? JSON.parse(text) : null;
-
-  if (!res.ok) {
-    throw new Error(json?.error?.message || "An error occurred");
-  }
-
-  return json.data;
+  return parseResponse<T>(res);
 }
 
 // Types matching the API DTOs

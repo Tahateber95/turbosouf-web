@@ -48,6 +48,27 @@ const TOKEN_KEY = "turbosouf_token";
 const REFRESH_KEY = "turbosouf_refresh";
 const USER_KEY = "turbosouf_user";
 
+// ── JWT helpers ───────────────────────────────────────────────────────────────
+
+function isTokenExpired(token: string): boolean {
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    // exp is in seconds; subtract 30s buffer to refresh slightly early
+    return Date.now() / 1000 > (payload.exp ?? 0) - 30;
+  } catch {
+    return true;
+  }
+}
+
+// ── Module-level refresh handle (used by api.ts) ──────────────────────────────
+
+let _silentRefresh: (() => Promise<string | null>) | null = null;
+export function getSilentRefresh() {
+  return _silentRefresh;
+}
+
+// ── Provider ──────────────────────────────────────────────────────────────────
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AuthState>({
     user: null,
@@ -55,31 +76,80 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isLoading: true,
   });
 
-  // Load from localStorage on mount
+  const logout = useCallback(() => {
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(REFRESH_KEY);
+    localStorage.removeItem(USER_KEY);
+    setState({ user: null, token: null, isLoading: false });
+  }, []);
+
+  // Attempts a token refresh. Returns new access token or null.
+  const doRefresh = useCallback(async (): Promise<string | null> => {
+    const storedRefresh = localStorage.getItem(REFRESH_KEY);
+    if (!storedRefresh) return null;
+    try {
+      const res = await fetch(`${API}/api/v1/auth/refresh`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ refreshToken: storedRefresh }),
+      });
+      if (!res.ok) {
+        logout();
+        return null;
+      }
+      const json = await res.json();
+      const { accessToken, refreshToken: newRefresh } = json.data;
+      localStorage.setItem(TOKEN_KEY, accessToken);
+      if (newRefresh) localStorage.setItem(REFRESH_KEY, newRefresh);
+      setState((prev) => ({ ...prev, token: accessToken }));
+      return accessToken;
+    } catch {
+      return null;
+    }
+  }, [logout]);
+
+  // Register doRefresh as the module-level handle so api.ts can use it
   useEffect(() => {
-    const load = () => {
+    _silentRefresh = doRefresh;
+    return () => { _silentRefresh = null; };
+  }, [doRefresh]);
+
+  // Load auth state from localStorage on mount, refreshing if token is expired
+  useEffect(() => {
+    const load = async () => {
       const token = localStorage.getItem(TOKEN_KEY);
       const userStr = localStorage.getItem(USER_KEY);
-      if (token && userStr) {
-        try {
-          const user = JSON.parse(userStr);
-          setState({ user, token, isLoading: false });
-        } catch {
-          localStorage.removeItem(TOKEN_KEY);
-          localStorage.removeItem(USER_KEY);
+
+      if (!token || !userStr) {
+        setState({ user: null, token: null, isLoading: false });
+        return;
+      }
+
+      let user: User;
+      try {
+        user = JSON.parse(userStr);
+      } catch {
+        logout();
+        return;
+      }
+
+      if (isTokenExpired(token)) {
+        const newToken = await doRefresh();
+        if (newToken) {
+          setState({ user, token: newToken, isLoading: false });
+        } else {
+          // refresh failed — user must re-login; logout() already called inside doRefresh
           setState({ user: null, token: null, isLoading: false });
         }
       } else {
-        setState({ user: null, token: null, isLoading: false });
+        setState({ user, token, isLoading: false });
       }
     };
 
     load();
-
-    // Sync state when adminFetch silently refreshes the token
     window.addEventListener("storage", load);
     return () => window.removeEventListener("storage", load);
-  }, []);
+  }, [doRefresh, logout]);
 
   const saveAuth = useCallback((token: string, refreshToken: string, user: User) => {
     localStorage.setItem(TOKEN_KEY, token);
@@ -125,13 +195,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return { success: false, error: "Erreur réseau. Veuillez réessayer." };
     }
   }, [saveAuth]);
-
-  const logout = useCallback(() => {
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(REFRESH_KEY);
-    localStorage.removeItem(USER_KEY);
-    setState({ user: null, token: null, isLoading: false });
-  }, []);
 
   const updateProfile = useCallback(async (data: { fullName?: string; phone?: string }) => {
     if (!state.token) return { success: false, error: "Non connecté" };
