@@ -388,10 +388,10 @@ export default function CheckoutPage() {
       setStep("payment");
     } catch (err) {
       if (err instanceof Error && err.message === "SESSION_EXPIRED") {
-        setError("Votre session a expiré. Veuillez vous reconnecter pour continuer.");
-      } else {
-        setError(err instanceof Error ? err.message : "Erreur lors de la création de la commande.");
+        router.push("/connexion?redirect=/commande");
+        return;
       }
+      setError(err instanceof Error ? err.message : "Erreur lors de la création de la commande.");
     } finally {
       setLoading(false);
     }
