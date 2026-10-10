@@ -256,6 +256,7 @@ interface CheckoutForm {
 export default function CheckoutPage() {
   const { items, itemCount, subtotalHT, subtotalTTC, totalDeposit, clearCart } = useCartContext();
   const { user, token } = useAuth();
+  const router = useRouter();
   const [step, setStep] = useState<Step>("info");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
