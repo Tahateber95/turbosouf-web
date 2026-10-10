@@ -19,10 +19,15 @@ export async function api<T>(endpoint: string, options: FetchOptions = {}): Prom
     ...rest,
   });
 
-  const json = await res.json();
+  if (res.status === 401) {
+    throw new Error("SESSION_EXPIRED");
+  }
+
+  const text = await res.text();
+  const json = text ? JSON.parse(text) : null;
 
   if (!res.ok) {
-    throw new Error(json.error?.message || "An error occurred");
+    throw new Error(json?.error?.message || "An error occurred");
   }
 
   return json.data;

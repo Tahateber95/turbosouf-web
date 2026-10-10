@@ -387,7 +387,11 @@ export default function CheckoutPage() {
       setOrderNumber(result.orderNumber);
       setStep("payment");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erreur lors de la création de la commande.");
+      if (err instanceof Error && err.message === "SESSION_EXPIRED") {
+        setError("Votre session a expiré. Veuillez vous reconnecter pour continuer.");
+      } else {
+        setError(err instanceof Error ? err.message : "Erreur lors de la création de la commande.");
+      }
     } finally {
       setLoading(false);
     }
