@@ -498,6 +498,8 @@ export const getVehicleModels = (makeId: string) => api<VehicleModel[]>(`/vehicl
 export const getVehicleEngines = (modelId: string) => api<VehicleEngine[]>(`/vehicles/models/${modelId}/engines`);
 export const getMyOrders = (token: string) => api<OrderListItem[]>("/orders/my", { token });
 export const getMyOrderById = (id: string, token: string) => api<OrderDetail>(`/orders/my/${id}`, { token });
+export const cancelMyOrder = (id: string, token: string) =>
+  api<{ message: string }>(`/orders/my/${id}/cancel`, { method: "POST", token });
 export const getOrderById = (id: string, token: string) => api<OrderDetail>(`/orders/${id}`, { token });
 export const forgotPassword = (email: string) =>
   api<void>("/auth/forgot-password", { method: "POST", body: JSON.stringify({ email }) });
