@@ -285,30 +285,6 @@ export async function LandingPage({ locale }: { locale: Locale }) {
         </div>
       </section>
 
-      {/* ── BRAND PARTNERS — Warm canvas ──────────────────────────────────── */}
-      <section className="py-12 border-t border-[rgba(0,0,0,0.06)]" style={{ backgroundColor: "var(--ts-canvas)" }}>
-        <div className="mx-auto max-w-7xl px-4">
-          <p className="text-center text-[10px] font-bold text-[#A0A0A0] uppercase tracking-[0.2em] mb-8">
-            {t.partners}
-          </p>
-          <div className="flex flex-wrap justify-center items-center gap-8 lg:gap-14">
-            {[
-              { name: "Garrett", src: "/images/brand-garrett.png" },
-              { name: "BorgWarner", src: "/images/brand-borgwarner.png" },
-              { name: "Continental", src: "/images/brand-continental.png" },
-              { name: "Holset", src: "/images/brand-holset.png" },
-              { name: "IHI Turbo", src: "/images/brand-ihi.png" },
-              { name: "Mitsubishi", src: "/images/brand-mitsubishi.png" },
-              { name: "Toyota", src: "/images/brand-toyota.png" },
-            ].map((brand) => (
-              <div key={brand.name} className="flex items-center justify-center grayscale opacity-35 hover:grayscale-0 hover:opacity-90 transition-all duration-300" title={brand.name}>
-                <img src={brand.src} alt={brand.name} className="h-8 lg:h-10 w-auto object-contain" />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ── TIKTOK FEED ──────────────────────────────────────────────────── */}
       <TikTokFeed />
 

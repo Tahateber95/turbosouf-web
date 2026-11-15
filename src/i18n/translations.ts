@@ -97,7 +97,6 @@ const translations = {
         },
       ],
     },
-    partners: "Nos marques partenaires",
     blog: {
       tagline: "BLOG",
       title: "Nos Articles",
@@ -237,7 +236,6 @@ const translations = {
         },
       ],
     },
-    partners: "Our partner brands",
     blog: {
       tagline: "BLOG",
       title: "Latest Articles",
@@ -377,7 +375,6 @@ const translations = {
         },
       ],
     },
-    partners: "Nuestras marcas asociadas",
     blog: {
       tagline: "BLOG",
       title: "Últimos Artículos",
