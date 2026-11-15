@@ -93,7 +93,6 @@ export function StoreFilters({ categories, brands, conditions, activeCategory, a
                   className="text-[var(--ts-primary-500)] focus:ring-[var(--ts-primary-500)]"
                 />
                 {cat.name}
-                <span className="text-xs text-gray-400 ml-auto">{cat.productCount}</span>
               </label>
             ))}
           </div>
@@ -113,7 +112,6 @@ export function StoreFilters({ categories, brands, conditions, activeCategory, a
                   className="text-[var(--ts-primary-500)] focus:ring-[var(--ts-primary-500)]"
                 />
                 {brand.name}
-                <span className="text-xs text-gray-400 ml-auto">{brand.productCount}</span>
               </label>
             ))}
           </div>

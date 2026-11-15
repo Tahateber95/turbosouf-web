@@ -62,7 +62,7 @@ export default async function ProductDetailPage({
 
             {/* Key info strip (no images case) */}
             {(!product.images || product.images.length === 0) && (
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 gap-2">
                 <div className="bg-white rounded-lg border border-gray-100 p-3 text-center">
                   <p className="text-xs font-bold text-gray-900">{product.sku}</p>
                   <p className="text-[9px] text-gray-400 uppercase">Référence</p>
@@ -73,12 +73,6 @@ export default async function ProductDetailPage({
                     <p className="text-[9px] text-gray-400 uppercase">OEM</p>
                   </div>
                 )}
-                <div className="bg-white rounded-lg border border-gray-100 p-3 text-center">
-                  <p className="text-xs font-bold text-emerald-600">
-                    {product.stockQuantity > 0 ? `${product.stockQuantity} dispo` : "Rupture"}
-                  </p>
-                  <p className="text-[9px] text-gray-400 uppercase">Stock</p>
-                </div>
               </div>
             )}
           </div>
