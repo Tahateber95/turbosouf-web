@@ -12,11 +12,10 @@ interface Props {
   activeCategory?: string;
   activeBrand?: string;
   activeCondition?: string;
-  activeInStock: boolean;
   activeSort?: string;
 }
 
-export function StoreFilters({ categories, brands, conditions, activeCategory, activeBrand, activeCondition, activeInStock, activeSort }: Props) {
+export function StoreFilters({ categories, brands, conditions, activeCategory, activeBrand, activeCondition, activeSort }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -39,13 +38,12 @@ export function StoreFilters({ categories, brands, conditions, activeCategory, a
     params.delete("category");
     params.delete("brand");
     params.delete("condition");
-    params.delete("inStock");
     params.delete("sort");
     params.delete("page");
     router.push(`${pathname}?${params.toString()}`);
   }, [router, pathname, searchParams]);
 
-  const hasActiveFilters = activeCategory || activeBrand || activeCondition || activeInStock;
+  const hasActiveFilters = activeCategory || activeBrand || activeCondition;
 
   return (
     <aside className="w-full lg:w-64 shrink-0">
@@ -135,17 +133,6 @@ export function StoreFilters({ categories, brands, conditions, activeCategory, a
             ))}
           </div>
         </div>
-
-        {/* In stock */}
-        <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={activeInStock}
-            onChange={() => updateFilter("inStock", activeInStock ? null : "true")}
-            className="rounded border-gray-300 text-[var(--ts-primary-500)] focus:ring-[var(--ts-primary-500)]"
-          />
-          En stock uniquement
-        </label>
       </div>
     </aside>
   );

@@ -23,7 +23,6 @@ export default async function ProductsPage({ searchParams }: Props) {
   if (params.category) apiParams.set("CategorySlug", String(params.category));
   if (params.brand) apiParams.set("BrandId", String(params.brand));
   if (params.condition) apiParams.set("Condition", String(params.condition));
-  if (params.inStock === "true") apiParams.set("InStock", "true");
   if (params.sort) apiParams.set("Sort", String(params.sort));
   if (params.page) apiParams.set("Page", String(params.page));
 
@@ -52,7 +51,6 @@ export default async function ProductsPage({ searchParams }: Props) {
     if (params.category) p.set("category", String(params.category));
     if (params.brand) p.set("brand", String(params.brand));
     if (params.condition) p.set("condition", String(params.condition));
-    if (params.inStock === "true") p.set("inStock", "true");
     if (params.sort) p.set("sort", String(params.sort));
     if (page > 1) p.set("page", String(page));
     const qs = p.toString();
@@ -92,7 +90,6 @@ export default async function ProductsPage({ searchParams }: Props) {
             activeCategory={params.category ? String(params.category) : undefined}
             activeBrand={params.brand ? String(params.brand) : undefined}
             activeCondition={params.condition ? String(params.condition) : undefined}
-            activeInStock={params.inStock === "true"}
             activeSort={params.sort ? String(params.sort) : undefined}
           />
 
